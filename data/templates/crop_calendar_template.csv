@@ -1,0 +1,8 @@
+crop,state,sowing_start_month,sowing_end_month,harvest_start_month,harvest_end_month,growth_days,optimal_temp_min,optimal_temp_max,optimal_rainfall_min,optimal_rainfall_max,drought_threshold,flood_threshold,critical_growth_stages,data_source,last_updated,verified
+Rice,Punjab,6,7,10,11,120,20,35,1200,1800,800,2500,"Transplanting, Flowering, Grain filling",Manual entry - Agriculture dept. guidelines,2026-01-30,Yes
+Cotton,Maharashtra,6,7,10,12,150,21,35,600,1200,400,1500,"Sowing, Flowering, Boll formation",Manual entry - Agriculture dept. guidelines,2026-01-30,Yes
+Maize,Karnataka,6,7,9,10,90,18,32,500,900,350,1200,"Germination, Tasseling, Grain filling",Manual entry - Agriculture dept. guidelines,2026-01-30,Yes
+Wheat,Punjab,11,12,3,4,120,10,25,300,600,200,800,"Germination, Crown root stage, Heading",Manual entry - Agriculture dept. guidelines,2026-01-30,Yes
+Chickpea,Madhya Pradesh,10,11,2,3,110,15,30,350,650,250,900,"Flowering, Pod formation",Manual entry - Agriculture dept. guidelines,2026-01-30,Yes
+Tomato,Karnataka,1,3,4,6,80,18,30,200,600,150,800,"Transplanting, Flowering, Fruit set",Manual entry - Agriculture dept. guidelines,2026-01-30,Yes
+Sugarcane,Uttar Pradesh,2,4,12,3,360,20,35,1500,2500,1000,3000,"Germination, Grand growth, Maturity",Manual entry - Agriculture dept. guidelines,2026-01-30,Yes
