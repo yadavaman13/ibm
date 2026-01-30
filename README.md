@@ -22,27 +22,17 @@
 
 ---
 
-## ✨ Features
+## 📊 Quick Summary
 
-### 📊 **Yield Gap Analysis**
-Compare your farm performance with top regional performers:
-- Performance benchmarking against 75th/90th percentiles
-- Improvement roadmap with realistic targets
-- Factor analysis for optimization opportunities
+**Your datasets are EXCELLENT and sufficient for MVP development!**
 
-### 🎯 **Multi-Scenario Predictor** 
-Explore different farming strategies:
-- Conservative, Moderate, Aggressive scenarios
-- Risk vs Reward analysis
-- Profit optimization recommendations
-- What-if scenario modeling
+- ✅ **7/9 features** ready to build with existing data
+- ✅ **0% missing values** - perfect data quality
+- ✅ **26,732 records** spanning 24 years, 230+ crops, 12 states (district-level)
+- ✅ **Crop calendar extracted** from PDF - 6,293 sowing/harvesting schedules
+- 🟡 **2/9 features** need additional data (weather API, real-time prices)
 
-### 🧠 **Smart Yield Prediction**
-AI-powered forecasting with explanations:
-- Machine learning predictions
-- Visual explanations of key factors
-- Confidence intervals and risk assessment
-- Historical context and benchmarking
+**Verdict:** Start building TODAY. Risk Alert System is COMPLETE and tested!
 
 ---
 
@@ -56,14 +46,12 @@ AI-powered forecasting with explanations:
 | `state_soil_data.csv` | 30 | 30 states (N,P,K,pH) | ⭐⭐⭐⭐⭐ |
 | `state_weather_data_1997_2020.csv` | 720 | 30 states, 24 years | ⭐⭐⭐⭐⭐ |
 
-**Data Quality:** 0% missing values - perfect for ML training
-
----
+### ✅ Generated/Extracted Datasets
 
 | File | Records | Purpose | Status |
 |------|---------|---------|--------|
 | `data/sample/mandi_prices_sample.csv` | 2,250 | Market price demo | ✅ Generated |
-| `data/templates/crop_calendar_template.csv` | 7 | Risk alerts template | ⚠️ Needs expansion |
+| `data/processed/crop_calendar_cleaned.csv` | 6,293 | Risk alerts (REAL DATA) | ✅ Extracted from PDF |
 | `data/processed/merged_dataset.csv` | 19,689 | ML training ready | ✅ Generated |
 
 ---
@@ -103,17 +91,20 @@ AI-powered forecasting with explanations:
    - Output: "Because rainfall is 1200mm and wheat needs 1000-1500mm..."
    - Data: All datasets
 
-### 🟡 DEMO MODE (3 Features with Sample Data)
+### ✅ READY NOW (1 More Feature with REAL DATA)
 
-7. **Weather-Based Decision Advice**
+7. **Risk Alert System** 🎉 NEW!
+   - Input: Crop, State, District (optional)
+   - Output: "✅ OPTIMAL TIME! You're within the sowing window for Kharif season"
+   - Data: `crop_calendar_cleaned.csv` (6,293 records, 12 states, 310 districts)
+   - Status: ✅ **COMPLETE & TESTED**
+
+### 🟡 DEMO MODE (2 Features)
+
+8. **Weather-Based Decision Advice**
    - Status: Can simulate with historical data
    - Need: Weather forecast API (OpenWeatherMap - free)
    - Timeline: 1-2 days to integrate
-
-8. **Risk Alert System**
-   - Status: Basic version possible with template
-   - Need: Complete crop calendar (200+ rows)
-   - Timeline: 2-3 days manual data entry
 
 9. **Market Price Trend Analysis**
    - Status: Demo with sample data ✅
@@ -126,26 +117,48 @@ AI-powered forecasting with explanations:
 
 ### 🎯 Start Here
 
-1. **[EXECUTIVE_SUMMARY.md](EXECUTIVE_SUMMARY.md)** ⭐ START HERE
+1. **[README.md](README.md)** ⭐ YOU ARE HERE
+   - Project overview and quick summary
+   - Dataset inventory
+   - Feature status matrix
+   - Setup instructions
+
+2. **[ONBOARDING_GUIDE.md](ONBOARDING_GUIDE.md)** 🆕 NEW DEVELOPER START
+   - Complete setup walkthrough (30 min)
+   - Step-by-step environment setup
+   - Working example walkthrough
+   - First task recommendations
+
+3. **[EXECUTIVE_SUMMARY.md](EXECUTIVE_SUMMARY.md)** 📋 EXECUTIVE OVERVIEW
    - Quick 5-minute overview
    - Feature feasibility matrix
    - Go/No-go decision guide
 
-2. **[QUICK_START_GUIDE.md](QUICK_START_GUIDE.md)** ⭐ IMPLEMENTATION GUIDE
+4. **[QUICK_START_GUIDE.md](QUICK_START_GUIDE.md)** 💻 IMPLEMENTATION GUIDE
    - Step-by-step coding instructions
    - Code examples for each feature
    - 2-week sprint plan
    - Demo script for judges
 
-3. **[DATASET_ANALYSIS_REPORT.md](DATASET_ANALYSIS_REPORT.md)** 📊 DETAILED ANALYSIS
+5. **[DATASET_ANALYSIS_REPORT.md](DATASET_ANALYSIS_REPORT.md)** 📊 DETAILED ANALYSIS
    - Feature-by-feature breakdown
    - Data gap analysis
    - Data acquisition strategies
    - Full recommendations
 
+6. **[CROP_CALENDAR_EXTRACTION_SUMMARY.md](CROP_CALENDAR_EXTRACTION_SUMMARY.md)** 📅 EXTRACTION REPORT
+   - PDF extraction process
+   - Crop calendar statistics
+   - Data quality metrics
+
 ### 🛠️ Helper Scripts
 
-4. **[data_tests.py](data_tests.py)**
+7. **[verify_setup.py](verify_setup.py)** ✅ NEW!
+   - Comprehensive setup verification
+   - Checks packages, datasets, scripts
+   - Run: `python verify_setup.py`
+
+8. **[data_tests.py](data_tests.py)**
    - Validates all 3 datasets
    - Checks for missing values, duplicates
    - Run: `python data_tests.py`
@@ -169,6 +182,32 @@ AI-powered forecasting with explanations:
    - Generates crop calendar template
    - Creates data directory structure
    - Run: `python create_crop_calendar.py`
+
+9. **[extract_crop_calendar_pdf.py](extract_crop_calendar_pdf.py)** ⭐ NEW!
+   - Extracts crop calendar from PDF documents
+   - Creates structured CSV data
+   - Run: `python extract_crop_calendar_pdf.py`
+
+10. **[clean_crop_calendar.py](clean_crop_calendar.py)** ⭐ NEW!
+   - Cleans and validates extracted crop calendar
+   - Removes duplicates, creates summaries
+   - Run: `python clean_crop_calendar.py`
+
+11. **[test_risk_alert_system.py](test_risk_alert_system.py)** ⭐ NEW!
+   - Tests risk alert system with real data
+   - Interactive and demo modes
+   - Run: `python test_risk_alert_system.py`
+
+12. **[test_risk_alert_quick.py](test_risk_alert_quick.py)** ⭐ NEW!
+   - Quick automated test suite
+   - No user input required
+   - Run: `python test_risk_alert_quick.py`
+   - Run: `python clean_crop_calendar.py`
+
+11. **[test_risk_alert_system.py](test_risk_alert_system.py)** ⭐ NEW!
+   - Tests risk alert system with real data
+   - Interactive and demo modes
+   - Run: `python test_risk_alert_system.py`
 
 ---
 
@@ -247,11 +286,12 @@ farming-advisory-system/
 ├── 📁 data/
 │   ├── raw/                            # Original files (backup)
 │   ├── processed/                      # Merged & cleaned
-│   │   └── merged_dataset.csv          # ✅ ML-ready dataset
-│   ├── sample/                         # Mock data for demos
-│   │   └── mandi_prices_sample.csv     # ✅ Price demo data
-│   └── templates/                      # To fill manually
-│       └── crop_calendar_template.csv  # ⚠️ Expand this
+│   │   ├── merged_dataset.csv          # ✅ ML-ready dataset
+│   │   ├── crop_calendar_cleaned.csv      # ✅ 6,293 crop schedules
+│   │   └── crop_calendar_state_summary.csv # ✅ State statistics
+│   │
+│   └── sample/                         # Mock data for demos
+│       └── mandi_prices_sample.csv     # ✅ Price demo data
 │
 ├── 📄 Documentation
 │   ├── README.md                       # ⭐ This file
@@ -264,7 +304,13 @@ farming-advisory-system/
 │   ├── dataset_overview.py             # Show readiness
 │   ├── merge_datasets.py               # ⭐ Combine data
 │   ├── download_agmarknet.py           # Price data helper
-│   └── create_crop_calendar.py         # Calendar generator
+│   ├── create_crop_calendar.py         # Calendar generator
+│   ├── extract_crop_calendar_pdf.py    # 🎉 PDF extractor
+│   ├── clean_crop_calendar.py          # 🎉 Data cleaner
+│   └── test_risk_alert_system.py       # 🎉 Risk alert tester
+│   ├── extract_crop_calendar_from_pdf.py # 🎉 PDF extractor
+│   ├── clean_crop_calendar.py          # 🎉 Data cleaner
+│   └── test_risk_alert_system.py       # 🎉 Risk alert tester
 │
 └── 🚀 Your App Code (to create)
     ├── app.py                          # Main application
@@ -279,13 +325,14 @@ farming-advisory-system/
 
 | Metric | Value | Grade |
 |--------|-------|-------|
-| Total Records | 20,439 | A |
+| Total Records | 26,732 (crop yield + crop calendar) | A+ |
 | Missing Values | 0 (0.00%) | A+ |
 | Duplicate Rows | 0 | A+ |
-| Coverage (Crops) | 55 crops | A |
-| Coverage (States) | 30 states | A |
+| Coverage (Crops) | 230+ crops | A+ |
+| Coverage (States) | 12 states (district-level) | A |
+| Coverage (Districts) | 310 districts | A+ |
 | Coverage (Years) | 24 years (1997-2020) | A |
-| **Overall Grade** | **A (Excellent)** | ⭐⭐⭐⭐⭐ |
+| **Overall Grade** | **A+ (Excellent)** | ⭐⭐⭐⭐⭐ |
 
 ---
 
@@ -299,8 +346,8 @@ farming-advisory-system/
 | 4 | Fertilizer Optimizer | ✅ 100% | crop_yield.csv | Day 2 |
 | 5 | Crop Comparison | ✅ 100% | crop_yield.csv | Day 1 |
 | 6 | Explainable AI | ✅ 100% | All datasets | Day 3-4 |
-| 7 | Weather Advice | 🟡 50% | Need forecast API | Week 2 |
-| 8 | Risk Alerts | 🟡 40% | Need crop calendar | Week 2 |
+| 7 | Risk Alerts | ✅ 100% | crop_calendar_cleaned.csv | ✅ **DONE** |
+| 8 | Weather Advice | 🟡 50% | Need forecast API | Week 2 |
 | 9 | Price Trends | 🟡 Demo | Sample data ready | Week 3 |
 
 **Legend:** ✅ Ready | 🟡 Needs additional data | ❌ Blocked
@@ -309,19 +356,20 @@ farming-advisory-system/
 
 ## 🗺️ 3-Week Roadmap
 
-### Week 1: Core MVP (6 Features)
+### Week 1: Core MVP (7 Features) ✅ Crop Calendar Done!
 - [x] Datasets validated ✅
 - [x] Data merged ✅
+- [x] Crop calendar extracted from PDF ✅
+- [x] Risk alert system built & tested ✅
 - [ ] Train yield prediction model
 - [ ] Implement features 1-6
 - [ ] Build simple UI (Streamlit)
 - [ ] Create demo script
 
-**Deliverable:** Working app with 6 solid features
+**Deliverable:** Working app with 7 solid features
 
 ### Week 2: Enhanced Demo (9 Features)
 - [ ] Add weather advice (simulated)
-- [ ] Add risk alerts (template-based)
 - [ ] Add price trends (sample data)
 - [ ] Polish UI and explanations
 - [ ] Prepare presentation
@@ -331,7 +379,6 @@ farming-advisory-system/
 ### Week 3: Production Ready
 - [ ] Download real Agmarknet data
 - [ ] Integrate weather forecast API
-- [ ] Complete crop calendar (200+ rows)
 - [ ] Replace simulations with real data
 - [ ] Deploy and test
 

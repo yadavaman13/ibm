@@ -1,0 +1,20 @@
+Hi! Welcome to the Farming Advisory System project. 
+
+Please follow these steps to get started:
+
+1. Clone/pull the latest code from the repository
+
+2. Open and read ONBOARDING_GUIDE.md - it's a 30-minute setup guide
+
+3. Run these commands in order:
+   - python -m venv .venv
+   - .venv\Scripts\activate (Windows) or source .venv/bin/activate (Mac/Linux)
+   - pip install -r requirements.txt
+   - python verify_setup.py
+
+4. Test the working Risk Alert System:
+   - python test_risk_alert_system.py
+
+5. Read QUICK_START_GUIDE.md for implementation details
+
+All documentation is in the root folder. Start with ONBOARDING_GUIDE.md!
