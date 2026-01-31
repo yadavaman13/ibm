@@ -17,7 +17,12 @@ import sys
 import os
 from pathlib import Path
 
-# Import our custom modules (now in local directories)
+# Add project root to path
+project_root = Path(__file__).parent.parent.parent
+if str(project_root) not in sys.path:
+    sys.path.insert(0, str(project_root))
+
+# Import our custom modules
 from src.core.data_loader import DataLoader
 from src.features.yield_gap_analyzer import YieldGapAnalyzer
 from src.features.multi_scenario_predictor import MultiScenarioPredictor
@@ -29,7 +34,9 @@ from src.utils.translator import LanguageTranslator
 def load_agricultural_data():
     """Load and cache the agricultural datasets."""
     try:
-        data_loader = DataLoader(".")  # Look in current directory (root)
+        # Use project root for data loading
+        project_root = Path(__file__).parent.parent.parent
+        data_loader = DataLoader(str(project_root))
         data_loader.load_datasets()
         return data_loader
     except Exception as e:
