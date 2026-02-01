@@ -1,6 +1,6 @@
 """
 FasalMitra - Home Page
-AI-Powered Farming Advisory System
+AI-Powered Farming Advisory System with Comprehensive Language Support
 """
 
 import streamlit as st
@@ -13,10 +13,12 @@ project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
 from src.features.weather_service import WeatherService
+from src.utils.language_service import get_language_service, get_text, get_current_language
 
-# Page configuration
+# Page configuration with multilingual support
+app_title = get_text('app_title', 'en')  # Get title in English for page config
 st.set_page_config(
-    page_title="FasalMitra - Farming Advisory System",
+    page_title=f"{app_title} - Farming Advisory System",
     page_icon="🌾",
     layout="wide",
     initial_sidebar_state="collapsed"
@@ -341,13 +343,15 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Initialize session state
-if 'language' not in st.session_state:
-    st.session_state.language = 'English'
+# Initialize session state for language support
 if 'weather_data' not in st.session_state:
     st.session_state.weather_data = None
 if 'chat_active' not in st.session_state:
     st.session_state.chat_active = False
+
+# Initialize language service
+language_service = get_language_service()
+current_lang = get_current_language()
 
 # Initialize weather service
 @st.cache_resource
@@ -371,29 +375,24 @@ if st.session_state.weather_data is None:
         # Initialize with empty dict on error
         st.session_state.weather_data = {'error': str(e)}
 
-# Compact header section
+# Compact header section with language support
 col_title, col_support, col_lang = st.columns([2, 1, 1])
 
 with col_title:
-    st.markdown('<div class="app-title"><i class="ri-plant-fill"></i> FasalMitra</div>', unsafe_allow_html=True)
+    app_title_display = get_text('app_title')
+    st.markdown(f'<div class="app-title"><i class="ri-plant-fill"></i> {app_title_display}</div>', unsafe_allow_html=True)
 
 with col_support:
-    st.markdown('<div style="text-align: right; padding-top: 0.5rem; font-size: 0.95rem; color: #1B5E20;">Support</div>', unsafe_allow_html=True)
+    support_text = get_text('support')
+    st.markdown(f'<div style="text-align: right; padding-top: 0.5rem; font-size: 0.95rem; color: #1B5E20;">{support_text}</div>', unsafe_allow_html=True)
 
 with col_lang:
-    st.markdown('<div class="language-selector" style="text-align: right;">Language / हिंदी</div>', unsafe_allow_html=True)
-    language = st.selectbox(
-        "",
-        options=['English', 'हिंदी (Hindi)', 'ગુજરાતી (Gujarati)', 'తెలుగు (Telugu)', 
-                 'தமிழ் (Tamil)', 'ಕನ್ನಡ (Kannada)', 'मराठी (Marathi)', 'বাংলা (Bengali)', 
-                 'ਪੰਜਾਬੀ (Punjabi)'],
-        key='lang_selector',
-        label_visibility='collapsed'
-    )
-    st.session_state.language = language
+    # Render language selector
+    language_service.render_language_selector("header")
 
-# Hero heading - centered
-st.markdown('<div class="hero-heading">Welcome to FasalMitra, Your AI Farming Assistant.</div>', unsafe_allow_html=True)
+# Hero heading - centered with multilingual support
+hero_text = get_text('hero_welcome')
+st.markdown(f'<div class="hero-heading">{hero_text}</div>', unsafe_allow_html=True)
 
 # Enhanced search bar - centered with proper container
 st.markdown('<div class="search-container">', unsafe_allow_html=True)
@@ -406,9 +405,10 @@ with search_main_col:
     st.markdown('<div style="position: relative;">', unsafe_allow_html=True)
     st.markdown('<div class="search-icon-container"><i class="ri-search-line"></i></div>', unsafe_allow_html=True)
     
+    search_placeholder = get_text('search_placeholder')
     search_query = st.text_input(
         "",
-        placeholder="Search for farming solutions...",
+        placeholder=search_placeholder,
         key="search_input",
         label_visibility='collapsed'
     )
@@ -470,8 +470,9 @@ if weather_data and not weather_data.get('error'):
     
     st.markdown(weather_html, unsafe_allow_html=True)
 
-# Section heading - centered
-st.markdown('<div class="section-heading">Explore Farming Solutions</div>', unsafe_allow_html=True)
+# Section heading - centered with multilingual support
+section_title = get_text('explore_solutions')
+st.markdown(f'<div class="section-heading">{section_title}</div>', unsafe_allow_html=True)
 
 # Feature cards - centered container with equal width columns
 st.markdown('<div class="cards-container">', unsafe_allow_html=True)
@@ -480,46 +481,51 @@ col1, col2, col3, col4 = st.columns(4, gap="medium")
 
 # Card 1: Multi-Scenario Predictor
 with col1:
-    st.markdown("""
+    card_title_1 = get_text('multi_scenario_predictor')
+    st.markdown(f"""
     <div class="feature-card">
         <i class="ri-git-branch-line card-icon"></i>
-        <div class="card-title">Multi-Scenario<br>Predictor</div>
+        <div class="card-title">{card_title_1}</div>
     </div>
     """, unsafe_allow_html=True)
-    if st.button("Open", key="open_multi_scenario", use_container_width=True, type="primary"):
+    open_text = get_text('open_button')
+    if st.button(open_text, key="open_multi_scenario", use_container_width=True, type="primary"):
         st.switch_page("pages/3_Multi_Scenario_Predictor.py")
 
 # Card 2: Smart Yield Prediction
 with col2:
-    st.markdown("""
+    card_title_2 = get_text('smart_yield_prediction')
+    st.markdown(f"""
     <div class="feature-card">
         <i class="ri-seedling-line card-icon"></i>
-        <div class="card-title">Smart Yield<br>Prediction</div>
+        <div class="card-title">{card_title_2}</div>
     </div>
     """, unsafe_allow_html=True)
-    if st.button("Open", key="open_smart_yield", use_container_width=True, type="primary"):
+    if st.button(open_text, key="open_smart_yield", use_container_width=True, type="primary"):
         st.switch_page("pages/2_Smart_Yield_Prediction.py")
 
 # Card 3: Disease Detection
 with col3:
-    st.markdown("""
+    card_title_3 = get_text('disease_detection')
+    st.markdown(f"""
     <div class="feature-card">
         <i class="ri-search-eye-line card-icon"></i>
-        <div class="card-title">Disease<br>Detection</div>
+        <div class="card-title">{card_title_3}</div>
     </div>
     """, unsafe_allow_html=True)
-    if st.button("Open", key="open_disease", use_container_width=True, type="primary"):
+    if st.button(open_text, key="open_disease", use_container_width=True, type="primary"):
         st.switch_page("pages/1_Disease_Detection.py")
 
 # Card 4: Yield Gap Analysis
 with col4:
-    st.markdown("""
+    card_title_4 = get_text('yield_gap_analysis')
+    st.markdown(f"""
     <div class="feature-card">
         <i class="ri-bar-chart-grouped-line card-icon"></i>
-        <div class="card-title">Yield Gap<br>Analysis</div>
+        <div class="card-title">{card_title_4}</div>
     </div>
     """, unsafe_allow_html=True)
-    if st.button("Open", key="open_yield_gap", use_container_width=True, type="primary"):
+    if st.button(open_text, key="open_yield_gap", use_container_width=True, type="primary"):
         st.switch_page("pages/4_Yield_Gap_Analysis.py")
 
 st.markdown('</div>', unsafe_allow_html=True)  # Close cards-container
