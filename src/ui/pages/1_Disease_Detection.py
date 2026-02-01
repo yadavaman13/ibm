@@ -33,6 +33,258 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# Include Remix Icons
+st.markdown(
+    '<link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">',
+    unsafe_allow_html=True
+)
+
+# Custom CSS following established standards
+st.markdown("""
+<style>
+    /* Main theme colors */
+    :root {
+        --primary-green: #2E7D32;
+        --secondary-green: #4CAF50;
+        --light-green: #81C784;
+        --bg-light: #F1F8F4;
+        --text-dark: #1B5E20;
+    }
+    
+    /* Override Streamlit's default padding */
+    .stMainBlockContainer {
+        padding: 1rem !important;
+    }
+    
+    /* Remove extra bottom space */
+    .block-container {
+        padding-top: 1rem !important;
+        padding-bottom: 1rem !important;
+        min-height: auto !important;
+    }
+    
+    /* Force light mode - prevent dark mode override */
+    body {
+        background-color: #FFFFFF !important;
+        color: #1B5E20 !important;
+    }
+    
+    [data-testid="stAppViewContainer"],
+    [data-testid="stAppViewContainer"] > div,
+    .main,
+    .block-container {
+        background-color: #FFFFFF !important;
+    }
+    
+    [data-testid="stHeader"] {
+        background-color: transparent !important;
+    }
+    
+    /* Force all text to be dark */
+    .stMarkdown, p, span, div, label, h1, h2, h3, h4, h5, h6 {
+        color: #1B5E20 !important;
+    }
+    
+    /* Force all base-web components to light mode */
+    div[data-baseweb] {
+        background-color: white !important;
+    }
+    
+    /* Force all dropdown menus and popovers */
+    div[role="listbox"],
+    div[data-baseweb="popover"],
+    div[data-baseweb="menu"],
+    div[data-baseweb="select"] {
+        background-color: white !important;
+    }
+    
+    /* Force all list and menu items */
+    ul, li,
+    div[role="option"],
+    [role="option"] {
+        background-color: white !important;
+        color: #1B5E20 !important;
+    }
+    
+    /* Hide default Streamlit elements */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header[data-testid="stHeader"] {
+        display: none;
+    }
+    
+    /* Input styling */
+    .stTextInput > div > div > input,
+    .stNumberInput > div > div > input,
+    .stSelectbox > div > div > select {
+        background-color: white !important;
+        color: #1B5E20 !important;
+        border-radius: 8px !important;
+        border: 2px solid #E8F5E9 !important;
+        padding: 0.75rem !important;
+    }
+    
+    .stTextInput > div > div > input:focus,
+    .stNumberInput > div > div > input:focus,
+    .stSelectbox > div > div > select:focus {
+        border-color: var(--secondary-green) !important;
+        box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2) !important;
+    }
+    
+    /* Force input containers to have white background */
+    .stTextInput > div > div,
+    .stNumberInput > div > div,
+    .stSelectbox > div > div {
+        background-color: white !important;
+    }
+    
+    /* Force dropdown menu options to white */
+    .stSelectbox div[role="listbox"] {
+        background-color: white !important;
+    }
+    
+    .stSelectbox div[role="option"] {
+        background-color: white !important;
+        color: #1B5E20 !important;
+    }
+    
+    .stSelectbox div[role="option"]:hover {
+        background-color: #F1F8F4 !important;
+        color: var(--primary-green) !important;
+    }
+    
+    /* Force select dropdown container */
+    .stSelectbox div[data-baseweb="popover"] {
+        background-color: white !important;
+    }
+    
+    .stSelectbox ul {
+        background-color: white !important;
+    }
+    
+    .stSelectbox li {
+        background-color: white !important;
+        color: #1B5E20 !important;
+    }
+    
+    .stSelectbox li:hover {
+        background-color: #E8F5E9 !important;
+    }
+    
+    /* Button styling */
+    .stButton > button {
+        background-color: var(--secondary-green) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 8px !important;
+        padding: 0.75rem 1.5rem !important;
+        font-weight: 500 !important;
+        transition: all 0.3s ease !important;
+    }
+    
+    .stButton > button p,
+    .stButton > button span,
+    .stButton > button div {
+        color: white !important;
+    }
+    
+    .stButton > button:hover {
+        background-color: var(--primary-green) !important;
+        box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3) !important;
+        transform: translateY(-2px) !important;
+    }
+    
+    .stButton > button:hover p,
+    .stButton > button:hover span,
+    .stButton > button:hover div {
+        color: white !important;
+    }
+    
+    /* Tab styling */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 8px;
+        background-color: #F1F8F4 !important;
+        padding: 0.5rem !important;
+        border-radius: 8px !important;
+    }
+    
+    .stTabs [data-baseweb="tab"] {
+        background-color: white !important;
+        color: #1B5E20 !important;
+        border-radius: 6px !important;
+        padding: 0.5rem 1rem !important;
+        font-weight: 500 !important;
+    }
+    
+    .stTabs [aria-selected="true"] {
+        background-color: var(--secondary-green) !important;
+        color: white !important;
+    }
+    
+    .stTabs [aria-selected="true"] p,
+    .stTabs [aria-selected="true"] span {
+        color: white !important;
+    }
+    
+    /* Metric styling */
+    .stMetric {
+        background-color: #F1F8F4 !important;
+        padding: 1rem !important;
+        border-radius: 8px !important;
+        border-left: 4px solid var(--secondary-green) !important;
+    }
+    
+    .stMetric label {
+        color: #1B5E20 !important;
+    }
+    
+    .stMetric [data-testid="stMetricValue"] {
+        color: var(--primary-green) !important;
+    }
+    
+    /* Progress bar */
+    .stProgress > div > div > div > div {
+        background-color: var(--secondary-green) !important;
+    }
+    
+    /* Expander styling */
+    .streamlit-expanderHeader {
+        background-color: #F1F8F4 !important;
+        color: #1B5E20 !important;
+        border-radius: 8px !important;
+        font-weight: 500 !important;
+    }
+    
+    .streamlit-expanderHeader:hover {
+        background-color: #E8F5E9 !important;
+    }
+    
+    /* Alert boxes */
+    .stAlert {
+        border-radius: 8px !important;
+    }
+    
+    /* Camera input styling */
+    .stCameraInput > div {
+        background-color: white !important;
+        border: 2px solid #E8F5E9 !important;
+        border-radius: 8px !important;
+    }
+    
+    /* File uploader styling */
+    .stFileUploader > div {
+        background-color: white !important;
+        border: 2px dashed #E8F5E9 !important;
+        border-radius: 8px !important;
+        padding: 1rem !important;
+    }
+    
+    .stFileUploader > div:hover {
+        border-color: var(--secondary-green) !important;
+    }
+</style>
+""", unsafe_allow_html=True)
+
 # Initialize session state
 def initialize_session_state():
     """Initialize session state for disease tracking."""
@@ -303,7 +555,6 @@ def display_enhanced_analysis_results(analysis, crop_type, location, is_demo=Fal
     
     # Detailed Analysis
     if analysis.get('disease_name') != 'Healthy':
-        st.markdown("---")
         st.markdown("### 📋 Detailed Analysis")
         
         tab1, tab2, tab3, tab4 = st.tabs(["🔬 Symptoms", "💊 Treatment", "💰 Cost Estimate", "🎓 Prevention"])
@@ -416,8 +667,20 @@ def analyze_enhanced_crop_disease(photos_data, crop_type, location, disease_dete
 def show_disease_detection_page():
     """Main disease detection interface."""
     
-    st.title("🔬 AI-Powered Crop Disease Detection")
-    st.markdown("*Upload or capture photos for AI-powered disease analysis and treatment recommendations*")
+    # Header with Back to Home button
+    header_col1, header_col2 = st.columns([4, 1])
+
+    with header_col1:
+        st.markdown("""
+        <h2 style="color: var(--text-dark); margin-bottom: 1.5rem;">
+            <i class="ri-microscope-line"></i> AI-Powered Crop Disease Detection
+        </h2>
+        """, unsafe_allow_html=True)
+        st.markdown("*Upload or capture photos for AI-powered disease analysis and treatment recommendations*")
+
+    with header_col2:
+        if st.button("Back to Home", key="back_top"):
+            st.switch_page("fasal_mitra_app.py")
     
     # Disease progression tracking display
     if st.session_state.disease_history:
@@ -550,11 +813,6 @@ with st.sidebar:
         latest = st.session_state.disease_history[-1]
         st.metric("Latest Detection", latest.get('disease', 'N/A'))
         st.metric("Latest Severity", latest.get('severity', 'N/A').title())
-    
-    st.markdown("---")
-    
-    if st.button("🏠 Back to Home", use_container_width=True):
-        st.switch_page("streamlit_app.py")
     
     st.markdown("---")
     st.caption("Powered by AI & Computer Vision")
