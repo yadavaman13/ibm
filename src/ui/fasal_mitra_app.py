@@ -395,35 +395,6 @@ with col_lang:
 # Hero heading - centered
 st.markdown('<div class="hero-heading">Welcome to FasalMitra, Your AI Farming Assistant.</div>', unsafe_allow_html=True)
 
-# Enhanced search bar - centered with proper container
-st.markdown('<div class="search-container">', unsafe_allow_html=True)
-
-# Create columns for proper layout
-search_col1, search_main_col, search_col2 = st.columns([0.5, 20, 0.5])
-
-with search_main_col:
-    # Container with search icon and input
-    st.markdown('<div style="position: relative;">', unsafe_allow_html=True)
-    st.markdown('<div class="search-icon-container"><i class="ri-search-line"></i></div>', unsafe_allow_html=True)
-    
-    search_query = st.text_input(
-        "",
-        placeholder="Search for farming solutions...",
-        key="search_input",
-        label_visibility='collapsed'
-    )
-    
-    st.markdown("""
-    <div class="mic-container">
-        <div class="mic-button">
-            <i class="ri-mic-line"></i>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
-
-st.markdown('</div>', unsafe_allow_html=True)
-
 # Weather section - single unified card
 weather_data = st.session_state.weather_data
 
@@ -523,3 +494,252 @@ with col4:
         st.switch_page("pages/4_Yield_Gap_Analysis.py")
 
 st.markdown('</div>', unsafe_allow_html=True)  # Close cards-container
+
+# ==================== INTELLIGENT SEARCH ASSISTANT ====================
+st.markdown("---")
+
+# Import chatbot
+import sys
+from pathlib import Path
+project_root = Path(__file__).parent.parent.parent
+if str(project_root) not in sys.path:
+    sys.path.insert(0, str(project_root))
+
+from src.utils.farmer_helper_bot import FarmerHelperBot
+
+# Initialize chatbot
+if 'farming_assistant' not in st.session_state:
+    st.session_state.farming_assistant = FarmerHelperBot()
+    st.session_state.search_history = []
+    st.session_state.assistant_chat = []
+
+helper = st.session_state.farming_assistant
+
+# Header
+st.markdown("""
+<div style="text-align: center; margin: 2rem 0;">
+    <h2 style="color: #2E7D32; margin-bottom: 0.5rem;">🔍 Intelligent Farming Assistant</h2>
+    <p style="color: #666; font-size: 1.1rem;">Ask any farming question or search for features - I'll guide you!</p>
+</div>
+""", unsafe_allow_html=True)
+
+# Feature mapping for intelligent suggestions
+feature_keywords = {
+    'disease': {
+        'keywords': ['disease', 'sick', 'pest', 'infection', 'leaf', 'spot', 'fungus', 'bacteria', 'virus', 'blight', 'rust', 'mildew', 'treatment', 'cure', 'diagnose', 'identify'],
+        'feature': 'Disease Detection',
+        'page': 'pages/1_Disease_Detection.py',
+        'description': '🔬 Upload crop photos to detect diseases and get treatment recommendations',
+        'icon': '🔬'
+    },
+    'yield': {
+        'keywords': ['yield', 'production', 'output', 'harvest', 'how much', 'quintal', 'ton', 'predict', 'forecast', 'estimate'],
+        'feature': 'Yield Prediction',
+        'page': 'pages/2_Smart_Yield_Prediction.py',
+        'description': '🌾 Predict your crop yield with 97% accuracy using AI',
+        'icon': '🌾'
+    },
+    'scenario': {
+        'keywords': ['scenario', 'what if', 'compare', 'different', 'options', 'alternative', 'strategy', 'fertilizer amount', 'season change'],
+        'feature': 'Multi-Scenario Analysis',
+        'page': 'pages/3_Multi_Scenario_Predictor.py',
+        'description': '🎯 Compare different farming strategies and see potential outcomes',
+        'icon': '🎯'
+    },
+    'gap': {
+        'keywords': ['gap', 'improve', 'better', 'increase', 'optimize', 'potential', 'maximum', 'best', 'performance'],
+        'feature': 'Yield Gap Analysis',
+        'page': 'pages/4_Yield_Gap_Analysis.py',
+        'description': '📊 Discover how to close the gap between actual and potential yields',
+        'icon': '📊'
+    },
+    'weather': {
+        'keywords': ['weather', 'rain', 'temperature', 'forecast', 'climate', 'humidity', 'wind', 'sunny', 'cloudy'],
+        'feature': 'Weather Forecast',
+        'page': 'pages/5_Weather_Forecast.py',
+        'description': '🌤️ Get 7-day weather predictions for better crop planning',
+        'icon': '🌤️'
+    }
+}
+
+def analyze_query_intent(query):
+    """Analyze user query and suggest relevant features."""
+    query_lower = query.lower()
+    suggestions = []
+    
+    for category, data in feature_keywords.items():
+        for keyword in data['keywords']:
+            if keyword in query_lower:
+                if data not in suggestions:
+                    suggestions.append(data)
+                break
+    
+    return suggestions
+
+# Search input with enhanced styling
+st.markdown("""
+<style>
+.search-assistant-section {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 2.5rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    margin-top: 2rem;
+}
+.smart-search-container {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    margin-bottom: 1.5rem;
+}
+.chat-message-user {
+    background: #E3F2FD;
+    padding: 1.2rem;
+    border-radius: 12px;
+    margin: 1rem 0;
+    border-left: 4px solid #2196F3;
+    box-shadow: 0 2px 8px rgba(33, 150, 243, 0.1);
+}
+.chat-message-bot {
+    background: #F1F8E9;
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin: 1rem 0;
+    border: 2px solid #4CAF50;
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.15);
+    position: relative;
+}
+.chat-message-bot::before {
+    content: '';
+    position: absolute;
+    left: -2px;
+    top: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(135deg, #4CAF50 0%, #81C784 100%);
+    border-radius: 12px;
+    z-index: -1;
+    opacity: 0.1;
+}
+.ai-response-header {
+    color: #2E7D32;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #E8F5E9;
+}
+.feature-suggestion-card {
+    background: white;
+    padding: 1rem;
+    border-radius: 10px;
+    border-left: 4px solid #2196F3;
+    margin: 0.8rem 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    transition: all 0.3s ease;
+}
+.feature-suggestion-card:hover {
+    box-shadow: 0 4px 16px rgba(33, 150, 243, 0.2);
+    transform: translateY(-2px);
+}
+</style>
+""", unsafe_allow_html=True)
+
+# Search form
+with st.form(key='intelligent_search_form', clear_on_submit=True):
+    col_search, col_btn = st.columns([5, 1])
+    
+    with col_search:
+        search_query = st.text_input(
+            "Search or Ask",
+            placeholder="e.g., How to detect wheat diseases? What will be my rice yield? Best time to plant tomatoes?",
+            label_visibility="collapsed",
+            key="smart_search_input"
+        )
+    
+    with col_btn:
+        search_submit = st.form_submit_button("🔍 Search", use_container_width=True, type="primary")
+
+# Process search query
+if search_submit and search_query.strip():
+    # Add to history
+    st.session_state.search_history.append(search_query)
+    
+    # Analyze intent
+    suggestions = analyze_query_intent(search_query)
+    
+    # Show AI response
+    st.markdown('<div class="ai-response-header">🤖 AI Assistant Response</div>', unsafe_allow_html=True)
+    
+    if helper.enabled:
+        if helper._can_make_request():
+            with st.spinner("🧠 Analyzing your question..."):
+                # Enhanced prompt for better responses
+                enhanced_query = f"""
+User Question: {search_query}
+
+You are FasalMitra's AI assistant. Provide:
+1. Direct answer to the question (2-3 sentences)
+2. Practical farming advice
+3. If relevant, mention which FasalMitra features can help (Disease Detection, Yield Prediction, Weather Forecast, Multi-Scenario Analysis, Yield Gap Analysis)
+
+Keep it friendly, simple, and actionable for farmers.
+"""
+                response = helper.chat_with_farmer(enhanced_query, st.session_state.assistant_chat[-4:])
+                
+                st.session_state.assistant_chat.append({'role': 'user', 'content': search_query})
+                st.session_state.assistant_chat.append({'role': 'assistant', 'content': response})
+                
+                st.markdown(f'<div class="chat-message-bot"><div style="font-size: 1.1rem; margin-bottom: 0.8rem;">💬 <strong style="color: #2E7D32;">FasalMitra Assistant</strong></div><div style="line-height: 1.6; color: #333;">{response}</div></div>', unsafe_allow_html=True)
+        else:
+            st.warning("⏳ Please wait 15 seconds between questions to avoid rate limits.")
+    else:
+        st.info("🤖 AI features require Gemini API key. Showing feature suggestions below.")
+    
+    # Show feature suggestions
+    if suggestions:
+        st.markdown('<div class="ai-response-header" style="margin-top: 2rem;">🎯 Recommended Features for Your Query</div>', unsafe_allow_html=True)
+        st.markdown("<p style='color: #666; margin-bottom: 1.5rem; font-size: 1.05rem;'>Based on your question, these features can help you:</p>", unsafe_allow_html=True)
+        
+        for idx, suggestion in enumerate(suggestions):
+            st.markdown('<div class="feature-suggestion-card">', unsafe_allow_html=True)
+            col_icon, col_content, col_action = st.columns([1, 5, 2])
+            
+            with col_icon:
+                st.markdown(f"<div style='font-size: 3rem; text-align: center;'>{suggestion['icon']}</div>", unsafe_allow_html=True)
+            
+            with col_content:
+                st.markdown(f"<div style='font-size: 1.2rem; font-weight: 600; color: #1976D2; margin-bottom: 0.3rem;'>{suggestion['feature']}</div>", unsafe_allow_html=True)
+                st.markdown(f"<p style='color: #555; font-size: 0.95rem; margin: 0;'>{suggestion['description']}</p>", unsafe_allow_html=True)
+            
+            with col_action:
+                if st.button(f"Open {suggestion['icon']}", key=f"nav_{idx}_{suggestion['feature'].replace(' ', '_')}", use_container_width=True, type="primary"):
+                    st.switch_page(suggestion['page'])
+            
+            st.markdown('</div>', unsafe_allow_html=True)
+    else:
+        # General suggestions when no specific match
+        st.markdown("### 🌟 Explore Our Features")
+        st.info("Not sure where to start? Check out all our farming tools above!")
+
+# Show recent searches
+if st.session_state.search_history:
+    with st.expander("📜 Recent Searches", expanded=False):
+        for i, search in enumerate(reversed(st.session_state.search_history[-5:])):
+            st.markdown(f"{i+1}. {search}")
+
+# Chat history
+if st.session_state.assistant_chat:
+    with st.expander("💬 Conversation History", expanded=False):
+        for msg in st.session_state.assistant_chat[-10:]:
+            if msg['role'] == 'user':
+                st.markdown(f'<div class="chat-message-user">🧑‍🌾 <strong>You:</strong> {msg["content"]}</div>', unsafe_allow_html=True)
+            else:
+                st.markdown(f'<div class="chat-message-bot">🤖 <strong>Assistant:</strong> {msg["content"]}</div>', unsafe_allow_html=True)
+        
+        if st.button("🗑️ Clear History", key="clear_assistant_history"):
+            st.session_state.assistant_chat = []
+            st.session_state.search_history = []
+            st.rerun()
+
