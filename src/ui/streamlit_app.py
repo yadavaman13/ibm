@@ -28,6 +28,7 @@ from src.features.yield_gap_analyzer import YieldGapAnalyzer
 from src.features.multi_scenario_predictor import MultiScenarioPredictor
 from features.crop_disease_detector import CropDiseaseDetector
 from src.utils.translator import LanguageTranslator
+from src.utils.farmer_helper_bot import FarmerHelperBot, show_help_icon_with_chatbot, show_general_chatbot
 
 # Initialize data and features
 @st.cache_data
@@ -289,6 +290,11 @@ def show_home_page(data_loader, translator, selected_lang):
     
     if len(crops) > 12:
         st.markdown(f"*...and {len(crops) - 12} more crops available!*")
+    
+    st.markdown("---")
+    
+    # Add General Chatbot on Home Page
+    show_general_chatbot()
 
 def show_yield_gap_analysis(data_loader, gap_analyzer, translator, selected_lang):
     """Display yield gap analysis interface with farmer-friendly guidance."""
@@ -520,16 +526,27 @@ def show_multi_scenario_predictor(data_loader, scenario_predictor, translator, s
         
         with col1:
             avg_temp = st.number_input("🌡️ Avg Temperature (°C)", min_value=10.0, max_value=45.0, value=25.0)
+            show_help_icon_with_chatbot("Temperature", "Average temperature for crop growth")
+            
             rainfall = st.number_input("🌧️ Total Rainfall (mm)", min_value=100, max_value=3000, value=1000)
+            show_help_icon_with_chatbot("Rainfall", "Total rainfall during crop season")
             
         with col2:
             humidity = st.number_input("💧 Avg Humidity (%)", min_value=30, max_value=100, value=70)
+            show_help_icon_with_chatbot("Humidity", "Average humidity in the air")
+            
             pH = st.number_input("🔬 Soil pH", min_value=4.0, max_value=9.0, value=6.5, step=0.1)
+            show_help_icon_with_chatbot("pH", "Soil acidity or alkalinity level")
             
         with col3:
             N = st.number_input("🧪 Nitrogen (N)", min_value=20, max_value=200, value=75)
+            show_help_icon_with_chatbot("N", "Nitrogen nutrient in soil")
+            
             P = st.number_input("🧪 Phosphorus (P)", min_value=10, max_value=80, value=35)
+            show_help_icon_with_chatbot("P", "Phosphorus nutrient in soil")
+            
             K = st.number_input("🧪 Potassium (K)", min_value=10, max_value=60, value=30)
+            show_help_icon_with_chatbot("K", "Potassium nutrient in soil")
         
         submitted = st.form_submit_button("🔮 Generate Scenarios", type="primary")
     
@@ -685,8 +702,13 @@ def show_smart_prediction(data_loader, scenario_predictor, translator, selected_
             
         with col2:
             fertilizer = st.number_input("🧪 Fertilizer (kg/ha)", value=25000)
+            show_help_icon_with_chatbot("Fertilizer", "Amount of fertilizer used per hectare")
+            
             pH = st.number_input("🔬 Soil pH", min_value=4.0, max_value=9.0, value=6.5)
+            show_help_icon_with_chatbot("pH", "Soil pH level")
+            
             rainfall = st.number_input("🌧️ Rainfall (mm)", value=1000)
+            show_help_icon_with_chatbot("Rainfall", "Total rainfall")
         
         submitted = st.form_submit_button("🔮 Predict Yield", type="primary")
     

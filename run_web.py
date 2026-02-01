@@ -2,16 +2,17 @@
 """Quick launcher for web application"""
 import sys
 import subprocess
+import os
 from pathlib import Path
 
 if __name__ == "__main__":
     # Get paths
     project_root = Path(__file__).parent
-    streamlit_path = Path(sys.executable).parent / "streamlit.exe"
-    if not streamlit_path.exists():
-        streamlit_path = Path(sys.executable).parent / "streamlit"  # Unix
-    
+    venv_python = project_root / ".venv" / "Scripts" / "python.exe"
     app_path = project_root / "src" / "ui" / "streamlit_app.py"
     
-    # Run streamlit with project root as working directory
-    subprocess.run([str(streamlit_path), "run", str(app_path)], cwd=str(project_root))
+    # Use venv python if available, otherwise system python
+    python_exe = str(venv_python) if venv_python.exists() else sys.executable
+    
+    # Run streamlit
+    subprocess.run([python_exe, "-m", "streamlit", "run", str(app_path)], cwd=str(project_root))

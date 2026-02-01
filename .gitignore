@@ -23,11 +23,6 @@ env/
 Thumbs.db
 desktop.ini
 
-# Data (keep structure, ignore large files)
-*.csv
-!data/sample/*.csv
-data/processed/merged_*.csv
-data/external/*.csv
 
 # Models
 models/*.pkl
@@ -56,6 +51,9 @@ temp/
 
 # Project specific
 prompt.txt
+.env
+.env.*
+!.env.example
 
 #md
 PROJECT_STRUCTURE.md
