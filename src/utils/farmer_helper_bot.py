@@ -10,6 +10,8 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 import google.generativeai as genai
+import time
+from datetime import datetime
 
 # Load environment variables
 env_path = Path(__file__).parent.parent.parent / '.env'
@@ -20,33 +22,95 @@ class FarmerHelperBot:
     
     def __init__(self):
         """Initialize the helper bot with Gemini API."""
-        self.api_key = os.getenv('GEMINI_API_KEY', '')
-        if self.api_key and self.api_key != 'your_gemini_api_key_here':
-            genai.configure(api_key=self.api_key)
-            self.model = genai.GenerativeModel('gemini-2.5-flash')
-            self.enabled = True
+        self.api_key = os.getenv('GEMINI_API_KEY', '').strip()
+        self.last_request_time = None
+        self.min_request_interval = 15  # 15 seconds between requests
+        self.request_count = 0
+        self.max_requests_per_minute = 4  # Conservative limit
+        
+        if self.api_key and self.api_key != 'your_gemini_api_key_here' and len(self.api_key) > 10:
+            try:
+                genai.configure(api_key=self.api_key)
+                # Use gemini-pro instead of gemini-2.5-flash for better rate limits
+                self.model = genai.GenerativeModel('gemini-pro')
+                self.enabled = True
+                print("DEBUG: Gemini API configured with gemini-pro model")
+            except Exception as e:
+                print(f"DEBUG: Error configuring Gemini API: {e}")
+                self.enabled = False
         else:
             self.enabled = False
     
+    def _can_make_request(self):
+        """Check if we can make a request without hitting rate limits."""
+        current_time = time.time()
+        
+        # Reset request count every minute
+        if self.last_request_time and (current_time - self.last_request_time) > 60:
+            self.request_count = 0
+        
+        # Check if we've exceeded our per-minute limit
+        if self.request_count >= self.max_requests_per_minute:
+            return False
+            
+        # Check minimum interval between requests
+        if self.last_request_time and (current_time - self.last_request_time) < self.min_request_interval:
+            return False
+            
+        return True
+    
     def get_term_explanation(self, term, context="farming"):
         """
-        Get explanation for a technical farming term.
-        
-        Args:
-            term: The technical term to explain
-            context: Additional context about where this term is used
-            
-        Returns:
-            Dictionary with explanation, measurement methods, and resources
+        Get explanation for a technical farming term with rate limiting.
         """
         if not self.enabled:
             return self._get_fallback_explanation(term)
         
+        # Check rate limits
+        if not self._can_make_request():
+            return {
+                'explanation': f"⏳ Rate limit reached. Please wait a moment before asking about '{term}' again.",
+                'measurement': "Rate limiting active",
+                'resources': ["Please try again in 15 seconds"],
+                'rate_limited': True
+            }
+        
         try:
-            prompt = f"""You are a helpful farming assistant explaining technical terms to farmers in simple language.
+            prompt = f"""You are a helpful farming assistant. Explain "{term}" in simple language suitable for farmers.
 
-Explain the following farming term: "{term}"
+Keep the response short (2-3 sentences) and practical. Focus on:
+1. What it means in farming
+2. Why it matters to farmers
+3. One practical tip
+
+Term: {term}
 Context: {context}
+"""
+
+            response = self.model.generate_content(prompt)
+            
+            # Update rate limiting counters
+            self.last_request_time = time.time()
+            self.request_count += 1
+            
+            return {
+                'explanation': response.text,
+                'measurement': "AI-generated explanation",
+                'resources': ["Powered by Google Gemini"],
+                'rate_limited': False
+            }
+            
+        except Exception as e:
+            error_msg = str(e)
+            if "quota" in error_msg.lower() or "rate" in error_msg.lower():
+                return {
+                    'explanation': f"⏳ API quota exceeded. Please try again later for '{term}'.",
+                    'measurement': "Rate limit exceeded",
+                    'resources': ["Please wait and try again in a few minutes"],
+                    'rate_limited': True
+                }
+            else:
+                return self._get_fallback_explanation(term)
 
 Provide your response in this exact JSON format:
 {{
@@ -155,42 +219,49 @@ Make it very practical and farmer-friendly. Use simple words, avoid jargon."""
     
     def chat_with_farmer(self, user_question, conversation_history=None):
         """
-        General farming chatbot conversation.
-        
-        Args:
-            user_question: Farmer's question
-            conversation_history: List of previous messages
-            
-        Returns:
-            AI response as a string
+        General farming chatbot conversation with rate limiting.
         """
         if not self.enabled:
-            return "Sorry, chatbot is not available. Please add your Gemini API key to the .env file to enable this feature."
+            return "⚠️ Chatbot requires API key. Please check your .env file."
+        
+        # Check rate limits
+        if not self._can_make_request():
+            return "⏳ Please wait 15 seconds between questions to avoid API rate limits. Thank you for your patience!"
         
         try:
-            # Build conversation context
-            context = """You are a helpful farming assistant for Indian farmers. 
-Speak in simple, easy-to-understand language. Be practical and give actionable advice.
-If asked about technical terms, explain them simply. 
-When relevant, suggest YouTube search terms or local resources like Krishi Vigyan Kendra.
-Be encouraging and supportive. Remember that farmers may not have advanced education but are experienced in their work.
+            # Build conversation context - shorter for rate limits
+            context = """You are a helpful farming assistant. Give concise, practical advice in 2-3 sentences.
+Use simple language suitable for farmers. Be encouraging and actionable.
 
 """
+            
+            # Limit conversation history to last 2 exchanges to save tokens
+            if conversation_history and len(conversation_history) > 4:
+                conversation_history = conversation_history[-4:]
             
             if conversation_history:
                 for msg in conversation_history:
                     if msg['role'] == 'user':
-                        context += f"Farmer: {msg['content']}\n"
+                        context += f"Q: {msg['content']}\n"
                     else:
-                        context += f"Assistant: {msg['content']}\n"
+                        context += f"A: {msg['content']}\n"
             
-            context += f"Farmer: {user_question}\nAssistant:"
+            context += f"Q: {user_question}\nA:"
             
             response = self.model.generate_content(context)
+            
+            # Update rate limiting counters
+            self.last_request_time = time.time()
+            self.request_count += 1
+            
             return response.text
             
         except Exception as e:
-            return f"Sorry, I couldn't process your question right now. Error: {str(e)}"
+            error_msg = str(e)
+            if "quota" in error_msg.lower() or "rate" in error_msg.lower() or "429" in error_msg:
+                return "⏳ API quota exceeded. Please try again in a few minutes. Thank you for your patience!"
+            else:
+                return f"⚠️ Sorry, I couldn't process your question right now. Please try again later."
 
 
 def show_help_icon_with_chatbot(term, context="farming"):
@@ -249,8 +320,22 @@ def show_general_chatbot():
     
     if not helper.enabled:
         st.warning("⚠️ Chatbot requires Gemini API key. Please add your key to the `.env` file to enable chat features.")
+        
+        # Debug information
+        env_path = Path(__file__).parent.parent.parent / '.env'
+        api_key = os.getenv('GEMINI_API_KEY', '')
+        
+        with st.expander("🔧 Debug Information"):
+            st.write(f"**.env file path:** `{env_path}`")
+            st.write(f"**.env file exists:** {'✅ Yes' if env_path.exists() else '❌ No'}")
+            st.write(f"**API key found:** {'✅ Yes' if api_key else '❌ No'}")
+            if api_key:
+                st.write(f"**API key length:** {len(api_key)} characters")
+                st.write(f"**Starts with 'AIza':** {'✅ Yes' if api_key.startswith('AIza') else '❌ No'}")
+        
         st.code("GEMINI_API_KEY=your_actual_api_key_here", language="bash")
         st.info("Get your API key from: https://makersuite.google.com/app/apikey")
+        st.warning("**Try refreshing the page (F5) after updating the .env file**")
         return
     
     # Initialize chat history in session state
@@ -277,14 +362,20 @@ def show_general_chatbot():
             submit = st.form_submit_button("Send 📤", use_container_width=True)
         
         if submit and user_input.strip():
+            # Check rate limits first
+            if not helper._can_make_request():
+                st.warning("⏳ **Rate Limit:** Please wait 15 seconds between questions.")
+                st.info("💡 **Tip:** Ask detailed questions to get more complete answers!")
+                return
+                
             # Add user message to history
             st.session_state.chat_history.append({
                 'role': 'user',
                 'content': user_input
             })
             
-            # Get AI response
-            with st.spinner("🤔 Thinking..."):
+            # Get AI response with rate limiting
+            with st.spinner("🤔 Getting your answer..."):
                 response = helper.chat_with_farmer(
                     user_input,
                     st.session_state.chat_history[:-1]  # Exclude current message
@@ -298,6 +389,12 @@ def show_general_chatbot():
             
             # Rerun to show new messages
             st.rerun()
+    
+    # Show usage info
+    if helper.enabled:
+        remaining = max(0, helper.max_requests_per_minute - helper.request_count)
+        if remaining <= 2:
+            st.info(f"⏳ **Usage:** {remaining} questions remaining this minute")
     
     # Clear chat button
     if len(st.session_state.chat_history) > 0:
