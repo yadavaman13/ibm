@@ -69,9 +69,12 @@ class FarmerHelperBot:
         # Check rate limits
         if not self._can_make_request():
             return {
-                'explanation': f"⏳ Rate limit reached. Please wait a moment before asking about '{term}' again.",
-                'measurement': "Rate limiting active",
-                'resources': ["Please try again in 15 seconds"],
+                'simple_explanation': f"⏳ Rate limit reached. Please wait a moment before asking about '{term}' again.",
+                'why_important': "Rate limiting helps prevent API quota exhaustion.",
+                'how_to_measure': "Please wait 15 seconds between requests.",
+                'typical_values': "API allows limited requests per minute.",
+                'video_search': f"{term} farming",
+                'tips': ["Wait 15 seconds between questions", "Ask detailed questions to get complete answers"],
                 'rate_limited': True
             }
         
@@ -93,10 +96,14 @@ Context: {context}
             self.last_request_time = time.time()
             self.request_count += 1
             
+            # Convert AI response to expected format
             return {
-                'explanation': response.text,
-                'measurement': "AI-generated explanation",
-                'resources': ["Powered by Google Gemini"],
+                'simple_explanation': response.text,
+                'why_important': "Understanding this helps you make better farming decisions.",
+                'how_to_measure': "Consult with local agriculture experts for measurement methods.",
+                'typical_values': "Values vary by crop and region.",
+                'video_search': f"{term} farming india",
+                'tips': ["Consult local krishi vigyan kendra", "Keep records of observations"],
                 'rate_limited': False
             }
             
@@ -104,45 +111,16 @@ Context: {context}
             error_msg = str(e)
             if "quota" in error_msg.lower() or "rate" in error_msg.lower():
                 return {
-                    'explanation': f"⏳ API quota exceeded. Please try again later for '{term}'.",
-                    'measurement': "Rate limit exceeded",
-                    'resources': ["Please wait and try again in a few minutes"],
+                    'simple_explanation': f"⏳ API quota exceeded. Please try again later for '{term}'.",
+                    'why_important': "Free API has daily usage limits.",
+                    'how_to_measure': "Wait for quota to reset (usually 24 hours).",
+                    'typical_values': "Free tier: 20 requests per day",
+                    'video_search': f"{term} farming",
+                    'tips': ["Try again tomorrow", "Use fallback explanations for common terms"],
                     'rate_limited': True
                 }
             else:
                 return self._get_fallback_explanation(term)
-
-Provide your response in this exact JSON format:
-{{
-    "simple_explanation": "A simple, easy-to-understand explanation in 2-3 sentences",
-    "why_important": "Why this matters for farming in 1-2 sentences",
-    "how_to_measure": "Step-by-step guide on how a farmer can measure or determine this (3-5 practical steps)",
-    "typical_values": "What are typical good/normal values for this?",
-    "video_search": "Suggested YouTube search query to learn more",
-    "tips": ["Tip 1", "Tip 2", "Tip 3"]
-}}
-
-Make it very practical and farmer-friendly. Use simple words, avoid jargon."""
-
-            response = self.model.generate_content(prompt)
-            
-            import json
-            # Extract JSON from response
-            result_text = response.text
-            # Try to find JSON in the response
-            if '{' in result_text and '}' in result_text:
-                start = result_text.find('{')
-                end = result_text.rfind('}') + 1
-                json_str = result_text[start:end]
-                result = json.loads(json_str)
-            else:
-                # Fallback if no JSON found
-                result = self._get_fallback_explanation(term)
-            
-            return result
-            
-        except Exception as e:
-            return self._get_fallback_explanation(term, str(e))
     
     def _get_fallback_explanation(self, term, error=None):
         """Provide fallback explanation when API is not available."""
