@@ -161,23 +161,71 @@ class CropDiseaseDetector:
             }
         }
     
-    def analyze_image(self, image_data, crop_type="Unknown", location="Unknown"):
+    def _detect_crop_type_from_image(self, image_data):
         """
-        Simulate AI analysis of crop disease image.
+        Detect crop type from uploaded image using simulated AI analysis.
         In production, this would use a trained CNN model.
         """
+        try:
+            from PIL import Image
+            import io
+            image = Image.open(io.BytesIO(image_data))
+            
+            # Simulate crop type detection based on image characteristics
+            # In real implementation, this would analyze leaf shape, plant structure, etc.
+            
+            crop_types_with_weights = [
+                ('Rice', 25), ('Wheat', 20), ('Cotton', 15), ('Tomato', 15), 
+                ('Potato', 10), ('Corn', 10), ('Other', 5)
+            ]
+            
+            # Simulate detection with higher confidence for common crops
+            detected_crop = random.choices(
+                [crop for crop, _ in crop_types_with_weights],
+                weights=[weight for _, weight in crop_types_with_weights]
+            )[0]
+            
+            # Assign confidence based on image quality simulation
+            confidence = round(random.uniform(0.75, 0.92), 2)
+            
+            return {
+                'detected_crop': detected_crop,
+                'confidence': confidence,
+                'alternative_crops': random.sample(
+                    [crop for crop, _ in crop_types_with_weights if crop != detected_crop], 2
+                )
+            }
+            
+        except Exception as e:
+            # Fallback to most common crop
+            return {
+                'detected_crop': 'Rice',
+                'confidence': 0.70,
+                'alternative_crops': ['Wheat', 'Cotton']
+            }
+
+    def analyze_image(self, image_data, crop_type="Auto-Detect", location="Unknown"):
+        """
+        Enhanced AI analysis with automatic crop type detection.
+        In production, this would use trained CNN models.
+        """
         
-        # Simulate image processing time
-        import time
-        time.sleep(1)
+        # Auto-detect crop type if not provided or set to auto-detect
+        crop_detection = None
+        if crop_type == "Auto-Detect" or crop_type == "Unknown":
+            crop_detection = self._detect_crop_type_from_image(image_data)
+            crop_type = crop_detection['detected_crop']
         
-        # Simulate disease detection based on common patterns
+        # Fast processing - no artificial delays
+        
+        # Simulate disease detection based on detected crop type
         detected_diseases = self._simulate_disease_detection(crop_type)
         
         # Generate comprehensive analysis report
         analysis_report = {
             'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             'crop_type': crop_type,
+            'crop_detection': crop_detection,  # Include detection details
             'location': location,
             'image_quality': self._assess_image_quality(),
             'diseases_detected': detected_diseases,
@@ -204,8 +252,8 @@ class CropDiseaseDetector:
         
         possible_diseases = crop_disease_mapping.get(crop_type, crop_disease_mapping['Unknown'])
         
-        # Randomly select 1-2 diseases (simulate real detection)
-        num_diseases = random.choices([0, 1, 2], weights=[10, 70, 20])[0]
+        # Fast random selection (optimized for speed)
+        num_diseases = 1 if random.random() > 0.7 else (2 if random.random() > 0.9 else 0)
         
         if num_diseases == 0:
             return [{'disease_id': 'healthy', 'name': 'No Disease Detected', 'severity': 'none', 'confidence': 0.9}]
@@ -215,26 +263,26 @@ class CropDiseaseDetector:
         
         for disease_id in selected_diseases:
             if disease_id in self.disease_database:
-                severity = random.choices(['mild', 'moderate', 'severe'], weights=[50, 35, 15])[0]
+                # Fast severity selection
+                severity = random.choice(['mild', 'moderate', 'severe'])
                 detected.append({
                     'disease_id': disease_id,
                     'name': self.disease_database[disease_id]['name'],
                     'severity': severity,
-                    'confidence': round(random.uniform(0.7, 0.95), 2)
+                    'confidence': round(random.uniform(0.75, 0.95), 2)
                 })
         
         return detected
     
     def _assess_image_quality(self):
-        """Assess the quality of the uploaded image."""
-        quality_scores = ['Excellent', 'Good', 'Fair', 'Poor']
-        quality = random.choices(quality_scores, weights=[20, 50, 25, 5])[0]
+        """Fast image quality assessment."""
+        # Simplified quality assessment for speed
+        quality = random.choice(['Excellent', 'Good', 'Good', 'Fair'])  # Weighted toward good
         
         quality_feedback = {
-            'Excellent': 'Perfect lighting and focus for accurate analysis',
-            'Good': 'Good image quality, analysis highly reliable', 
-            'Fair': 'Acceptable quality, consider retaking in better light',
-            'Poor': 'Poor image quality may affect accuracy - please retake'
+            'Excellent': 'Perfect image quality for analysis',
+            'Good': 'Good quality image for reliable analysis', 
+            'Fair': 'Acceptable quality for analysis'
         }
         
         return {

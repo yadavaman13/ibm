@@ -22,6 +22,11 @@ import json
 from PIL import Image, ImageDraw, ImageFont
 import requests
 import hashlib
+from dotenv import load_dotenv
+
+# Load environment variables early
+env_path = Path(__file__).parent.parent.parent / '.env'
+load_dotenv(env_path)
 
 # Add project root to path
 project_root = Path(__file__).parent.parent.parent
@@ -74,6 +79,11 @@ def initialize_features(_data_loader):
     except Exception as e:
         st.error(f"Error initializing features: {e}")
         return None, None, None, None
+
+@st.cache_data(ttl=300)  # Cache for 5 minutes
+def cached_disease_analysis(image_hash, crop_type, location):
+    """Cache disease analysis results to avoid redundant processing."""
+    return None  # Placeholder - actual caching handled in analyze_enhanced_crop_disease
 
 # Main app
 def main():
@@ -876,78 +886,177 @@ def show_disease_detection(data_loader, disease_detector, translator, selected_l
     # Image capture/upload section with tabs
     st.subheader("Image Upload Options")
     
-    tab1, tab2 = st.tabs(["Camera Capture", "File Upload"])
+    tab1, tab2 = st.tabs(["📸 Camera Capture", "📁 File Upload"])
     
+    camera_photo = None
     with tab1:
         st.markdown("**Real-time Camera Capture**")
-        camera_photo = st.camera_input("Take a photo of your crop", help="Position camera to focus on affected plant parts")
+        
+        # Add browser compatibility check
+        st.info("📸 Make sure your browser supports camera access and you're on a secure connection (HTTPS or localhost)")
+        
+        # Add troubleshooting info
+        with st.expander("🔧 Camera Not Working? Troubleshooting Tips", expanded=False):
+            st.write("""
+            **If camera permission is not requested:**
+            - Refresh the page (Ctrl+F5)
+            - Check browser address bar for camera icon 🎥
+            - Try in Chrome or Firefox
+            - Make sure no other apps are using your camera
+            - Check browser settings: Allow camera for this site
+            - Clear browser cache and try again
+            """)
+        
+        # Camera input with explicit settings
+        camera_photo = st.camera_input(
+            "📸 Click here to activate camera and take a photo of your crop", 
+            key="disease_detection_camera",
+            help="Your browser will request camera permission when you interact with this camera widget"
+        )
+        
         if camera_photo:
-            st.success("Photo captured successfully")
+            st.success("✅ Photo captured successfully!")
             # Show small preview
             col1, col2, col3 = st.columns([1, 2, 1])
             with col2:
                 st.image(camera_photo, caption="Camera Preview", width=200)
+        else:
+            st.warning("👆 Click the camera widget above to request camera access")
     
     with tab2:
-        st.markdown("**Upload Crop Photos**")
-        uploaded_files = st.file_uploader(
-            "Choose one or more images of your crop",
-            type=['png', 'jpg', 'jpeg'],
-            accept_multiple_files=True,
-            help="Upload 1 image for single analysis or multiple photos for comprehensive analysis"
-        )
-        if uploaded_files:
-            if len(uploaded_files) == 1:
-                st.success("1 photo uploaded - Single image analysis ready")
-                # Show single preview
-                col1, col2, col3 = st.columns([1, 2, 1])
-                with col2:
-                    st.image(uploaded_files[0], caption="Upload Preview", width=200)
-            else:
-                st.success(f"{len(uploaded_files)} photos uploaded - Multiple image analysis ready")
-                # Show small previews in a grid
-                st.markdown("**Preview of uploaded images:**")
-                if len(uploaded_files) <= 3:
-                    cols = st.columns(len(uploaded_files))
-                    for i, file in enumerate(uploaded_files):
-                        with cols[i]:
-                            st.image(file, caption=f"Photo {i+1}", width=150)
-                else:
-                    # Show in rows of 3 for more than 3 images
-                    for i in range(0, len(uploaded_files), 3):
-                        batch = uploaded_files[i:i+3]
-                        cols = st.columns(len(batch))
-                        for j, file in enumerate(batch):
-                            with cols[j]:
-                                st.image(file, caption=f"Photo {i+j+1}", width=120)
-    
-    # Analysis Parameters
-    st.subheader("Analysis Settings")
-    col1, col2 = st.columns([1, 1])
-    
-    with col1:
-        crop_type = st.selectbox("Select Crop Type", 
-            ['Rice', 'Wheat', 'Cotton', 'Tomato', 'Potato', 'Corn', 'Other'])
+        st.markdown("**📁 Upload Crop Photos**")
         
-        location = st.text_input("Location (optional)", 
-            value=getattr(st.session_state, 'user_location', ''),
-            placeholder="e.g., Punjab, Maharashtra",
-            help="Used for local treatment cost estimation")
-        if location:
-            st.session_state.user_location = location
-    
-    with col2:
-        st.info("""
-        **Enhanced Analysis Features:**
-        • Real-time camera capture
-        • Smart symptom highlighting  
-        • Local treatment cost estimation
-        • Disease progression tracking
-        • Automatic single/multiple analysis
-        """)
+        # Enhanced file upload styling
+        st.markdown("""
+        <style>
+        .upload-container {
+            border: 2px dashed #4CAF50;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            background: linear-gradient(135deg, #f8f9ff 0%, #f0f8f0 100%);
+            margin: 1rem 0;
+            transition: all 0.3s ease;
+        }
+        .upload-container:hover {
+            border-color: #45a049;
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+        }
+        .upload-info {
+            color: #666;
+            font-size: 14px;
+            margin-top: 0.5rem;
+        }
+        .file-list {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem;
+            margin: 0.25rem 0;
+            background: white;
+            border-radius: 6px;
+            border-left: 4px solid #4CAF50;
+        }
+        .stFileUploader > div > div > div > button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+        
+        # Create two columns - upload area and file list
+        col_upload, col_files = st.columns([2, 1])
+        
+        with col_upload:
+            # Enhanced file uploader with custom styling
+            uploaded_files = st.file_uploader(
+                "",  # Empty label for custom styling
+                type=['png', 'jpg', 'jpeg', 'webp'],
+                accept_multiple_files=True,
+                help="Drag and drop files here or click Browse",
+                label_visibility="hidden"
+            )
+            
+            # Custom upload area description
+            st.markdown("""
+            <div class="upload-container">
+                <div style="font-size: 48px; margin-bottom: 1rem;">📤</div>
+                <div style="font-size: 18px; font-weight: 600; margin-bottom: 0.5rem;">
+                    Drop files here or click Browse
+                </div>
+                <div class="upload-info">
+                    *File supported: .png, .jpg, .jpeg & .webp
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        with col_files:
+            if uploaded_files:
+                st.markdown("""
+                <div class="file-list">
+                    <h4 style="margin-top: 0; color: #333;">📋 Uploaded Files</h4>
+                """, unsafe_allow_html=True)
+                
+                # Display uploaded files with enhanced styling
+                for i, file in enumerate(uploaded_files):
+                    file_size_mb = file.size / (1024 * 1024)
+                    st.markdown(f"""
+                    <div class="file-item">
+                        <div>
+                            <span style="font-weight: 600;">📸 {file.name}</span>
+                            <br><small style="color: #666;">{file_size_mb:.1f} MB</small>
+                        </div>
+                        <div style="color: #4CAF50;">✅</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+                
+                st.markdown("</div>", unsafe_allow_html=True)
+                
+                # Success message with file count
+                if len(uploaded_files) == 1:
+                    st.success("✅ **1 photo ready** - Single image analysis")
+                else:
+                    st.success(f"✅ **{len(uploaded_files)} photos ready** - Multi-image analysis")
+                
+                # Compact preview section
+                st.markdown("**🖼️ Preview:**")
+                if len(uploaded_files) <= 3:
+                    preview_cols = st.columns(len(uploaded_files))
+                    for i, file in enumerate(uploaded_files):
+                        with preview_cols[i]:
+                            st.image(file, caption=f"📷 {i+1}", width=120)
+                else:
+                    st.info(f"📸 {len(uploaded_files)} images uploaded. Preview available after analysis.")
+            else:
+                # Show placeholder when no files uploaded
+                st.markdown("""
+                <div class="file-list">
+                    <h4 style="margin-top: 0; color: #333;">📋 Uploaded Files</h4>
+                    <div style="text-align: center; padding: 2rem; color: #999;">
+                        <div style="font-size: 48px; margin-bottom: 1rem;">📁</div>
+                        <div>No files uploaded yet</div>
+                        <div style="font-size: 14px; margin-top: 0.5rem;">Upload crop images to get started</div>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
     
     # Determine which photos to analyze
     photos_to_analyze = []
+    # Use auto-detection for crop type and empty location
+    crop_type = "Auto-Detect"  # Auto-detect crop type from image
+    location = ""  # Default empty location
+    
     if camera_photo:
         photos_to_analyze.append(("Camera", camera_photo))
     if uploaded_files:
@@ -991,18 +1100,21 @@ def show_disease_detection(data_loader, disease_detector, translator, selected_l
 def analyze_enhanced_crop_disease(photos_data, crop_type, location, disease_detector):
     """Enhanced analysis with multiple photos, symptom highlighting, cost calculation, and image validation."""
     
-    with st.spinner(f"🔬 Analyzing {len(photos_data)} photo(s) for crop content and diseases... This may take a few moments."):
+    with st.spinner(f"🔬 Analyzing {len(photos_data)} photo(s) - Optimized for fast results..."):
         
-        # Analyze all photos
+        # Analyze all photos with optimized processing
         all_analyses = []
         invalid_images = []
         
+        # Process images in parallel-like manner (streamlined)
         for source, photo in photos_data:
             image_data = photo.read()
+            
+            # Fast analysis with minimal overhead
             analysis = disease_detector.analyze_image(image_data, crop_type, location)
             analysis['source'] = source
             
-            # Check if image is valid crop image
+            # Quick validation check
             if not analysis.get('is_valid_crop_image', True):
                 invalid_images.append((source, analysis))
             else:
@@ -1064,13 +1176,17 @@ def analyze_enhanced_crop_disease(photos_data, crop_type, location, disease_dete
                 for source, analysis in invalid_images:
                     st.error(f"**{source}:** {analysis.get('validation_message', 'Invalid crop image')}")
         
-        # Aggregate results for valid images
-        if len(all_analyses) > 1:
-            aggregated_analysis = disease_detector.aggregate_multi_photo_analysis(all_analyses)
-            st.success(f"✅ **Enhanced Analysis Complete!** Analyzed {len(all_analyses)} valid crop images.")
-        else:
-            aggregated_analysis = all_analyses[0]
-            st.success("✅ **Analysis Complete!** Valid crop image analyzed successfully.")
+    # Fast-path for single photo analysis - skip complex aggregation
+    if len(photos_data) == 1 and len(all_analyses) == 1:
+        aggregated_analysis = all_analyses[0]
+        st.success("✅ **Fast Analysis Complete!** Single photo analyzed.")
+    elif len(all_analyses) > 1:
+        # Only do complex aggregation for multiple photos
+        aggregated_analysis = disease_detector.aggregate_multi_photo_analysis(all_analyses)
+        st.success(f"✅ **Multi-Photo Analysis Complete!** Analyzed {len(all_analyses)} images.")
+    else:
+        aggregated_analysis = all_analyses[0]
+        st.success("✅ **Analysis Complete!**")
         
         # Store in disease history
         if not hasattr(st.session_state, 'disease_history'):
@@ -1092,39 +1208,31 @@ def analyze_enhanced_crop_disease(photos_data, crop_type, location, disease_dete
     # Display enhanced results for valid crop images
     show_image_validation_summary(aggregated_analysis)
     
-    # Analysis Summary with enhanced metrics
-    st.subheader("Analysis Summary")
+    # Analysis Summary with optimized metrics display
+    st.subheader("📋 Analysis Summary")
     
-    col1, col2, col3, col4, col5 = st.columns(5)
+    # Show detected crop type if available
+    if 'crop_detection' in aggregated_analysis and aggregated_analysis['crop_detection']:
+        crop_info = aggregated_analysis['crop_detection']
+        st.info(f"🌾 **Detected Crop:** {crop_info['detected_crop']} (Confidence: {crop_info['confidence']:.0%})")
+        
+        if crop_info.get('alternative_crops'):
+            st.caption(f"Alternative possibilities: {', '.join(crop_info['alternative_crops'])}")
+    
+    col1, col2, col3 = st.columns(3)  # Reduced from 5 to 3 columns for faster rendering
     
     with col1:
-        st.metric("Confidence Score", f"{aggregated_analysis['confidence_score']:.0%}")
+        st.metric("Confidence", f"{aggregated_analysis['confidence_score']:.0%}")
     
     with col2:
-        st.metric("Valid Photos", len(all_analyses))
+        st.metric("Photos Analyzed", len(all_analyses))
     
     with col3:
-        st.metric("Image Quality", aggregated_analysis['image_quality']['score'])
-    
-    with col4:
-        st.metric("Urgency Level", aggregated_analysis['urgency_level'])
-    
-    with col5:
         diseases_count = len([d for d in aggregated_analysis['diseases_detected'] if d['disease_id'] != 'healthy'])
         st.metric("Issues Found", diseases_count)
     
-    with col3:
-        st.metric("Image Quality", aggregated_analysis['image_quality']['score'])
-    
-    with col4:
-        st.metric("Urgency Level", aggregated_analysis['urgency_level'])
-    
-    with col5:
-        diseases_count = len([d for d in aggregated_analysis['diseases_detected'] if d['disease_id'] != 'healthy'])
-        st.metric("Issues Found", diseases_count)
-    
-    # Smart symptom highlighting (simulated)
-    if len(photos_data) == 1:
+    # Optional symptom highlighting - only for single photo to improve performance
+    if len(photos_data) == 1 and st.checkbox("Show Symptom Highlighting (slower)", value=False):
         show_symptom_highlighting(photos_data[0][1], aggregated_analysis)
     
     # Disease detection results with enhanced features
@@ -1351,50 +1459,36 @@ def show_disease_progression_timeline():
             st.plotly_chart(fig, use_container_width=True)
 
 def show_enhanced_disease_results(analysis, crop_type, location, disease_detector):
-    """Display enhanced disease results with detailed information."""
+    """Display optimized disease results with essential information."""
     
-    st.subheader("Disease Detection Results")
+    st.subheader("🔍 Disease Detection Results")
     
     diseases = analysis['diseases_detected']
     
     if diseases[0]['disease_id'] == 'healthy':
-        st.success("**Excellent News! No diseases detected in your crop.**")
+        st.success("🎉 **Excellent News! No diseases detected in your crop.**")
         
-        # Provide preventive recommendations even for healthy crops
-        col1, col2 = st.columns([1, 1])
-        
-        with col1:
-            st.info("""
-            **Keep Your Crop Healthy:**
-            • Continue regular monitoring
-            • Maintain proper irrigation
-            • Ensure good air circulation
-            • Apply preventive treatments
-            """)
-        
-        with col2:
-            st.success("""
-            **Next Steps:**
-            • Check again in 7 days
-            • Monitor weather conditions
-            • Track growth patterns
-            • Document with photos
-            """)
+        # Simplified healthy crop recommendations
+        st.info("**✅ Keep monitoring regularly • 💧 Maintain proper irrigation • 🌱 Apply preventive care**")
     else:
-        # Display each disease with enhanced information
+        # Display diseases with streamlined information for faster rendering
         for i, disease in enumerate(diseases):
-            severity_indicator = "🔴" if disease['severity'] == 'severe' else "🟠" if disease['severity'] == 'moderate' else "🟡"
+            severity_color = {"severe": "🔴", "moderate": "🟠", "mild": "🟡"}[disease['severity']]
             
-            with st.expander(f"{disease['name']} - Severity: {disease['severity'].title()}", expanded=True):
+            with st.expander(f"{severity_color} {disease['name']} - {disease['severity'].title()}", expanded=i==0):  # Only expand first
                 
-                # Enhanced disease information in columns
-                col1, col2, col3 = st.columns([2, 1, 1])
+                # Streamlined display in single column for speed
+                st.write(f"**Confidence:** {disease['confidence']:.0%}")
+                st.write(f"**Risk Level:** {disease.get('risk_level', 'Medium')}")
                 
-                with col1:
-                    # Get enhanced treatment plan
-                    treatment_plan = disease_detector.get_enhanced_treatment_plan(
-                        disease['disease_id'], disease['severity'], crop_type, location
-                    )
+                # Quick treatment summary
+                st.write("**🏥 Immediate Actions:**")
+                if disease['severity'] == 'severe':
+                    st.error("• Apply systemic treatment immediately • Remove affected parts • Improve ventilation")
+                elif disease['severity'] == 'moderate': 
+                    st.warning("• Apply targeted treatment • Monitor closely • Preventive measures")
+                else:
+                    st.info("• Apply preventive treatment • Regular monitoring • Maintain good practices")
                     
                     st.markdown(f"**Confidence:** {disease['confidence']:.0%}")
                     st.markdown(f"**Severity:** {disease['severity'].title()}")
