@@ -24,10 +24,16 @@ if str(project_root) not in sys.path:
 # Import required modules
 from src.core.data_loader import DataLoader
 from features.crop_disease_detector import CropDiseaseDetector
+from src.utils.language_service import get_language_service, get_text, get_current_language
 
-# Page configuration
+# Initialize language service
+language_service = get_language_service()
+current_lang = get_current_language()
+
+# Page configuration with language support
+page_title = get_text('disease_detection_title', 'en')
 st.set_page_config(
-    page_title="🔬 Disease Detection - FasalMitra",
+    page_title=f"🔬 {page_title} - FasalMitra",
     page_icon="🔬",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -64,6 +70,21 @@ if not disease_detector:
     st.error("Failed to initialize disease detector. Please check the data files.")
     st.stop()
 
+# Sidebar with language selector
+with st.sidebar:
+    language_settings_text = get_text('language_settings')
+    st.markdown(f"### {language_settings_text}")
+    language_service.render_language_selector("sidebar")
+    
+    # Add navigation
+    st.markdown("---")
+    home_text = get_text('go_to_home')
+    if st.button(home_text, use_container_width=True):
+        st.switch_page("src/ui/fasal_mitra_app.py")
+    
+    # Add some spacing
+    st.markdown("---")
+
 # ========== Helper Functions (Copied from streamlit_app.py) ==========
 
 def show_disease_progression_timeline():
@@ -71,7 +92,8 @@ def show_disease_progression_timeline():
     if not hasattr(st.session_state, 'disease_history') or not st.session_state.disease_history:
         return
     
-    st.markdown("### 📊 Analysis Timeline")
+    timeline_text = get_text('analysis_timeline')
+    st.markdown(f"### {timeline_text}")
     
     # Show recent analyses in reverse chronological order
     for i, entry in enumerate(reversed(st.session_state.disease_history[-5:])):  # Last 5 entries
@@ -416,8 +438,42 @@ def analyze_enhanced_crop_disease(photos_data, crop_type, location, disease_dete
 def show_disease_detection_page():
     """Main disease detection interface."""
     
-    st.title("🔬 AI-Powered Crop Disease Detection")
-    st.markdown("*Upload or capture photos for AI-powered disease analysis and treatment recommendations*")
+    # Get current language for direct translations
+    current_lang = get_current_language()
+    
+    # Page titles
+    page_titles = {
+        'en': '🔬 AI-Powered Crop Disease Detection',
+        'hi': '🔬 AI-संचालित फसल रोग की पहचान',
+        'mr': '🔬 AI-चालित पीक रोग शोध',
+        'gu': '🔬 AI-સંચાલિત પાક રોગ શોધ',
+        'pa': '🔬 AI-ਸੰਚਾਲਿਤ ਫਸਲ ਬਿਮਾਰੀ ਖੋਜ',
+        'bn': '🔬 AI-চালিত ফসল রোগ সনাক্তকরণ',
+        'ta': '🔬 AI-இயக்கப்படும் பயிர் நோய் கண்டறிதல்',
+        'te': '🔬 AI-నడిచే పంట వ్యాధి గుర్తింపు',
+        'kn': '🔬 AI-ಚಾಲಿತ ಬೆಳೆ ರೋಗ ಪತ್ತೆ',
+        'ml': '🔬 AI-പ്രവർത്തിപ്പിക്കുന്ന വിള രോഗ കണ്ടെത്തൽ',
+        'or': '🔬 AI-ଚାଳିତ ଫସଲ ରୋଗ ଚିହ୍ନଟ',
+        'as': '🔬 AI-চালিত শস্য ৰোগ চিনাক্তকৰণ'
+    }
+    
+    page_subtitles = {
+        'en': '*Upload or capture photos for AI-powered disease analysis and treatment recommendations*',
+        'hi': '*AI-संचालित रोग विश्लेषण और उपचार सिफारिशों के लिए फ़ोटो अपलोड या कैप्चर करें*',
+        'mr': '*AI-चालित रोग विश्लेषण आणि उपचार शिफारशींसाठी फोटो अपलोड किंवा कॅप्चर करा*',
+        'gu': '*AI-સંચાલિત રોગ વિશ્લેષણ અને સારવાર સુઝાવો માટે ફોટો અપલોડ અથવા કેપ્ચર કરો*',
+        'pa': '*AI-ਸੰਚਾਲਿਤ ਬਿਮਾਰੀ ਵਿਸ਼ਲੇਸ਼ਣ ਅਤੇ ਇਲਾਜ ਸਿਫਾਰਿਸ਼ਾਂ ਲਈ ਫੋਟੋ ਅਪਲੋਡ ਜਾਂ ਕੈਪਚਰ ਕਰੋ*',
+        'bn': '*AI-চালিত রোগ বিশ্লেষণ এবং চিকিৎসা সুপারিশের জন্য ছবি আপলোড বা ক্যাপচার করুন*',
+        'ta': '*AI-இயக்கப்படும் நோய் பகுப்பாய்வு மற்றும் சிகிச்சை பரிந்துரைகளுக்கு படங்களை பதிவேற்றவும் அல்லது கைப்பற்றவும்*',
+        'te': '*AI-నడిచే వ్యాধి విశ్లేషణ మరియు చికిత్సా సిఫారసుల కోసం ఫోటోలను అప్‌లోడ్ చేయండి లేదా క్యాప్చర్ చేయండి*',
+        'kn': '*AI-ಚಾಲಿತ ರೋಗ ವಿಶ್ಲೇಷಣೆ ಮತ್ತು ಚಿಕಿತ್ಸೆ ಶಿಫಾರಸುಗಳಿಗಾಗಿ ಫೋಟೋಗಳನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ ಅಥವಾ ಸೆರೆಹಿಡಿಯಿರಿ*',
+        'ml': '*AI-പ്രവർത്തിപ്പിക്കുന്ന രോഗ വിശകലനത്തിനും ചികിത്സാ ശുപാർശകൾക്കുമായി ഫോട്ടോകൾ അപ്‌ലോഡ് ചെയ്യുക അല്ലെങ്കിൽ ക്യാപ്‌ചർ ചെയ്യുക*',
+        'or': '*AI-ଚାଳିତ ରୋଗ ବିଶ୍ଳେଷଣ ଏବଂ ଚିକିତ୍ସା ସୁପାରିସ୍ ପାଇଁ ଫଟୋ ଅପଲୋଡ୍ କିମ୍ବା କ୍ୟାପଚର କରନ୍ତୁ*',
+        'as': '*AI-চালিত ৰোগ বিশ্লেষণ আৰু চিকিৎসা পৰামৰ্শৰ বাবে ফটো আপলোড বা কেপচাৰ কৰক*'
+    }
+    
+    st.title(page_titles.get(current_lang, page_titles['en']))
+    st.markdown(page_subtitles.get(current_lang, page_subtitles['en']))
     
     # Disease progression tracking display
     if st.session_state.disease_history:
@@ -426,7 +482,8 @@ def show_disease_detection_page():
     
     # Image capture/upload section
     st.markdown("---")
-    st.subheader("📤 Image Upload Options")
+    upload_options_text = get_text('image_upload_options')
+    st.subheader(upload_options_text)
     
     tab1, tab2 = st.tabs(["📸 Camera Capture", "📁 File Upload"])
     
@@ -498,7 +555,8 @@ def show_disease_detection_page():
         
         col1, col2 = st.columns([2, 1])
         with col1:
-            if st.button("🔬 Run Analysis", type="primary", use_container_width=True):
+            run_analysis_text = get_text('run_analysis')
+            if st.button(run_analysis_text, type="primary", use_container_width=True):
                 analyze_enhanced_crop_disease(photos_to_analyze, crop_type, location, disease_detector)
         with col2:
             st.info(f"{len(photos_to_analyze)} image(s) ready")
@@ -506,7 +564,8 @@ def show_disease_detection_page():
     else:
         # Demo section
         st.markdown("---")
-        st.subheader("🎮 Demo Analysis")
+        demo_text = get_text('demo_analysis')
+        st.subheader(demo_text)
         
         demo_scenarios = {
             "Rice Leaf Spot (Moderate)": {"crop": "Rice", "disease": "leaf_spot", "severity": "moderate"},

@@ -18,6 +18,11 @@ sys.path.insert(0, str(project_root))
 # Import ML model components
 from src.core.data_loader import DataLoader
 from src.features.multi_scenario_predictor import MultiScenarioPredictor
+from src.utils.language_service import get_language_service, get_text, get_current_language
+
+# Initialize language service
+language_service = get_language_service()
+current_lang = get_current_language()
 
 # Initialize data and ML model
 @st.cache_data
@@ -45,9 +50,10 @@ def initialize_predictor(_data_loader):
         st.error(f"Error initializing predictor: {e}")
         return None
 
-# Page configuration
+# Page configuration with language support
+page_title = get_text('smart_yield_prediction_title', 'en')
 st.set_page_config(
-    page_title="Smart Yield Prediction - FasalMitra",
+    page_title=f"{page_title} - FasalMitra",
     page_icon="🌾",
     layout="wide"
 )
@@ -381,8 +387,24 @@ if data_loader is None or scenario_predictor is None:
     st.error("⚠️ Error loading agricultural data. Please check data files.")
     st.stop()
 
+# Sidebar with language selector and navigation
+with st.sidebar:
+    language_settings_text = get_text('language_settings')
+    st.markdown(f"### {language_settings_text}")
+    language_service.render_language_selector("sidebar")
+    
+    # Add navigation
+    st.markdown("---")
+    home_text = get_text('go_to_home')
+    if st.button(home_text, use_container_width=True):
+        st.switch_page("src/ui/fasal_mitra_app.py")
+    
+    # Add some spacing
+    st.markdown("---")
+
 # Main content - Input Section
-st.markdown('<h3 style="color: var(--primary-green); margin-bottom: 1.5rem;"><i class="ri-file-list-3-line"></i> Enter Crop Details</h3>', unsafe_allow_html=True)
+enter_crop_details = get_text('enter_crop_details') if 'enter_crop_details' in get_language_service().translator.translations else 'Enter Crop Details'
+st.markdown(f'<h3 style="color: var(--primary-green); margin-bottom: 1.5rem;"><i class="ri-file-list-3-line"></i> {enter_crop_details}</h3>', unsafe_allow_html=True)
 
 # Get real data lists from the model
 available_states = ["Select State"] + data_loader.get_state_list()
@@ -394,22 +416,25 @@ input_col1, input_col2 = st.columns([1, 1], gap="medium")
 
 with input_col1:
     # Crop selection
+    crop_type_label = get_text('crop_type') if 'crop_type' in get_language_service().translator.translations else '🌱 Crop Type'
     crop_type = st.selectbox(
-        "🌱 Crop Type",
+        crop_type_label,
         available_crops,
         key="crop"
     )
     
     # Location inputs
+    state_label = get_text('state_location') if 'state_location' in get_language_service().translator.translations else '🗺️ State'
     state = st.selectbox(
-        "🗺️ State",
+        state_label,
         available_states,
         key="state"
     )
     
     # Season
+    season_label = get_text('season') if 'season' in get_language_service().translator.translations else '📅 Season'
     season = st.selectbox(
-        "📅 Season",
+        season_label,
         available_seasons,
         key="season"
     )
