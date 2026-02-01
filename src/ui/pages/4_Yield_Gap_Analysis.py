@@ -17,6 +17,11 @@ sys.path.insert(0, str(project_root))
 
 from src.core.data_loader import DataLoader
 from src.features.yield_gap_analyzer import YieldGapAnalyzer
+from src.utils.language_service import get_language_service, get_text, get_current_language
+
+# Initialize language service
+language_service = get_language_service()
+current_lang = get_current_language()
 
 @st.cache_data
 def load_agricultural_data():
@@ -32,9 +37,10 @@ def initialize_analyzer(_data_loader):
     """Initialize and cache the yield gap analyzer"""
     return YieldGapAnalyzer(_data_loader)
 
-# Page configuration
+# Page configuration with language support
+page_title = get_text('yield_gap_analysis_title', 'en')
 st.set_page_config(
-    page_title="Yield Gap Analysis - FasalMitra",
+    page_title=f"{page_title} - FasalMitra",
     page_icon="📊",
     layout="wide"
 )
@@ -347,12 +353,44 @@ except Exception as e:
     st.error(f"Error loading data: {e}")
     st.stop()
 
+# Sidebar with language selector and navigation
+with st.sidebar:
+    language_settings_text = get_text('language_settings')
+    st.markdown(f"### {language_settings_text}")
+    language_service.render_language_selector("sidebar")
+    
+    # Add navigation
+    st.markdown("---")
+    home_text = get_text('go_to_home')
+    if st.button(home_text, use_container_width=True):
+        st.switch_page("src/ui/fasal_mitra_app.py")
+    
+    # Add some spacing
+    st.markdown("---")
+
 # Initialize session state
 if 'analysis_done' not in st.session_state:
     st.session_state.analysis_done = False
 
-# Input Form Section
-st.markdown('<h3 style="color: var(--primary-green); margin-bottom: 1rem;"><i class="ri-file-list-3-line"></i> Farm Details</h3>', unsafe_allow_html=True)
+# Input Form Section with translations
+current_lang = get_current_language()
+
+farm_details_headers = {
+    'en': 'Farm Details',
+    'hi': 'खेत का विवरण',
+    'mr': 'शेताचा तपशील',
+    'gu': 'ફાર્મની વિગતો',
+    'pa': 'ਖੇਤ ਦਾ ਵੇਰਵਾ',
+    'bn': 'খামারের বিবরণ',
+    'ta': 'பண்ணை விவரங்கள்',
+    'te': 'పొలం వివరాలు',
+    'kn': 'ಫಾರ್ಮ್ ವಿವರಗಳು',
+    'ml': 'ഫാം വിവരങ്ങൾ',
+    'or': 'ଚାଷ ବିବରଣୀ',
+    'as': 'ফাৰ্মৰ বিৱৰণ'
+}
+
+st.markdown(f'<h3 style="color: var(--primary-green); margin-bottom: 1rem;"><i class="ri-file-list-3-line"></i> {farm_details_headers.get(current_lang, farm_details_headers["en"])}</h3>', unsafe_allow_html=True)
 
 # Two-column input layout
 input_col1, input_col2 = st.columns(2, gap="medium")

@@ -19,6 +19,11 @@ sys.path.insert(0, str(project_root))
 # Import ML model components
 from src.core.data_loader import DataLoader
 from src.features.multi_scenario_predictor import MultiScenarioPredictor
+from src.utils.language_service import get_language_service, get_text, get_current_language
+
+# Initialize language service
+language_service = get_language_service()
+current_lang = get_current_language()
 
 # Initialize data and ML model
 @st.cache_data
@@ -46,9 +51,10 @@ def initialize_predictor(_data_loader):
         st.error(f"Error initializing predictor: {e}")
         return None
 
-# Page configuration
+# Page configuration with language support
+page_title = get_text('multi_scenario_predictor_title', 'en')
 st.set_page_config(
-    page_title="Multi-Scenario Predictor - FasalMitra",
+    page_title=f"{page_title} - FasalMitra",
     page_icon="🎯",
     layout="wide"
 )
@@ -326,11 +332,60 @@ if data_loader is None or scenario_predictor is None:
     st.error("⚠️ Error loading agricultural data. Please check data files.")
     st.stop()
 
-st.markdown("*Explore multiple 'what-if' scenarios for your farming decisions and compare outcomes*")
+# Sidebar with language selector and navigation
+with st.sidebar:
+    language_settings_text = get_text('language_settings')
+    st.markdown(f"### {language_settings_text}")
+    language_service.render_language_selector("sidebar")
+    
+    # Add navigation
+    st.markdown("---")
+    home_text = get_text('go_to_home')
+    if st.button(home_text, use_container_width=True):
+        st.switch_page("src/ui/fasal_mitra_app.py")
+    
+    # Add some spacing
+    st.markdown("---")
+
+# Get current language for translations
+current_lang = get_current_language()
+
+# Page subtitles
+page_subtitles = {
+    'en': "*Explore multiple 'what-if' scenarios for your farming decisions and compare outcomes*",
+    'hi': "*अपने कृषि निर्णयों के लिए कई 'क्या-अगर' परिदृश्यों का पता लगाएं और परिणामों की तुलना करें*",
+    'mr': "*तुमच्या शेतीच्या निर्णयांसाठी अनेक 'काय-जर' परिस्थितींचा शोध घ्या आणि परिणामांची तुलना करा*",
+    'gu': "*તમારા ખેતી નિર્ણયો માટે અનેક 'શું-જો' દૃશ્યો શોધો અને પરિણામોની સરખામણી કરો*",
+    'pa': "*ਆਪਣੇ ਖੇਤੀ ਫੈਸਲਿਆਂ ਲਈ ਕਈ 'ਕੀ-ਜੇ' ਦ੍ਰਿਸ਼ਾਂ ਦੀ ਖੋਜ ਕਰੋ ਅਤੇ ਨਤੀਜਿਆਂ ਦੀ ਤੁਲਨਾ ਕਰੋ*",
+    'bn': "*আপনার কৃষি সিদ্ধান্তের জন্য একাধিক 'কী-যদি' দৃশ্য অন্বেষণ করুন এবং ফলাফল তুলনা করুন*",
+    'ta': "*உங்கள் விவசாய முடிவுகளுக்கான பல 'என்ன-என்றால்' காட்சிகளை ஆராய்ந்து முடிவுகளை ஒப்பிடவும்*",
+    'te': "*మీ వ్యవసాయ నిర్ణయాలకు అనేక 'ఏమి-ఒకవేళ' దృశ్యాలను అన్వేషించండి మరియు ఫలితాలను పోల్చండి*",
+    'kn': "*ನಿಮ್ಮ ಕೃಷಿ ನಿರ್ಧಾರಗಳಿಗಾಗಿ ಅನೇಕ 'ಏನು-ಒಂದವೇಳೆ' ಸನ್ನಿವೇಶಗಳನ್ನು ಅನ್ವೇಷಿಸಿ ಮತ್ತು ಫಲಿತಾಂಶಗಳನ್ನು ಹೋಲಿಸಿ*",
+    'ml': "*നിങ്ങളുടെ കൃഷി തീരുമാനങ്ങൾക്കായി ഒന്നിലധികം 'എന്താണ്-ഒരുപക്ഷേ' സാഹചര്യങ്ങൾ പര്യവേക്ഷണം ചെയ്ത് ഫലങ്ങൾ താരതമ്യം ചെയ്യുക*",
+    'or': "*ଆପଣଙ୍କ କୃଷି ନିଷ୍ପତ୍ତି ପାଇଁ ଏକାଧିକ 'କଣ-ଯଦି' ଦୃଶ୍ୟ ଅନୁସନ୍ଧାନ କରନ୍ତୁ ଏବଂ ଫଳାଫଳ ତୁଳନା କରନ୍ତୁ*",
+    'as': "*আপোনাৰ কৃষি সিদ্ধান্তৰ বাবে একাধিক 'কি-যদি' দৃশ্যপট অন্বেষণ কৰক আৰু ফলাফল তুলনা কৰক*"
+}
+
+st.markdown(page_subtitles.get(current_lang, page_subtitles['en']))
 st.markdown("---")
 
 # Input Form Section
-st.markdown('<h3 style="color: var(--primary-green); margin-bottom: 1.5rem;"><i class="ri-settings-3-line"></i> Base Configuration</h3>', unsafe_allow_html=True)
+section_headers = {
+    'en': 'Base Configuration',
+    'hi': 'आधार कॉन्फ़िगरेशन',
+    'mr': 'मूळ कॉन्फिगरेशन',
+    'gu': 'આધાર કોન્ફિગરેશન',
+    'pa': 'ਬੇਸ ਕੰਨਫਿਗਰੇਸ਼ਨ',
+    'bn': 'বেস কনফিগারেশন',
+    'ta': 'அடிப்படை உள்ளமைவு',
+    'te': 'బేస్ కన్ఫిగరేషన్',
+    'kn': 'ಮೂಲ ಸಂರಚನೆ',
+    'ml': 'ബേസ് കോൺഫിഗറേഷൻ',
+    'or': 'ବେସ କନଫିଗରେସନ',
+    'as': 'বেচ কনফিগাৰেচন'
+}
+
+st.markdown(f'<h3 style="color: var(--primary-green); margin-bottom: 1.5rem;"><i class="ri-settings-3-line"></i> {section_headers.get(current_lang, section_headers["en"])}</h3>', unsafe_allow_html=True)
 
 # Get real data lists
 available_states = ["Select State"] + data_loader.get_state_list()
