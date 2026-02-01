@@ -6,10 +6,13 @@ AI-Powered Farming Advisory System
 import streamlit as st
 import sys
 from pathlib import Path
+from datetime import datetime
 
 # Add project root to path for imports
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
+
+from src.features.weather_service import WeatherService
 
 # Page configuration
 st.set_page_config(
@@ -19,7 +22,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Custom CSS for modern agri-tech theme
+# Custom CSS for centered, balanced modern design
 st.markdown("""
 <link href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css" rel="stylesheet"/>
 <style>
@@ -30,20 +33,22 @@ st.markdown("""
         --light-green: #81C784;
         --bg-light: #F1F8F4;
         --text-dark: #1B5E20;
+        --text-gray: #666666;
     }
     
-    /* Override Streamlit's default padding */
+    /* Override Streamlit's default padding for centered layout */
     .stMainBlockContainer {
-        padding: 1rem !important;
+        padding: 0.5rem 2rem !important;
+        max-width: 1400px !important;
+        margin: 0 auto !important;
     }
     
-    /* Remove extra bottom space */
     .block-container {
-        padding-bottom: 1rem !important;
+        padding: 0.5rem 0 !important;
         min-height: auto !important;
     }
     
-    /* Force light mode - prevent dark mode override */
+    /* Force light mode */
     body {
         background-color: #FFFFFF !important;
         color: #1B5E20 !important;
@@ -70,7 +75,6 @@ st.markdown("""
         background-color: white !important;
     }
     
-    /* Force all dropdown menus and popovers */
     div[role="listbox"],
     div[data-baseweb="popover"],
     div[data-baseweb="menu"],
@@ -78,14 +82,12 @@ st.markdown("""
         background-color: white !important;
     }
     
-    /* Force all list and menu items */
     ul, li,
     div[role="option"],
     [role="option"] {
         background-color: white !important;
         color: #1B5E20 !important;
     }
-    
     
     /* Hide default Streamlit elements */
     #MainMenu {visibility: hidden;}
@@ -94,111 +96,155 @@ st.markdown("""
         display: none;
     }
     
-    /* Header styling */
-    .main-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1rem 0;
-        margin-bottom: 2rem;
-    }
-    
+    /* Compact header */
     .app-title {
-        font-size: 2.5rem;
+        font-size: 1.8rem;
         font-weight: 600;
         color: var(--primary-green);
         font-family: 'Segoe UI', sans-serif;
     }
     
-    /* Main heading */
-    .main-heading {
+    .language-selector {
+        font-size: 0.9rem;
+        color: var(--text-gray);
+    }
+    
+    /* Hero section - centered */
+    .hero-heading {
         text-align: center;
-        font-size: 2rem;
+        font-size: 1.6rem;
         font-weight: 500;
         color: var(--text-dark);
-        margin: 3rem 0 2.5rem 0;
-    }
-    
-    /* Functionality cards */
-    .functionality-card {
-        background: white;
-        border: 2px solid #E8F5E9;
-        border-radius: 16px;
-        padding: 2rem 1.5rem;
-        text-align: center;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        height: 180px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        box-shadow: 0 2px 8px rgba(46, 125, 50, 0.08);
-    }
-    
-    .functionality-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 24px rgba(46, 125, 50, 0.15);
-        border-color: var(--secondary-green);
-    }
-    
-    .card-icon {
-        font-size: 3rem;
-        margin-bottom: 1rem;
-    }
-    
-    .card-title {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: var(--text-dark);
+        margin: 1.5rem 0 1rem 0;
         line-height: 1.4;
     }
     
-    /* Search section */
-    .search-section {
-        margin-top: 4rem;
-        display: flex;
-        justify-content: center;
-        gap: 1rem;
-        align-items: center;
-    }
-    
+    /* Enhanced search bar */
     .search-container {
-        max-width: 600px;
-        width: 100%;
+        width: 60%;
+        margin: 1.5rem auto;
+        position: relative;
     }
     
-    /* Help section */
-    .help-section {
-        margin-top: 3rem;
-        text-align: left;
+    .stTextInput > div > div > input {
+        height: 56px !important;
+        border-radius: 10px !important;
+        padding: 0 4rem 0 3.5rem !important;
+        border: 2px solid #E0E0E0 !important;
+        font-size: 1rem !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+        transition: all 0.3s ease !important;
+    }
+    
+    .stTextInput > div > div > input:focus {
+        border-color: var(--secondary-green) !important;
+        box-shadow: 0 4px 12px rgba(76, 175, 80, 0.15) !important;
+        outline: none !important;
+    }
+    
+    /* Weather section - single unified card */
+    .weather-section {
+        margin: 1.5rem auto 2rem auto;
+    }
+    
+    .weather-unified {
+        background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+        border-radius: 12px;
+        padding: 0.8rem 1.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        height: 100px;
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+    }
+    
+    .weather-info-left {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 0.3rem;
+    }
+    
+    .weather-location {
+        font-size: 0.8rem;
+        color: #546E7A;
+        font-weight: 500;
+    }
+    
+    .weather-datetime {
+        font-size: 0.75rem;
+        color: #546E7A;
+    }
+    
+    .weather-current {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding-left: 1.5rem;
+        border-left: 2px solid rgba(25, 118, 210, 0.2);
+    }
+    
+    .current-temp {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #1976D2;
+        line-height: 1;
+    }
+    
+    .weather-condition {
+        font-size: 0.9rem;
+        color: #37474F;
+        white-space: nowrap;
+    }
+    
+    .weather-forecast-section {
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+        margin-left: auto;
         padding-left: 2rem;
+        border-left: 2px solid rgba(25, 118, 210, 0.2);
     }
     
-    .help-link {
-        color: #E91E63;
-        font-size: 1rem;
-        text-decoration: none;
+    .forecast-day-item {
         display: flex;
+        flex-direction: column;
         align-items: center;
-        gap: 0.5rem;
-        cursor: pointer;
+        gap: 0.3rem;
     }
     
-    .help-link:hover {
-        text-decoration: underline;
+    .forecast-day-name {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #1B5E20;
     }
     
-    /* Language selector */
-    .language-selector {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: 1rem;
+    .forecast-icon {
+        font-size: 1.5rem;
+    }
+    
+    .forecast-temps {
+        font-size: 0.85rem;
+        color: #1976D2;
+        font-weight: 600;
+    }
+    
+    /* Section heading - centered */
+    .section-heading {
+        text-align: center;
+        font-size: 1.5rem;
+        font-weight: 600;
         color: var(--text-dark);
+        margin: 2rem 0 1.5rem 0;
     }
     
-    /* Streamlit button override */
+    /* Cards container - centered */
+    .cards-container {
+        max-width: 1200px;
+        margin: 0 auto 2rem auto;
+    }
+    
+    /* Streamlit button styling for cards */
     .stButton > button {
         width: 100%;
         height: 100%;
@@ -207,22 +253,90 @@ st.markdown("""
         padding: 0;
     }
     
-    /* Voice button */
-    .voice-btn {
-        background: var(--secondary-green);
-        color: white;
-        border: none;
-        border-radius: 50%;
-        width: 50px;
-        height: 50px;
-        font-size: 1.5rem;
-        cursor: pointer;
+    /* Feature card styling */
+    .feature-card {
+        background: white;
+        border: 2px solid #E8F5E9;
+        border-radius: 14px;
+        padding: 1.5rem 1rem;
+        text-align: center;
+        height: 160px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 2px 8px rgba(46, 125, 50, 0.08);
         transition: all 0.3s ease;
     }
     
-    .voice-btn:hover {
-        background: var(--primary-green);
-        transform: scale(1.05);
+    .feature-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 20px rgba(46, 125, 50, 0.15);
+        border-color: var(--secondary-green);
+    }
+    
+    .card-icon {
+        font-size: 3rem;
+        color: var(--primary-green);
+        margin-bottom: 0.5rem;
+    }
+    
+    .card-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        line-height: 1.3;
+    }
+    
+    /* Search icon positioning */
+    .search-icon-container {
+        position: absolute;
+        left: 1.2rem;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 10;
+        pointer-events: none;
+    }
+    
+    .search-icon-container i {
+        font-size: 1.3rem;
+        color: var(--text-gray);
+    }
+    
+    /* Mic button */
+    .mic-container {
+        position: absolute;
+        right: 0.7rem;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 10;
+    }
+    
+    .mic-button {
+        background: white !important;
+        border: 2px solid var(--secondary-green) !important;
+        border-radius: 50% !important;
+        width: 40px !important;
+        height: 40px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        cursor: pointer !important;
+        transition: all 0.3s ease !important;
+    }
+    
+    .mic-button:hover {
+        background: var(--secondary-green) !important;
+        transform: scale(1.05) !important;
+    }
+    
+    .mic-button i {
+        font-size: 1.1rem !important;
+        color: var(--secondary-green) !important;
+    }
+    
+    .mic-button:hover i {
+        color: white !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -230,15 +344,44 @@ st.markdown("""
 # Initialize session state
 if 'language' not in st.session_state:
     st.session_state.language = 'English'
+if 'weather_data' not in st.session_state:
+    st.session_state.weather_data = None
+if 'chat_active' not in st.session_state:
+    st.session_state.chat_active = False
 
-# Header section
-col_title, col_lang = st.columns([3, 1])
+# Initialize weather service
+@st.cache_resource
+def get_weather_service():
+    """Initialize and cache weather service"""
+    return WeatherService()
+
+weather_service = get_weather_service()
+
+# Fetch weather data for default location (New Delhi)
+if st.session_state.weather_data is None:
+    try:
+        # Default location: New Delhi
+        weather_data = weather_service.get_complete_weather(28.6139, 77.2090, forecast_days=3)
+        # Check if there's an error in the response
+        if weather_data and not weather_data.get('error'):
+            st.session_state.weather_data = weather_data
+        else:
+            st.session_state.weather_data = {'error': 'Unable to fetch weather'}
+    except Exception as e:
+        # Initialize with empty dict on error
+        st.session_state.weather_data = {'error': str(e)}
+
+# Compact header section
+col_title, col_support, col_lang = st.columns([2, 1, 1])
 
 with col_title:
-    st.markdown('<div class="app-title"><i class="ri-plant-fill" style="color: var(--primary-green);"></i> FasalMitra</div>', unsafe_allow_html=True)
+    st.markdown('<div class="app-title"><i class="ri-plant-fill"></i> FasalMitra</div>', unsafe_allow_html=True)
+
+with col_support:
+    st.markdown('<div style="text-align: right; padding-top: 0.5rem; font-size: 0.95rem; color: #1B5E20;">Support</div>', unsafe_allow_html=True)
 
 with col_lang:
-    st.markdown('<div class="language-selector">Language / भाषा</div>', unsafe_allow_html=True)
+    st.markdown('<div class="language-selector" style="text-align: right;">Language / हिंदी</div>', unsafe_allow_html=True)
     language = st.selectbox(
         "",
         options=['English', 'हिंदी (Hindi)', 'ગુજરાતી (Gujarati)', 'తెలుగు (Telugu)', 
@@ -249,291 +392,134 @@ with col_lang:
     )
     st.session_state.language = language
 
-# Main heading
-st.markdown('<h2 class="main-heading">Select the functionality you want</h2>', unsafe_allow_html=True)
+# Hero heading - centered
+st.markdown('<div class="hero-heading">Welcome to FasalMitra, Your AI Farming Assistant.</div>', unsafe_allow_html=True)
 
-# Functionality cards section
-st.markdown("<br>", unsafe_allow_html=True)
+# Enhanced search bar - centered with proper container
+st.markdown('<div class="search-container">', unsafe_allow_html=True)
 
-# Custom CSS for clickable cards
-st.markdown("""
-<style>
-    /* Make buttons fill the container */
-    div[data-testid="column"] > div > div > div > button {
-        width: 100%;
-        height: 180px;
-        background: white;
-        border: 2px solid #E8F5E9;
-        border-radius: 16px;
-        padding: 0;
-        margin: 0;
-        box-shadow: 0 2px 8px rgba(46, 125, 50, 0.08);
-        transition: all 0.3s ease;
-    }
-    
-    div[data-testid="column"] > div > div > div > button:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 24px rgba(46, 125, 50, 0.15);
-        border-color: var(--secondary-green);
-        background: white;
-    }
-    
-    div[data-testid="column"] > div > div > div > button > div {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-    }
-    
-    .card-content {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 1rem;
-    }
-    
-    /* Remix Icon styling */
-    .card-icon i {
-        font-size: 3rem;
-        color: var(--primary-green);
-    }
-    
-    button i {
-        font-size: 3rem;
-        color: var(--primary-green);
-        margin-bottom: 0.5rem;
-    }
-    
-    .search-icon i {
-        font-size: 2rem;
-        color: var(--text-dark);
-    }
-    
-    .voice-icon i {
-        font-size: 1.5rem;
-        color: white;
-    }
-    
-    .help-icon i {
-        font-size: 1.2rem;
-        color: #E91E63;
-    }
-</style>
-""", unsafe_allow_html=True)
+# Create columns for proper layout
+search_col1, search_main_col, search_col2 = st.columns([0.5, 20, 0.5])
 
-# Additional CSS for button-based cards
-st.markdown("""
-<style>
-    /* Style buttons to look like cards - with high specificity */
-    div[data-testid="column"] button[kind="secondary"],
-    div[data-testid="column"] button[kind="secondary"] > div,
-    div[data-testid="column"] button[kind="secondary"] div[data-baseweb] {
-        background: white !important;
-        border: 2px solid #E8F5E9 !important;
-        border-radius: 16px !important;
-        padding: 2rem 1.5rem !important;
-        height: 180px !important;
-        width: 100% !important;
-        transition: all 0.3s ease !important;
-        box-shadow: 0 2px 8px rgba(46, 125, 50, 0.08) !important;
-        color: #1B5E20 !important;
-    }
-    
-    div[data-testid="column"] button[kind="secondary"]:hover,
-    div[data-testid="column"] button[kind="secondary"]:hover > div,
-    div[data-testid="column"] button[kind="secondary"]:hover div[data-baseweb] {
-        transform: translateY(-5px) !important;
-        box-shadow: 0 8px 24px rgba(46, 125, 50, 0.15) !important;
-        border-color: #4CAF50 !important;
-        background: white !important;
-    }
-    
-    div[data-testid="column"] button[kind="secondary"] p {
-        font-size: 1.1rem !important;
-        font-weight: 600 !important;
-        color: #1B5E20 !important;
-        margin: 0 !important;
-        line-height: 1.4 !important;
-    }
-    
-    /* Icon styling inside buttons */
-    div[data-testid="column"] button[kind="secondary"] i {
-        font-size: 3rem !important;
-        color: #2E7D32 !important;
-        display: block !important;
-        margin-bottom: 1rem !important;
-    }
-    
-    /* Ensure button text is always dark green */
-    div[data-testid="column"] button[kind="secondary"] *,
-    div[data-testid="column"] button[kind="secondary"] span,
-    div[data-testid="column"] button[kind="secondary"] div {
-        color: #1B5E20 !important;
-    }
-</style>
-""", unsafe_allow_html=True)
-
-col1, col2, col3, col4 = st.columns(4, gap="large")
-
-# Card 1: Yield Gap Analysis
-with col1:
-    if st.button('📊\n\n**Yield Gap Analysis**', key="yield_gap", help="Compare your yield with top performers", use_container_width=True):
-        st.switch_page("pages/4_Yield_Gap_Analysis.py")
-
-# Card 2: Multi-Scenario Predictor
-with col2:
-    if st.button('🎯\n\n**Multi-Scenario\nPredictor**', key="multi_scenario", help="Compare multiple farming scenarios", use_container_width=True):
-        st.switch_page("pages/3_Multi_Scenario_Predictor.py")
-
-# Card 3: Smart Yield Prediction  
-with col3:
-    if st.button('🌾\n\n**Smart Yield\nPrediction**', key="smart_yield", help="AI-powered yield prediction with explanations", use_container_width=True):
-        st.switch_page("pages/2_Smart_Yield_Prediction.py")
-
-# Card 4: Disease Detection
-with col4:
-    if st.button('🦠\n\n**Disease\nDetection**', key="disease_detection", help="AI-powered crop disease detection", use_container_width=True):
-        st.switch_page("pages/1_Disease_Detection.py")
-
-# Search section
-st.markdown("<br><br>", unsafe_allow_html=True)
-
-st.markdown("""
-<style>
-    /* Fix column alignment for search row */
-    div.row-widget.stHorizontal > div[data-testid="column"] {
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-    }
-    
-    /* Search icon container */
-    .search-icon-container {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 48px;
-        width: 100%;
-    }
-    
-    .search-icon-container i {
-        font-size: 2rem;
-        color: var(--text-dark);
-        line-height: 48px;
-    }
-    
-    /* Remove default margins from text input wrapper */
-    .stTextInput {
-        margin: 0 !important;
-        padding: 0 !important;
-    }
-    
-    .stTextInput > div {
-        margin: 0 !important;
-        padding: 0 !important;
-    }
-    
-    .stTextInput > div > div {
-        margin: 0 !important;
-        padding: 0 !important;
-    }
-    
-    /* Make search input same height as mic button */
-    .stTextInput > div > div > input {
-        height: 48px !important;
-        border-radius: 24px !important;
-        padding: 0 1.5rem !important;
-        margin: 0 !important;
-    }
-    
-    /* Mic button container alignment */
-    .mic-container {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 48px;
-        width: 100%;
-    }
-    
-    /* Mic button styling */
-    .mic-button {
-        background: transparent !important;
-        border: 2px solid var(--secondary-green) !important;
-        border-radius: 50% !important;
-        width: 48px !important;
-        height: 48px !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        cursor: pointer !important;
-        transition: all 0.3s ease !important;
-        flex-shrink: 0 !important;
-    }
-    
-    .mic-button:hover {
-        background: var(--secondary-green) !important;
-        transform: scale(1.05) !important;
-    }
-    
-    .mic-button i {
-        font-size: 1.5rem !important;
-        color: var(--secondary-green) !important;
-        line-height: 1 !important;
-    }
-    
-    .mic-button:hover i {
-        color: white !important;
-    }
-</style>
-""", unsafe_allow_html=True)
-
-search_col_left, icon_col, search_col, mic_col, search_col_right = st.columns([2, 0.3, 6, 0.3, 2], gap="small")
-
-with search_col_left:
-    pass  # Empty padding column
-
-with icon_col:
+with search_main_col:
+    # Container with search icon and input
+    st.markdown('<div style="position: relative;">', unsafe_allow_html=True)
     st.markdown('<div class="search-icon-container"><i class="ri-search-line"></i></div>', unsafe_allow_html=True)
-
-with search_col:
+    
     search_query = st.text_input(
         "",
-        placeholder="search your problem",
+        placeholder="Search for farming solutions...",
         key="search_input",
         label_visibility='collapsed'
     )
-
-with mic_col:
+    
     st.markdown("""
     <div class="mic-container">
-        <div class="mic-button" onclick="alert('Voice search coming soon!')">
+        <div class="mic-button">
             <i class="ri-mic-line"></i>
         </div>
     </div>
     """, unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
-with search_col_right:
-    pass  # Empty padding column
+st.markdown('</div>', unsafe_allow_html=True)
 
-# Help section
-st.markdown("<br>", unsafe_allow_html=True)
+# Weather section - single unified card
+weather_data = st.session_state.weather_data
 
-st.markdown("""
-<div style="display: flex; align-items: center; gap: 0.5rem;">
-    <i class="ri-customer-service-2-line" style="color: #E91E63; font-size: 1rem;"></i>
-    <span style="color: #E91E63; font-size: 1rem;">Need Help?</span>
+if weather_data and not weather_data.get('error'):
+    current = weather_data.get('current', {})
+    forecast = weather_data.get('forecast', [])
+    
+    # Get current date/time
+    now = datetime.now()
+    date_str = now.strftime("%A, %B %d, %Y")
+    time_str = now.strftime("%I:%M %p IST")
+    
+    # Build unified weather card HTML
+    weather_html = f"""<div class="weather-section">
+<div class="weather-unified">
+<div class="weather-info-left">
+<div class="weather-location">📍 New Delhi, Delhi</div>
+<div class="weather-datetime">{date_str} • {time_str}</div>
 </div>
-""", unsafe_allow_html=True)
+<div class="weather-current">
+<div class="current-temp">{current.get('temperature', 0):.0f}°C</div>
+<div class="weather-condition">{weather_service.get_weather_emoji(current.get('weather_code', 0))} {current.get('weather_description', 'N/A')}</div>
+</div>
+<div class="weather-forecast-section">"""
+    
+    # Add forecast days (skip today, show next 2 days)
+    if forecast and len(forecast) > 1:
+        for day_forecast in forecast[1:3]:  # Show 2 days only
+            date_obj = datetime.strptime(day_forecast['date'], '%Y-%m-%d')
+            day_name = date_obj.strftime('%a')
+            temp_min = day_forecast.get('temp_min', 0)
+            temp_max = day_forecast.get('temp_max', 0)
+            emoji = weather_service.get_weather_emoji(day_forecast.get('weather_code', 0))
+            
+            weather_html += f"""<div class="forecast-day-item">
+<div class="forecast-day-name">{day_name}</div>
+<div class="forecast-icon">{emoji}</div>
+<div class="forecast-temps">{temp_max:.0f}°/{temp_min:.0f}°</div>
+</div>"""
+    
+    weather_html += """</div>
+</div>
+</div>"""
+    
+    st.markdown(weather_html, unsafe_allow_html=True)
 
-# Footer
-st.markdown("<br>", unsafe_allow_html=True)
-st.markdown('<hr style="margin: 0.5rem 0; border: none; border-top: 1px solid #ddd;">', unsafe_allow_html=True)
-st.markdown(
-    '<div style="text-align: center; color: #666; font-size: 0.9rem; padding: 0.5rem 0;">'
-    '<i class="ri-plant-line" style="color: var(--primary-green);"></i> FasalMitra - Empowering Farmers with AI | '
-    'Developed with ❤️ for Indian Agriculture'
-    '</div>',
-    unsafe_allow_html=True
-)
+# Section heading - centered
+st.markdown('<div class="section-heading">Explore Farming Solutions</div>', unsafe_allow_html=True)
+
+# Feature cards - centered container with equal width columns
+st.markdown('<div class="cards-container">', unsafe_allow_html=True)
+
+col1, col2, col3, col4 = st.columns(4, gap="medium")
+
+# Card 1: Multi-Scenario Predictor
+with col1:
+    st.markdown("""
+    <div class="feature-card">
+        <i class="ri-git-branch-line card-icon"></i>
+        <div class="card-title">Multi-Scenario<br>Predictor</div>
+    </div>
+    """, unsafe_allow_html=True)
+    if st.button("Open", key="open_multi_scenario", use_container_width=True, type="primary"):
+        st.switch_page("pages/3_Multi_Scenario_Predictor.py")
+
+# Card 2: Smart Yield Prediction
+with col2:
+    st.markdown("""
+    <div class="feature-card">
+        <i class="ri-seedling-line card-icon"></i>
+        <div class="card-title">Smart Yield<br>Prediction</div>
+    </div>
+    """, unsafe_allow_html=True)
+    if st.button("Open", key="open_smart_yield", use_container_width=True, type="primary"):
+        st.switch_page("pages/2_Smart_Yield_Prediction.py")
+
+# Card 3: Disease Detection
+with col3:
+    st.markdown("""
+    <div class="feature-card">
+        <i class="ri-search-eye-line card-icon"></i>
+        <div class="card-title">Disease<br>Detection</div>
+    </div>
+    """, unsafe_allow_html=True)
+    if st.button("Open", key="open_disease", use_container_width=True, type="primary"):
+        st.switch_page("pages/1_Disease_Detection.py")
+
+# Card 4: Yield Gap Analysis
+with col4:
+    st.markdown("""
+    <div class="feature-card">
+        <i class="ri-bar-chart-grouped-line card-icon"></i>
+        <div class="card-title">Yield Gap<br>Analysis</div>
+    </div>
+    """, unsafe_allow_html=True)
+    if st.button("Open", key="open_yield_gap", use_container_width=True, type="primary"):
+        st.switch_page("pages/4_Yield_Gap_Analysis.py")
+
+st.markdown('</div>', unsafe_allow_html=True)  # Close cards-container
