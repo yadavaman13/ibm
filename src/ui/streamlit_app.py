@@ -27,8 +27,10 @@ from src.core.data_loader import DataLoader
 from src.features.yield_gap_analyzer import YieldGapAnalyzer
 from src.features.multi_scenario_predictor import MultiScenarioPredictor
 from features.crop_disease_detector import CropDiseaseDetector
-from src.utils.translator import LanguageTranslator
+from src.utils.translator import LanguageTranslator, WEATHER_TRANSLATIONS
 from src.utils.farmer_helper_bot import FarmerHelperBot, show_help_icon_with_chatbot, show_general_chatbot
+from src.features.weather_service import WeatherService
+from src.utils.location_service import LocationService, EXAMPLE_LOCATIONS
 
 # Initialize data and features
 @st.cache_data
@@ -174,12 +176,13 @@ def main():
     st.markdown('<p class="help-text">Click on any tab below to start using the farming tools</p>', unsafe_allow_html=True)
     
     # Simplified Navigation with farmer-friendly icons and descriptions  
-    tab1, tab2, tab3, tab4, tab5 = st.tabs([
+    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
         f"🏠 {translator.get_text('tab_home', selected_lang)}", 
         f"📊 {translator.get_text('tab_yield_gap', selected_lang)}", 
         f"🎯 {translator.get_text('tab_scenarios', selected_lang)}", 
         f"🧠 {translator.get_text('tab_prediction', selected_lang)}",
-        f"🔬 {translator.get_text('tab_disease', selected_lang)}"
+        f"🔬 {translator.get_text('tab_disease', selected_lang)}",
+        f"{WEATHER_TRANSLATIONS['tab_weather'].get(selected_lang, '🌤️ Weather Forecast')}"
     ])
     
     with tab1:
@@ -196,6 +199,9 @@ def main():
         
     with tab5:
         show_disease_detection(data_loader, disease_detector, translator, selected_lang)
+    
+    with tab6:
+        show_weather_forecast(selected_lang)
 
 def show_home_page(data_loader, translator, selected_lang):
     """Display the home page with simplified feature overview for farmers."""
@@ -1159,9 +1165,329 @@ def show_disease_education(disease_detector):
             "📱 **Technology Use**: Leverage AI tools like this for quick identification",
             "📝 **Record Keeping**: Maintain treatment logs for future reference"
         ]
+
+
+def show_weather_forecast(selected_lang):
+    """Display weather forecast feature with location-based weather data."""
+    
+    st.markdown("## 🌤️ Weather Forecast for Your Location")
+    st.markdown("*Get current weather and 4-day forecast to plan your farming activities*")
+    st.markdown("---")
+    
+    # Initialize services
+    weather_service = WeatherService()
+    location_service = LocationService()
+    
+    # Initialize session state for location
+    if 'weather_latitude' not in st.session_state:
+        st.session_state.weather_latitude = None
+    if 'weather_longitude' not in st.session_state:
+        st.session_state.weather_longitude = None
+    if 'weather_data' not in st.session_state:
+        st.session_state.weather_data = None
+    if 'location_name' not in st.session_state:
+        st.session_state.location_name = None
+    
+    # Location Input Section
+    st.markdown("### 📍 Step 1: Enter Your Location")
+    
+    col1, col2 = st.columns([2, 1])
+    
+    with col1:
+        st.markdown("#### 🎯 Quick Select (India)")
+        example_location = st.selectbox(
+            "Choose a location or enter coordinates below:",
+            options=["Custom Location"] + list(EXAMPLE_LOCATIONS.keys()),
+            index=0
+        )
         
-        for tip in tips:
-            st.write(tip)
+        if example_location != "Custom Location":
+            coords = EXAMPLE_LOCATIONS[example_location]
+            st.session_state.weather_latitude = coords[0]
+            st.session_state.weather_longitude = coords[1]
+    
+    with col2:
+        st.markdown("#### ℹ️ How to find coordinates?")
+        st.info("""
+        **Google Maps:**
+        1. Right-click location
+        2. Click coordinates
+        3. Copy & paste
+        
+        **Your location:** Use a GPS app on your phone
+        """)
+    
+    # Manual coordinate input
+    st.markdown("#### 🗺️ Or Enter Coordinates Manually")
+    
+    col_lat, col_lon, col_btn = st.columns([2, 2, 1])
+    
+    with col_lat:
+        lat_input = st.number_input(
+            "Latitude (-90 to 90)",
+            min_value=-90.0,
+            max_value=90.0,
+            value=float(st.session_state.weather_latitude) if st.session_state.weather_latitude else 28.6139,
+            step=0.0001,
+            format="%.4f",
+            help="Latitude of your farm location"
+        )
+    
+    with col_lon:
+        lon_input = st.number_input(
+            "Longitude (-180 to 180)",
+            min_value=-180.0,
+            max_value=180.0,
+            value=float(st.session_state.weather_longitude) if st.session_state.weather_longitude else 77.2090,
+            step=0.0001,
+            format="%.4f",
+            help="Longitude of your farm location"
+        )
+    
+    with col_btn:
+        st.markdown("<br>", unsafe_allow_html=True)
+        if st.button("🔍 Get Weather", type="primary", use_container_width=True):
+            # Validate coordinates
+            is_valid, error_msg = location_service.validate_coordinates(lat_input, lon_input)
+            
+            if is_valid:
+                st.session_state.weather_latitude = lat_input
+                st.session_state.weather_longitude = lon_input
+                
+                with st.spinner("🌍 Fetching weather data..."):
+                    # Get weather data
+                    weather_data = weather_service.get_complete_weather(
+                        lat_input, 
+                        lon_input,
+                        forecast_days=4
+                    )
+                    st.session_state.weather_data = weather_data
+                    
+                    # Get location name
+                    location_data = location_service.get_location_name(lat_input, lon_input)
+                    st.session_state.location_name = location_data
+                    
+                    if weather_data.get('error'):
+                        st.error(f"❌ {weather_data['error']}")
+                    else:
+                        st.success("✅ Weather data fetched successfully!")
+            else:
+                st.error(f"❌ {error_msg}")
+    
+    # Display Weather Data
+    if st.session_state.weather_data and not st.session_state.weather_data.get('error'):
+        st.markdown("---")
+        
+        # Location Information
+        if st.session_state.location_name and not st.session_state.location_name.get('error'):
+            loc = st.session_state.location_name
+            st.markdown(f"### 📍 Location: {loc['village_city']}, {loc['district']}, {loc['state']}, {loc['country']}")
+            st.caption(f"Coordinates: {st.session_state.weather_latitude:.4f}, {st.session_state.weather_longitude:.4f}")
+        else:
+            st.markdown(f"### 📍 Location: {st.session_state.weather_latitude:.4f}, {st.session_state.weather_longitude:.4f}")
+            if st.session_state.location_name and st.session_state.location_name.get('error'):
+                st.caption(f"⚠️ {st.session_state.location_name['error']}")
+        
+        # Current Weather
+        st.markdown("### 🌡️ Current Weather")
+        
+        current = st.session_state.weather_data.get('current', {})
+        if current and not current.get('error'):
+            weather_emoji = weather_service.get_weather_emoji(current.get('weather_code', 0))
+            
+            col1, col2, col3, col4 = st.columns(4)
+            
+            with col1:
+                st.metric(
+                    label="🌡️ Temperature",
+                    value=f"{current.get('temperature', 0):.1f}°C",
+                    help="Current air temperature"
+                )
+            
+            with col2:
+                st.metric(
+                    label="💧 Humidity",
+                    value=f"{current.get('humidity', 0):.0f}%",
+                    help="Relative humidity"
+                )
+            
+            with col3:
+                st.metric(
+                    label="💨 Wind Speed",
+                    value=f"{current.get('wind_speed', 0):.1f} km/h",
+                    help="Wind speed at 10m height"
+                )
+            
+            with col4:
+                st.metric(
+                    label="🌧️ Precipitation",
+                    value=f"{current.get('precipitation', 0):.1f} mm",
+                    help="Current rainfall"
+                )
+            
+            # Weather description
+            st.info(f"{weather_emoji} **{current.get('weather_description', 'Unknown')}**")
+            
+            # Farming advice based on current weather
+            st.markdown("#### 🌾 Farming Advice Based on Current Weather")
+            _show_farming_advice(current)
+        
+        # Forecast
+        forecast = st.session_state.weather_data.get('forecast', [])
+        if forecast:
+            st.markdown("---")
+            st.markdown("### 📅 4-Day Forecast")
+            
+            # Create forecast cards
+            cols = st.columns(4)
+            
+            for i, day_forecast in enumerate(forecast[:4]):
+                with cols[i]:
+                    weather_emoji = weather_service.get_weather_emoji(day_forecast.get('weather_code', 0))
+                    
+                    st.markdown(f"""
+                    <div style="
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                        padding: 1.5rem;
+                        border-radius: 15px;
+                        color: white;
+                        text-align: center;
+                        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                    ">
+                        <h3 style="margin:0; color: white;">{day_forecast.get('date', '')}</h3>
+                        <div style="font-size: 3rem; margin: 1rem 0;">{weather_emoji}</div>
+                        <p style="margin: 0.5rem 0; font-size: 1.1rem;">{day_forecast.get('weather_description', '')}</p>
+                        <hr style="border-color: rgba(255,255,255,0.3);">
+                        <p style="margin: 0.5rem 0;"><strong>High:</strong> {day_forecast.get('temp_max', 0):.1f}°C</p>
+                        <p style="margin: 0.5rem 0;"><strong>Low:</strong> {day_forecast.get('temp_min', 0):.1f}°C</p>
+                        <p style="margin: 0.5rem 0;"><strong>Rain:</strong> {day_forecast.get('precipitation', 0):.1f} mm</p>
+                        <p style="margin: 0.5rem 0;"><strong>Wind:</strong> {day_forecast.get('wind_speed', 0):.1f} km/h</p>
+                    </div>
+                    """, unsafe_allow_html=True)
+            
+            # Weekly planning advice
+            st.markdown("---")
+            st.markdown("### 📋 Weekly Farming Activities Recommendation")
+            _show_weekly_recommendations(forecast)
+    
+    elif st.session_state.weather_data and st.session_state.weather_data.get('error'):
+        st.error(f"❌ Error: {st.session_state.weather_data['error']}")
+    
+    # Help Section
+    st.markdown("---")
+    st.markdown("### ❓ Help & Information")
+    
+    with st.expander("📖 How to use this feature"):
+        st.markdown("""
+        **Steps to get weather forecast:**
+        
+        1. **Select Location**: Choose from quick select dropdown or enter custom coordinates
+        2. **Enter Coordinates**: If custom, enter latitude and longitude
+        3. **Click Get Weather**: Fetch current weather and 4-day forecast
+        4. **View Results**: See current conditions and forecast
+        5. **Plan Activities**: Use recommendations for farming tasks
+        
+        **Tips:**
+        - Use Google Maps to find exact coordinates of your farm
+        - Weather data is updated hourly
+        - Forecast is accurate for next 4 days
+        - Check precipitation for irrigation planning
+        - Monitor temperature for crop protection
+        """)
+    
+    with st.expander("🌍 About Weather Data"):
+        st.markdown("""
+        **Data Source:**
+        - Weather data from Open-Meteo API (Free, No API key required)
+        - Location data from OpenStreetMap Nominatim
+        
+        **Data Includes:**
+        - Current temperature, humidity, wind speed, precipitation
+        - 4-day forecast with daily high/low temperatures
+        - Weather conditions and descriptions
+        - Location information (village, district, state, country)
+        
+        **Accuracy:**
+        - Weather predictions are based on meteorological models
+        - Accuracy decreases with time (Day 1 > Day 2 > Day 3 > Day 4)
+        - Always check multiple sources for critical decisions
+        """)
+
+
+def _show_farming_advice(current_weather):
+    """Show farming advice based on current weather conditions."""
+    
+    temp = current_weather.get('temperature', 0)
+    humidity = current_weather.get('humidity', 0)
+    wind_speed = current_weather.get('wind_speed', 0)
+    precipitation = current_weather.get('precipitation', 0)
+    
+    advice = []
+    
+    # Temperature-based advice
+    if temp < 10:
+        advice.append("🥶 **Cold Weather**: Protect sensitive crops from frost. Consider covering young plants.")
+    elif temp > 35:
+        advice.append("🌡️ **Hot Weather**: Ensure adequate irrigation. Consider shade nets for sensitive crops.")
+    else:
+        advice.append("✅ **Moderate Temperature**: Good conditions for most farming activities.")
+    
+    # Humidity-based advice
+    if humidity > 80:
+        advice.append("💧 **High Humidity**: Watch for fungal diseases. Ensure good air circulation in crops.")
+    elif humidity < 30:
+        advice.append("🏜️ **Low Humidity**: Increase irrigation frequency. Plants may need more water.")
+    
+    # Wind-based advice
+    if wind_speed > 30:
+        advice.append("💨 **Strong Winds**: Avoid spraying pesticides/fertilizers. Secure loose structures.")
+    
+    # Precipitation-based advice
+    if precipitation > 5:
+        advice.append("🌧️ **Rainy Conditions**: Delay fertilizer/pesticide application. Check drainage systems.")
+    elif precipitation > 0:
+        advice.append("🌦️ **Light Rain**: Good for recently planted crops. May reduce irrigation needs.")
+    else:
+        advice.append("☀️ **Dry Conditions**: Check soil moisture. Plan irrigation accordingly.")
+    
+    for item in advice:
+        st.markdown(f"- {item}")
+
+
+def _show_weekly_recommendations(forecast):
+    """Show weekly farming recommendations based on forecast."""
+    
+    # Analyze forecast
+    total_rain = sum(day.get('precipitation', 0) for day in forecast)
+    avg_temp_max = sum(day.get('temp_max', 0) for day in forecast) / len(forecast) if forecast else 0
+    avg_temp_min = sum(day.get('temp_min', 0) for day in forecast) / len(forecast) if forecast else 0
+    
+    recommendations = []
+    
+    # Rain-based recommendations
+    if total_rain > 50:
+        recommendations.append("🌧️ **Heavy Rain Expected**: Ensure proper field drainage. Delay any planned spraying activities.")
+    elif total_rain > 20:
+        recommendations.append("🌦️ **Moderate Rain Expected**: Reduce irrigation. Good time for fertilizer application before rain.")
+    elif total_rain < 5:
+        recommendations.append("☀️ **Dry Week Ahead**: Plan regular irrigation. Check water availability.")
+    
+    # Temperature-based recommendations
+    if avg_temp_max > 35:
+        recommendations.append("🌡️ **Hot Week**: Increase irrigation frequency. Consider mulching to retain soil moisture.")
+    elif avg_temp_min < 10:
+        recommendations.append("🥶 **Cold Nights**: Protect frost-sensitive crops. Consider row covers.")
+    
+    # General recommendations
+    recommendations.extend([
+        "📅 **Best Days for Spraying**: Choose days with low wind and no rain forecast",
+        "💧 **Irrigation Planning**: Adjust based on rainfall forecast",
+        "🌱 **Planting**: Check temperature ranges suitable for your crops",
+        "👨‍🌾 **Field Work**: Plan activities for days with favorable weather"
+    ])
+    
+    for item in recommendations:
+        st.markdown(f"- {item}")
 
 if __name__ == "__main__":
     main()
