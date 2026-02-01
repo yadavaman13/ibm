@@ -27,18 +27,22 @@ class FarmerHelperBot:
         self.min_request_interval = 15  # 15 seconds between requests
         self.request_count = 0
         self.max_requests_per_minute = 4  # Conservative limit
+        self.initialization_error = None
         
         if self.api_key and self.api_key != 'your_gemini_api_key_here' and len(self.api_key) > 10:
             try:
                 genai.configure(api_key=self.api_key)
-                # Use gemini-pro instead of gemini-2.5-flash for better rate limits
-                self.model = genai.GenerativeModel('gemini-pro')
+                # Use gemini-2.5-flash - latest available model
+                self.model = genai.GenerativeModel('gemini-2.5-flash')
                 self.enabled = True
-                print("DEBUG: Gemini API configured with gemini-pro model")
+                print("✅ Gemini API configured successfully with gemini-2.5-flash model")
             except Exception as e:
-                print(f"DEBUG: Error configuring Gemini API: {e}")
+                print(f"❌ Error configuring Gemini API: {e}")
+                self.initialization_error = str(e)
                 self.enabled = False
         else:
+            print(f"⚠️ Gemini API key not configured properly. Key length: {len(self.api_key) if self.api_key else 0}")
+            self.initialization_error = "API key missing or invalid"
             self.enabled = False
     
     def _can_make_request(self):
@@ -226,20 +230,36 @@ Use simple language suitable for farmers. Be encouraging and actionable.
             
             context += f"Q: {user_question}\nA:"
             
+            # Generate response - simplified without generation_config initially
+            print(f"DEBUG: Sending request to Gemini API...")
             response = self.model.generate_content(context)
+            print(f"DEBUG: Response received: {bool(response)}, has text: {bool(response.text if response else False)}")
             
             # Update rate limiting counters
             self.last_request_time = time.time()
             self.request_count += 1
             
-            return response.text
+            if response and response.text:
+                return response.text
+            else:
+                return "I received your question but couldn't generate a response. Please try rephrasing your question."
             
         except Exception as e:
-            error_msg = str(e)
-            if "quota" in error_msg.lower() or "rate" in error_msg.lower() or "429" in error_msg:
-                return "⏳ API quota exceeded. Please try again in a few minutes. Thank you for your patience!"
+            error_msg = str(e).lower()
+            print(f"DEBUG: Gemini API Error: {e}")  # Debug logging
+            
+            if "quota" in error_msg or "resource_exhausted" in error_msg or "429" in error_msg:
+                return "⏳ **Daily API quota exceeded (20 requests/day limit reached).** The chatbot will work again tomorrow, or you can upgrade your Gemini API plan. Meanwhile, you can still use all other features!"
+            elif "rate" in error_msg:
+                return "⏳ Too many requests. Please wait 15 seconds and try again."
+            elif "api_key" in error_msg or "invalid" in error_msg or "authentication" in error_msg:
+                return "⚠️ API authentication issue. Please check your API key configuration."
+            elif "timeout" in error_msg:
+                return "⏳ Request timed out. Please try again with a shorter question."
+            elif "safety" in error_msg or "blocked" in error_msg:
+                return "⚠️ Response was blocked by safety filters. Please rephrase your question."
             else:
-                return f"⚠️ Sorry, I couldn't process your question right now. Please try again later."
+                return f"⚠️ I encountered an error. Please try again or rephrase your question. (Error: {str(e)[:100]})"
 
 
 def show_help_icon_with_chatbot(term, context="farming"):
