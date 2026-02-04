@@ -1,0 +1,437 @@
+/* Disease Detection Page Styles */
+
+/* Tab Navigation */
+.disease-tabs {
+    display: flex;
+    justify-content: center;
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: 2rem;
+}
+
+.tab-button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    background: none;
+    color: var(--color-text-secondary);
+    font-weight: 500;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.tab-button:hover {
+    color: var(--color-primary);
+}
+
+.tab-active {
+    color: var(--color-primary) !important;
+    border-bottom-color: var(--color-primary);
+}
+
+/* Detection Content */
+.detection-input-section, 
+.detection-results-section {
+    height: fit-content;
+}
+
+.input-card {
+    background: white;
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    border: 1px solid var(--color-border);
+}
+
+.section-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: 1rem;
+}
+
+/* Form Elements */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.form-select,
+.form-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    background-color: white;
+}
+
+.form-select:focus,
+.form-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(153, 188, 133, 0.1);
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 0.75rem;
+    flex-direction: column;
+}
+
+.detect-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 0.875rem 1rem;
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.detect-button:hover:not(:disabled) {
+    background-color: #7da067;
+    transform: translateY(-1px);
+}
+
+.detect-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.reset-button {
+    width: 100%;
+    padding: 0.75rem;
+    background: none;
+    color: var(--color-text-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.reset-button:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+/* Error Message */
+.error-message {
+    display: flex;
+    align-items: center;
+    background-color: #fef2f2;
+    color: #dc2626;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid #fecaca;
+    margin-top: 1rem;
+    font-size: 0.875rem;
+}
+
+/* Results Placeholder */
+.results-placeholder {
+    background: white;
+    border-radius: 0.75rem;
+    border: 2px dashed var(--color-border);
+    padding: 3rem 2rem;
+    text-align: center;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.placeholder-icon {
+    margin-bottom: 1rem;
+}
+
+/* Image Upload Styles */
+.image-upload-container {
+    margin-bottom: 1.5rem;
+}
+
+.image-upload-area {
+    border: 2px dashed var(--color-border);
+    border-radius: 0.75rem;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: var(--color-surface);
+}
+
+.image-upload-area:hover {
+    border-color: var(--color-primary);
+    background-color: var(--color-primary-light);
+}
+
+.image-upload-area.drag-over {
+    border-color: var(--color-primary);
+    background-color: var(--color-primary-light);
+    transform: scale(1.02);
+}
+
+.upload-icon {
+    width: 3rem;
+    height: 3rem;
+    color: var(--color-primary);
+    margin-bottom: 0.5rem;
+}
+
+.image-preview {
+    border-radius: 0.5rem;
+    max-width: 100%;
+    max-height: 200px;
+    object-fit: contain;
+    border: 1px solid var(--color-border);
+    margin-bottom: 0.5rem;
+}
+
+/* Detection Results Styles */
+.detection-results-card {
+    background: white;
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--color-border);
+    padding: 1.5rem;
+}
+
+.disease-header {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.disease-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+}
+
+.confidence-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    background-color: var(--color-primary);
+    color: white;
+}
+
+.severity-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    margin-top: 0.5rem;
+}
+
+.severity-mild {
+    background-color: #dcfce7;
+    color: #15803d;
+}
+
+.severity-moderate {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+
+.severity-severe {
+    background-color: #fef2f2;
+    color: #dc2626;
+}
+
+.info-section {
+    margin-bottom: 1.5rem;
+}
+
+.info-title {
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.info-list {
+    list-style: none;
+    padding: 0;
+}
+
+.info-list li {
+    padding: 0.25rem 0;
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+}
+
+.info-list li::before {
+    content: '•';
+    color: var(--color-primary);
+    margin-right: 0.5rem;
+}
+
+/* Treatment Plan Styles */
+.treatment-card {
+    background: white;
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--color-border);
+    padding: 1.5rem;
+}
+
+.treatment-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.treatment-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: var(--color-primary);
+    margin-right: 0.5rem;
+}
+
+.cost-estimate {
+    background-color: var(--color-primary-light);
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.cost-amount {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+/* Disease Database Styles */
+.disease-database-header {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.database-filter {
+    max-width: 200px;
+}
+
+.disease-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.disease-card {
+    background: white;
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--color-border);
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.disease-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.15);
+}
+
+.disease-card-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.crops-affected {
+    margin-bottom: 1rem;
+}
+
+.crop-tag {
+    display: inline-block;
+    padding: 0.125rem 0.5rem;
+    background-color: var(--color-primary-light);
+    color: var(--color-primary);
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    margin-right: 0.25rem;
+    margin-bottom: 0.25rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .disease-tabs {
+        flex-direction: column;
+    }
+    
+    .tab-button {
+        border-bottom: none;
+        border-right: 2px solid transparent;
+        text-align: left;
+    }
+    
+    .tab-active {
+        border-bottom: none;
+        border-right-color: var(--color-primary);
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .disease-header {
+        flex-direction: column;
+        align-items: start;
+    }
+    
+    .disease-database-header {
+        align-items: stretch;
+    }
+    
+    .database-filter {
+        max-width: none;
+    }
+    
+    .disease-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .input-card,
+    .detection-results-card,
+    .treatment-card,
+    .disease-card {
+        padding: 1rem;
+    }
+    
+    .section-title {
+        font-size: 1rem;
+    }
+    
+    .upload-icon {
+        width: 2rem;
+        height: 2rem;
+    }
+}

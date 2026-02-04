@@ -53,7 +53,7 @@ const Dashboard = () => {
                             Welcome to <span style={{ color: '#99BC85' }}>FasalMitra</span>
                         </h1>
                         <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
-                            Your Smart FarminclassName="dashboard-hero-title-accent" insights for better crop management and higher yields
+                            Your Smart Farming Assistant providing data-driven insights for better crop management and higher yields
                         </p>
                     </div>
                 </div>
