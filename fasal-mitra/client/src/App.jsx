@@ -1,10 +1,12 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Beaker, Bug, TrendingUp } from 'lucide-react';
+import { TrendingUp } from 'lucide-react';
 import Navbar from './components/Navbar';
 import Dashboard from './pages/Dashboard';
 import YieldPrediction from './pages/YieldPrediction';
 import DiseaseDetection from './pages/DiseaseDetection';
+import SoilAnalysis from './pages/SoilAnalysis';
+import YieldGapAnalysis from './pages/YieldGapAnalysis';
 import './styles/pages.css';
 
 const App = () => {
@@ -16,10 +18,8 @@ const App = () => {
           <Route path="/" element={<Dashboard />} />
           <Route path="/yield-prediction" element={<YieldPrediction />} />
           <Route path="/disease-detection" element={<DiseaseDetection />} />
-          
-          {/* Placeholder routes - will create pages later */}
-          <Route path="/soil-analysis" element={<ComingSoon title="Soil Analysis" icon={Beaker} />} />
-          <Route path="/gap-analysis" element={<ComingSoon title="Gap Analysis" icon={TrendingUp} />} />
+          <Route path="/soil-analysis" element={<SoilAnalysis />} />
+          <Route path="/gap-analysis" element={<YieldGapAnalysis />} />
         </Routes>
       </div>
     </Router>
