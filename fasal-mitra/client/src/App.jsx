@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Cloud, Beaker, Bug, TrendingUp, MessageCircle } from 'lucide-react';
+import { Beaker, Bug, TrendingUp } from 'lucide-react';
 import Navbar from './components/Navbar';
 import Dashboard from './pages/Dashboard';
 import YieldPrediction from './pages/YieldPrediction';
@@ -18,10 +18,8 @@ const App = () => {
           <Route path="/disease-detection" element={<DiseaseDetection />} />
           
           {/* Placeholder routes - will create pages later */}
-          <Route path="/weather" element={<ComingSoon title="Weather Forecast" icon={Cloud} />} />
           <Route path="/soil-analysis" element={<ComingSoon title="Soil Analysis" icon={Beaker} />} />
           <Route path="/gap-analysis" element={<ComingSoon title="Gap Analysis" icon={TrendingUp} />} />
-          <Route path="/chatbot" element={<ComingSoon title="AI Assistant" icon={MessageCircle} />} />
         </Routes>
       </div>
     </Router>
