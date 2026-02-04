@@ -6,6 +6,16 @@ from pydantic_settings import BaseSettings
 from pathlib import Path
 from typing import List
 import os
+from dotenv import load_dotenv
+
+# Load .env file explicitly
+env_path = Path(__file__).parent.parent / ".env"
+if env_path.exists():
+    load_dotenv(env_path)
+    print(f"✅ Loaded .env from: {env_path}")
+else:
+    print(f"⚠️ .env not found at: {env_path}")
+    load_dotenv()  # Try default locations
 
 
 class Settings(BaseSettings):

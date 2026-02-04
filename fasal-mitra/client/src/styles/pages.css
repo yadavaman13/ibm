@@ -1,0 +1,31 @@
+/* Common Page Styles */
+.page-container {
+    min-height: 100vh;
+    background-color: var(--color-background);
+}
+
+.page-header-title {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.page-header-subtitle {
+    color: var(--color-text-secondary);
+    margin-bottom: 2rem;
+}
+
+.coming-soon-icon {
+    color: var(--color-primary);
+    width: 4rem;
+    height: 4rem;
+}
+
+.coming-soon-card {
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    text-align: center;
+}

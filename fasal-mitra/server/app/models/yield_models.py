@@ -46,11 +46,21 @@ class YieldPredictionResponse(BaseModel):
 
 
 class YieldGapRequest(BaseModel):
-    """Request for yield gap analysis"""
-    crop: str
-    state: str
-    season: Optional[str] = None
-    current_yield: float = Field(..., gt=0, description="Current yield in tons/hectare")
+    """Request for yield gap analysis - supports both actual and predicted scenarios"""
+    crop: str = Field(..., description="Crop name")
+    state: str = Field(..., description="State name")
+    season: Optional[str] = Field(None, description="Season (Kharif, Rabi, etc.)")
+    
+    # Scenario 1: Post-harvest analysis (farmer knows actual yield)
+    actual_yield: Optional[float] = Field(None, gt=0, description="Actual harvested yield in tons/hectare")
+    
+    # Scenario 2: Pre-harvest planning (predict from inputs)
+    area: Optional[float] = Field(None, gt=0, description="Area in hectares")
+    fertilizer: Optional[float] = Field(None, ge=0, description="Fertilizer in kg/ha")
+    pesticide: Optional[float] = Field(None, ge=0, description="Pesticide in kg/ha")
+    avg_temp_c: Optional[float] = Field(None, description="Average temperature")
+    total_rainfall_mm: Optional[float] = Field(None, description="Total rainfall")
+    avg_humidity_percent: Optional[float] = Field(None, description="Average humidity")
 
 
 class YieldGapResponse(BaseModel):

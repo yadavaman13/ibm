@@ -17,7 +17,7 @@ env/
 *.swp
 *.swo
 *~
-
+/.specstory
 # OS
 .DS_Store
 Thumbs.db

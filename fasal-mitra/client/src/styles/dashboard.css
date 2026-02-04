@@ -1,0 +1,26 @@
+/* Dashboard Styles */
+.dashboard-container {
+    min-height: 100vh;
+    background-color: var(--color-background);
+}
+
+.dashboard-hero {
+    background: linear-gradient(to right, var(--color-surface), var(--color-primary-light));
+    border-bottom: 1px solid var(--color-primary-light);
+}
+
+.dashboard-hero-title-accent {
+    color: var(--color-primary);
+}
+
+.dashboard-stats-value {
+    color: var(--color-primary);
+    font-size: 1.875rem;
+    font-weight: 700;
+}
+
+.dashboard-stats-label {
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}

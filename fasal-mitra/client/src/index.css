@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+/* Theme Variables */
+:root {
+  /* Color Palette */
+  --color-primary: #99BC85;
+  --color-primary-light: #E4EFE7;
+  --color-background: #FDFAF6;
+  --color-surface: #FAF1E6;
+  
+  /* Semantic Colors */
+  --color-text-primary: #1f2937;
+  --color-text-secondary: #6b7280;
+  --color-border: #e5e7eb;
+  
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+}
+
+/* Base Styles */
+body {
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+}
