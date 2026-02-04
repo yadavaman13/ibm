@@ -2,6 +2,7 @@
  * Test script to verify OpenWeatherMap API integration
  * Tests free-tier endpoints: Current Weather API 2.5, Geocoding, and 5-Day Forecast
  * 
+ * Setup: Create a .env file with VITE_OPENWEATHER_API_KEY=your_key_here
  * Run: node testWeatherAPI.js
  * 
  * Expected Results:
@@ -10,7 +11,10 @@
  * ❌ Other errors: Check API key validity
  */
 
-const API_KEY = '7c225d66215584fd15a0f5dad74b941d';
+// Load environment variables from .env file
+require('dotenv').config();
+
+const API_KEY = process.env.VITE_OPENWEATHER_API_KEY;
 
 async function testCurrentWeather() {
     console.log('\n🌤️  Testing Current Weather API...');
@@ -96,6 +100,13 @@ async function runTests() {
     console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     console.log('  OpenWeatherMap API Integration Test');
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    
+    if (!API_KEY) {
+        console.log('❌ ERROR: API key not found!');
+        console.log('   Please ensure VITE_OPENWEATHER_API_KEY is set in .env file\n');
+        return;
+    }
+    
     console.log(`  API Key: ${API_KEY.substring(0, 8)}...${API_KEY.substring(API_KEY.length - 4)}`);
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     
