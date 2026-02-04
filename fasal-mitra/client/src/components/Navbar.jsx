@@ -9,10 +9,9 @@ const Navbar = () => {
     const navItems = [
         { name: 'Home', path: '/' },
         { name: 'Yield Prediction', path: '/yield-prediction' },
-        { name: 'Weather', path: '/weather' },
         { name: 'Soil Analysis', path: '/soil-analysis' },
         { name: 'Disease Detection', path: '/disease-detection' },
-        { name: 'AI Assistant', path: '/chatbot' },
+        { name: 'Gap Analysis', path: '/gap-analysis' },
     ];
 
     return (
