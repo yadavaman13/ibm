@@ -435,3 +435,143 @@
         height: 2rem;
     }
 }
+
+/* AI Agent Section */
+.ai-agent-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+}
+
+.ai-agent-card {
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    padding: 3rem;
+    max-width: 600px;
+    width: 100%;
+    text-align: center;
+    border: 1px solid var(--color-border);
+}
+
+.ai-agent-icon {
+    display: inline-flex;
+    padding: 1.5rem;
+    background: var(--color-primary-light);
+    border-radius: 50%;
+    color: var(--color-primary);
+    margin-bottom: 1.5rem;
+}
+
+.ai-agent-title {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: 1rem;
+}
+
+.ai-agent-description {
+    color: var(--color-text-secondary);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+
+.ai-agent-features {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+    text-align: left;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--color-text-secondary);
+    font-size: 0.95rem;
+}
+
+.feature-item svg {
+    color: var(--color-success);
+    flex-shrink: 0;
+}
+
+.telegram-bot-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 2rem;
+    background: var(--color-primary);
+    color: white;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.telegram-bot-button:hover {
+    background: #7ea56b;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+.ai-agent-note {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+    padding: 0.75rem;
+    background: var(--color-info-light);
+    border-radius: 0.5rem;
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+}
+
+.ai-agent-note svg {
+    color: var(--color-info);
+    flex-shrink: 0;
+}
+
+/* AI Agent Responsive */
+@media (max-width: 768px) {
+    .ai-agent-card {
+        padding: 2rem 1.5rem;
+    }
+    
+    .ai-agent-title {
+        font-size: 1.5rem;
+    }
+    
+    .ai-agent-description {
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .ai-agent-card {
+        padding: 1.5rem 1rem;
+    }
+    
+    .ai-agent-icon {
+        padding: 1rem;
+    }
+    
+    .ai-agent-icon svg {
+        width: 3rem;
+        height: 3rem;
+    }
+    
+    .ai-agent-title {
+        font-size: 1.25rem;
+    }
+    
+    .telegram-bot-button {
+        width: 100%;
+        justify-content: center;
+    }
+}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Bug, AlertCircle, CheckCircle, Loader2 } from 'lucide-react';
+import { Bug, AlertCircle, CheckCircle, Loader2, MessageCircle, ExternalLink } from 'lucide-react';
 import ImageUpload from '../components/disease/ImageUpload';
 import DetectionResults from '../components/disease/DetectionResults';
 import DiseaseList from '../components/disease/DiseaseList';
@@ -122,10 +122,64 @@ const DiseaseDetection = () => {
                     >
                         📚 Disease Database
                     </button>
+                    <button
+                        className={`tab-button ${activeTab === 'aiagent' ? 'tab-active' : ''}`}
+                        onClick={() => setActiveTab('aiagent')}
+                    >
+                        🤖 AI Agent
+                    </button>
                 </div>
 
                 {/* Tab Content */}
-                {activeTab === 'detect' ? (
+                {activeTab === 'aiagent' ? (
+                    <div className="ai-agent-section">
+                        <div className="ai-agent-card">
+                            <div className="ai-agent-icon">
+                                <MessageCircle className="w-16 h-16" />
+                            </div>
+                            <h2 className="ai-agent-title">Disease Detection AI Agent</h2>
+                            <p className="ai-agent-description">
+                                Get instant disease detection and expert farming advice through our intelligent Telegram bot. 
+                                Available 24/7 to answer your questions, analyze crop images, and provide personalized recommendations.
+                            </p>
+                            
+                            <div className="ai-agent-features">
+                                <div className="feature-item">
+                                    <CheckCircle className="w-5 h-5" />
+                                    <span>Instant image-based disease detection</span>
+                                </div>
+                                <div className="feature-item">
+                                    <CheckCircle className="w-5 h-5" />
+                                    <span>24/7 expert farming assistance</span>
+                                </div>
+                                <div className="feature-item">
+                                    <CheckCircle className="w-5 h-5" />
+                                    <span>Personalized crop recommendations</span>
+                                </div>
+                                <div className="feature-item">
+                                    <CheckCircle className="w-5 h-5" />
+                                    <span>Multi-language support</span>
+                                </div>
+                            </div>
+
+                            <a 
+                                href="https://t.me/fasalmitra_ai_bot" 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="telegram-bot-button"
+                            >
+                                <MessageCircle className="w-5 h-5" />
+                                <span>Open Telegram Bot</span>
+                                <ExternalLink className="w-4 h-4" />
+                            </a>
+
+                            <div className="ai-agent-note">
+                                <AlertCircle className="w-4 h-4" />
+                                <span>Note: You need Telegram installed on your device to use this service.</span>
+                            </div>
+                        </div>
+                    </div>
+                ) : activeTab === 'detect' ? (
                     <div className="disease-detection-content">
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                             {/* Left Column - Input Section */}
