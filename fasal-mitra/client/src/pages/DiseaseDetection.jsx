@@ -7,6 +7,7 @@ import DiseaseList from '../components/disease/DiseaseList';
 import TreatmentPlan from '../components/disease/TreatmentPlan';
 import FieldHelpIcon from '../components/FieldHelpIcon';
 import FieldHelpModal from '../components/FieldHelpModal';
+import { VoiceSummary } from '../components/voice';
 import '../styles/disease-detection.css';
 import '../styles/pages.css';
 
@@ -286,6 +287,17 @@ const DiseaseDetection = () => {
                                             treatmentPlan={detectionResult.treatment_plan}
                                             severity={detectionResult.estimated_severity}
                                             recommendations={detectionResult.recommendations}
+                                        />
+                                        
+                                        {/* Voice Summary for Disease Detection Results */}
+                                        <VoiceSummary
+                                            result={detectionResult}
+                                            resultType="diseaseDetection"
+                                            title="🎧 Disease Analysis Summary"
+                                            className="disease-voice-summary"
+                                            onSpeechStart={() => console.log('Started reading disease detection summary')}
+                                            onSpeechEnd={() => console.log('Finished reading disease detection summary')}
+                                            onSpeechError={(error) => console.error('Disease speech error:', error)}
                                         />
                                     </div>
                                 ) : (

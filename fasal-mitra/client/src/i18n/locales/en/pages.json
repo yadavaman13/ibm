@@ -85,7 +85,23 @@
     "nutrients": "Nutrients",
     "ph": "pH Level",
     "recommendations": "Recommendations",
-    "comingSoon": "This feature will be implemented soon"
+    "comingSoon": "This feature will be implemented soon",
+    "location": {
+      "title": "Location Detection (Optional)",
+      "subtitle": "Detect your precise location for more accurate soil analysis",
+      "detectButton": "Detect My Location",
+      "detecting": "Detecting Location...",
+      "latitude": "Latitude:",
+      "longitude": "Longitude:",
+      "stateDetected": "State automatically detected and selected!",
+      "errors": {
+        "notSupported": "Geolocation is not supported by this browser.",
+        "permissionDenied": "Location access denied. Please enable location permissions in your browser.",
+        "unavailable": "Location information is unavailable. Please try again.",
+        "timeout": "Location request timed out. Please try again.",
+        "unknown": "An unknown error occurred while retrieving location."
+      }
+    }
   },
   "yieldGapAnalysis": {
     "title": "Yield Gap Analysis",
