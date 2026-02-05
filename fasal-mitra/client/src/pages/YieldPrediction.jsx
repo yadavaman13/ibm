@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Sprout, TrendingUp, AlertCircle, CheckCircle, Loader, Leaf, Droplets, Bug, Maximize2, PackagePlus, Info } from 'lucide-react';
 import { predictYield, checkServerHealth } from '../services/yieldService';
 import FieldHelpIcon from '../components/FieldHelpIcon';
@@ -7,6 +8,7 @@ import '../styles/pages.css';
 import '../styles/yield-prediction.css';
 
 const YieldPrediction = () => {
+    const { t } = useTranslation(['pages', 'common']);
     const [formData, setFormData] = useState({
         crop: '',
         state: '',
@@ -151,10 +153,10 @@ const YieldPrediction = () => {
                 <div className="page-header">
                     <div className="flex items-center gap-3 mb-2">
                         <Sprout className="page-icon" />
-                        <h1 className="page-header-title">Yield Prediction</h1>
+                        <h1 className="page-header-title">{t('pages:yieldPrediction.title')}</h1>
                     </div>
                     <p className="page-header-subtitle">
-                        Get AI-powered crop yield predictions based on your farming inputs
+                        {t('pages:yieldPrediction.subtitle')}
                     </p>
                     {serverStatus === false && (
                         <div className="server-alert">
@@ -167,8 +169,8 @@ const YieldPrediction = () => {
                 {/* Form Section - Full Width */}
                 <div className="yield-form-card">
                     <div className="form-header">
-                        <h2 className="yield-card-title">Farm Details</h2>
-                        <p className="yield-card-subtitle">Enter your farming parameters for prediction</p>
+                        <h2 className="yield-card-title">{t('yieldPrediction.farmDetails')}</h2>
+                        <p className="yield-card-subtitle">{t('pages:yieldPrediction.farmDetailsSubtitle')}</p>
                     </div>
 
                     <form onSubmit={handleSubmit} className="yield-form">
@@ -193,9 +195,9 @@ const YieldPrediction = () => {
                                         required
                                         className="form-select"
                                     >
-                                        <option value="">Select crop...</option>
+                                        <option value="">{t('pages:yieldPrediction.selectCrop')}</option>
                                         {crops.map(crop => (
-                                            <option key={crop} value={crop}>{crop}</option>
+                                            <option key={crop} value={crop}>{t(`common:crops.${crop}`)}</option>
                                         ))}
                                     </select>
                                 </div>
@@ -203,7 +205,7 @@ const YieldPrediction = () => {
                                 {/* State Selection */}
                                 <div className="form-group">
                                     <label htmlFor="state" className="form-label">
-                                        State <span className="required">*</span>
+                                        {t('yieldPrediction.state')} <span className="required">*</span>
                                     </label>
                                     <select
                                         id="state"
@@ -213,9 +215,9 @@ const YieldPrediction = () => {
                                         required
                                         className="form-select"
                                     >
-                                        <option value="">Select state...</option>
+                                        <option value="">{t('pages:yieldPrediction.selectState')}</option>
                                         {states.map(state => (
-                                            <option key={state} value={state}>{state}</option>
+                                            <option key={state} value={state}>{t(`common:states.${state}`)}</option>
                                         ))}
                                     </select>
                                 </div>
@@ -237,9 +239,9 @@ const YieldPrediction = () => {
                                         required
                                         className="form-select"
                                     >
-                                        <option value="">Select season...</option>
+                                        <option value="">{t('pages:yieldPrediction.selectSeason')}</option>
                                         {seasons.map(season => (
-                                            <option key={season} value={season}>{season}</option>
+                                            <option key={season} value={season}>{t(`common:seasons.${season}`)}</option>
                                         ))}
                                     </select>
                                 </div>
@@ -333,7 +335,7 @@ const YieldPrediction = () => {
                                 ) : (
                                     <>
                                         <TrendingUp className="btn-icon" />
-                                        Predict Yield
+                                        {t('yieldPrediction.predict')}
                                     </>
                                 )}
                             </button>
@@ -343,7 +345,7 @@ const YieldPrediction = () => {
                                 className="btn-secondary"
                                 disabled={loading}
                             >
-                                Reset
+                                {t('common.reset')}
                             </button>
                         </div>
                     </form>

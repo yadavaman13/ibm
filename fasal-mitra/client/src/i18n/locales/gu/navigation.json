@@ -1,0 +1,21 @@
+{
+  "brand": {
+    "name": "ફસલમિત્ર",
+    "tagline": "સ્માર્ટ ખેતી સહાયક"
+  },
+  "home": "હોમ",
+  "yieldPrediction": "ઉત્પાદન અનુમાન",
+  "soilAnalysis": "માટી વિશ્લેષણ",
+  "diseaseDetection": "રોગ ઓળખ",
+  "yieldGapAnalysis": "ઉત્પાદન ગેપ વિશ્લેષણ",
+  "auth": {
+    "login": "લોગિન",
+    "signup": "સાઇન અપ"
+  },
+  "user": {
+    "welcome": "સ્વાગત",
+    "profile": "મારી પ્રોફાઇલ",
+    "preferences": "પસંદગીઓ",
+    "notifications": "સૂચનાઓ"
+  }
+}
