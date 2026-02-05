@@ -1,13 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Sprout, Menu, X } from 'lucide-react';
+import { Sprout } from 'lucide-react';
 import LanguageSelector from './LanguageSelector';
 import '../styles/navbar.css';
 
 const Navbar = () => {
     const { t, ready } = useTranslation('navigation');
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     // Show a minimal navbar while i18n loads
     if (!ready) {
@@ -37,7 +36,7 @@ const Navbar = () => {
     ];
 
     return (
-        <nav className="navbar shadow-">
+        <nav className="navbar shadow-sm">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-16">
                     {/* Logo */}
@@ -48,57 +47,28 @@ const Navbar = () => {
                         </span>
                     </Link>
 
-                    {/* Desktop Navigation */}
-                    <div className="hidden md:flex items-center space-x-4">
-                        <div className="flex items-center space-x-1">
+                    {/* Navigation Items - Always Visible */}
+                    <div className="flex items-center space-x-6">
+                        {/* Navigation Links */}
+                        <div className="flex items-center space-x-4">
                             {navItems.map((item) => (
                                 <Link
                                     key={item.path}
                                     to={item.path}
-                                    className="navbar-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 transition-colors"
+                                    className="navbar-link text-sm font-medium transition-colors hover:text-white"
                                 >
                                     {item.name}
                                 </Link>
                             ))}
                         </div>
-                        <LanguageSelector />
-                    </div>
-
-                    {/* Mobile Menu Button */}
-                    <button
-                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                        className="navbar-mobile-btn md:hidden p-2 rounded-md text-gray-700 focus:outline-none"
-                        aria-label="Toggle menu"
-                    >
-                        {isMobileMenuOpen ? (
-                            <X className="h-6 w-6" />
-                        ) : (
-                            <Menu className="h-6 w-6" />
-                        )}
-                    </button>
-                </div>
-            </div>
-
-            {/* Mobile Menu */}
-            {isMobileMenuOpen && (
-                <div className="navbar-mobile-menu md:hidden">
-                    <div className="px-2 pt-2 pb-3 space-y-1">
-                        {navItems.map((item) => (
-                            <Link
-                                key={item.path}
-                                to={item.path}
-                                className="navbar-link block px-3 py-2 rounded-md text-base font-medium text-gray-700 transition-colors"
-                                onClick={() => setIsMobileMenuOpen(false)}
-                            >
-                                {item.name}
-                            </Link>
-                        ))}
-                        <div className="px-3 py-2">
+                        
+                        {/* Language Selector */}
+                        <div className="flex items-center">
                             <LanguageSelector />
                         </div>
                     </div>
                 </div>
-            )}
+            </div>
         </nav>
     );
 };

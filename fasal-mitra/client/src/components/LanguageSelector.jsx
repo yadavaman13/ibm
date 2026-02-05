@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChevronDown, Globe } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { supportedLanguages } from '../i18n';
+import languageIcon from '../assets/bgremoved.png';
 import '../styles/language-selector.css';
 
 const LanguageSelector = () => {
@@ -36,7 +37,7 @@ const LanguageSelector = () => {
         className="language-selector-button"
         aria-label="Select language"
       >
-        <Globe className="language-selector-icon" />
+        <img src={languageIcon} alt="Language" className="language-selector-icon" />
         <span className="language-selector-text">{currentLanguage.nativeName}</span>
         <ChevronDown className={`language-selector-chevron ${isOpen ? 'open' : ''}`} />
       </button>
@@ -51,7 +52,6 @@ const LanguageSelector = () => {
                 language.code === i18n.language ? 'active' : ''
               }`}
             >
-              <span className="language-flag">{language.flag}</span>
               <div className="language-info">
                 <div className="language-native">{language.nativeName}</div>
                 <div className="language-english">{language.name}</div>
