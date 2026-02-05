@@ -1,0 +1,21 @@
+{
+  "brand": {
+    "name": "फसलमित्र",
+    "tagline": "स्मार्ट शेती सहाय्यक"
+  },
+  "home": "होम",
+  "yieldPrediction": "उत्पादन अंदाज",
+  "soilAnalysis": "माती विश्लेषण",
+  "diseaseDetection": "रोग ओळख",
+  "yieldGapAnalysis": "उत्पादन अंतर विश्लेषण",
+  "auth": {
+    "login": "लॉगिन",
+    "signup": "नोंदणी करा"
+  },
+  "user": {
+    "welcome": "स्वागत",
+    "profile": "माझी प्रोफाइल",
+    "preferences": "प्राधान्यता",
+    "notifications": "सूचना"
+  }
+}

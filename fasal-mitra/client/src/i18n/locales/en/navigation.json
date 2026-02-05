@@ -1,0 +1,35 @@
+{
+  "brand": {
+    "name": "FasalMitra",
+    "tagline": "Smart Farming Assistant"
+  },
+  "home": "Home",
+  "yieldPrediction": "Yield Prediction",
+  "soilAnalysis": "Soil Analysis",
+  "diseaseDetection": "Disease Detection",
+  "yieldGapAnalysis": "Yield Gap Analysis",
+  "menu": {
+    "dashboard": "Dashboard",
+    "yieldPrediction": "Yield Prediction",
+    "diseaseDetection": "Disease Detection",
+    "weatherForecast": "Weather",
+    "soilAnalysis": "Soil Analysis",
+    "gapAnalysis": "Gap Analysis",
+    "chatbot": "AI Assistant"
+  },
+  "actions": {
+    "home": "Home",
+    "profile": "Profile",
+    "settings": "Settings",
+    "help": "Help",
+    "logout": "Logout",
+    "login": "Login",
+    "signup": "Sign Up"
+  },
+  "user": {
+    "welcome": "Welcome",
+    "profile": "My Profile",
+    "preferences": "Preferences",
+    "notifications": "Notifications"
+  }
+}

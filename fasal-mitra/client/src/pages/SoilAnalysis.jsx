@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Sprout, Droplets, TestTube, CheckCircle, AlertCircle, Loader, TrendingUp } from 'lucide-react';
 import '../styles/soil-analysis.css';
 import * as soilService from '../services/soilService';
 
 const SoilAnalysis = () => {
+    const { t } = useTranslation(['pages', 'common']);
     const [formData, setFormData] = useState({
         state: '',
         crop: ''
@@ -118,10 +120,10 @@ const SoilAnalysis = () => {
                         <div className="page-icon-wrapper">
                             <TestTube className="page-icon" />
                         </div>
-                        <h1 className="page-header-title">Soil Analysis</h1>
+                        <h1 className="page-header-title">{t('soilAnalysis.title')}</h1>
                     </div>
                     <p className="page-header-subtitle">
-                        Analyze soil quality and get crop recommendations based on NPK values and pH levels
+                        {t('soilAnalysis.subtitle')}
                     </p>
                     {serverStatus === false && (
                         <div className="server-alert">
@@ -134,8 +136,8 @@ const SoilAnalysis = () => {
                 {/* Input Form */}
                 <div className="soil-form-card">
                     <div className="form-header">
-                        <h2 className="form-title">Select Location & Crop</h2>
-                        <p className="form-subtitle">Choose your state and crop to analyze soil suitability</p>
+                        <h2 className="form-title">{t('soilAnalysis.selectLocationCrop')}</h2>
+                        <p className="form-subtitle">{t('soilAnalysis.chooseStateAndCrop')}</p>
                     </div>
 
                     <form onSubmit={handleSubmit} className="soil-form">
@@ -143,7 +145,7 @@ const SoilAnalysis = () => {
                             {/* State Selection */}
                             <div className="form-group">
                                 <label htmlFor="state" className="form-label">
-                                    State <span className="required">*</span>
+                                    {t('soilAnalysis.state')} <span className="required">*</span>
                                 </label>
                                 <select
                                     id="state"
@@ -153,9 +155,9 @@ const SoilAnalysis = () => {
                                     required
                                     className="form-select"
                                 >
-                                    <option value="">Select state...</option>
+                                    <option value="">{t('pages:soilAnalysis.selectState')}</option>
                                     {states.map(state => (
-                                        <option key={state} value={state}>{state}</option>
+                                        <option key={state} value={state}>{t(`common:states.${state}`)}</option>
                                     ))}
                                 </select>
                             </div>
@@ -163,7 +165,7 @@ const SoilAnalysis = () => {
                             {/* Crop Selection */}
                             <div className="form-group">
                                 <label htmlFor="crop" className="form-label">
-                                    Crop <span className="required">*</span>
+                                    {t('soilAnalysis.crop')} <span className="required">*</span>
                                 </label>
                                 <select
                                     id="crop"
@@ -173,9 +175,9 @@ const SoilAnalysis = () => {
                                     required
                                     className="form-select"
                                 >
-                                    <option value="">Select crop...</option>
+                                    <option value="">{t('pages:soilAnalysis.selectCrop')}</option>
                                     {crops.map(crop => (
-                                        <option key={crop} value={crop}>{crop}</option>
+                                        <option key={crop} value={crop}>{t(`common:crops.${crop}`)}</option>
                                     ))}
                                 </select>
                             </div>
@@ -196,7 +198,7 @@ const SoilAnalysis = () => {
                                 ) : (
                                     <>
                                         <TestTube className="btn-icon" />
-                                        Analyze Soil
+                                        {t('soilAnalysis.analyze')}
                                     </>
                                 )}
                             </button>
@@ -206,7 +208,7 @@ const SoilAnalysis = () => {
                                 className="btn-secondary"
                                 disabled={loading}
                             >
-                                Reset
+                                {t('common.reset')}
                             </button>
                         </div>
                     </form>

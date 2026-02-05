@@ -1,17 +1,39 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Sprout, Menu, X } from 'lucide-react';
+import LanguageSelector from './LanguageSelector';
 import '../styles/navbar.css';
 
 const Navbar = () => {
+    const { t, ready } = useTranslation('navigation');
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+    // Show a minimal navbar while i18n loads
+    if (!ready) {
+        return (
+            <nav className="navbar shadow-sm">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="flex justify-between items-center h-16">
+                        <Link to="/" className="flex items-center space-x-2">
+                            <Sprout className="w-6 h-6 navbar-logo-icon" />
+                            <span className="text-xl font-bold navbar-brand">
+                                <span className="navbar-fasal">Fasal</span><span className="navbar-mitra">Mitra</span>
+                            </span>
+                        </Link>
+                        <LanguageSelector />
+                    </div>
+                </div>
+            </nav>
+        );
+    }
+
     const navItems = [
-        { name: 'Home', path: '/' },
-        { name: 'Yield Prediction', path: '/yield-prediction' },
-        { name: 'Soil Analysis', path: '/soil-analysis' },
-        { name: 'Disease Detection', path: '/disease-detection' },
-        { name: 'Yield Gap Analysis', path: '/gap-analysis' },
+        { name: t('home'), path: '/' },
+        { name: t('yieldPrediction'), path: '/yield-prediction' },
+        { name: t('soilAnalysis'), path: '/soil-analysis' },
+        { name: t('diseaseDetection'), path: '/disease-detection' },
+        { name: t('yieldGapAnalysis'), path: '/gap-analysis' },
     ];
 
     return (
@@ -21,22 +43,25 @@ const Navbar = () => {
                     {/* Logo */}
                     <Link to="/" className="flex items-center space-x-2">
                         <Sprout className="w-6 h-6 navbar-logo-icon" />
-                        <span className="text-xl font-bold text-gray-800">
-                            Fasal<span className="navbar-brand">Mitra</span>
+                        <span className="text-xl font-bold navbar-brand">
+                            <span className="navbar-fasal">Fasal</span><span className="navbar-mitra">Mitra</span>
                         </span>
                     </Link>
 
                     {/* Desktop Navigation */}
-                    <div className="hidden md:flex items-center space-x-1">
-                        {navItems.map((item) => (
-                            <Link
-                                key={item.path}
-                                to={item.path}
-                                className="navbar-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 transition-colors"
-                            >
-                                {item.name}
-                            </Link>
-                        ))}
+                    <div className="hidden md:flex items-center space-x-4">
+                        <div className="flex items-center space-x-1">
+                            {navItems.map((item) => (
+                                <Link
+                                    key={item.path}
+                                    to={item.path}
+                                    className="navbar-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 transition-colors"
+                                >
+                                    {item.name}
+                                </Link>
+                            ))}
+                        </div>
+                        <LanguageSelector />
                     </div>
 
                     {/* Mobile Menu Button */}
@@ -68,6 +93,9 @@ const Navbar = () => {
                                 {item.name}
                             </Link>
                         ))}
+                        <div className="px-3 py-2">
+                            <LanguageSelector />
+                        </div>
                     </div>
                 </div>
             )}

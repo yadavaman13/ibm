@@ -92,6 +92,11 @@ const ChatbotWidget = () => {
             });
 
             const data = await response.json();
+            
+            if (!response.ok) {
+                console.error('Chatbot API error:', response.status, data);
+                throw new Error(`Server error: ${response.status} - ${data.detail || data.message || 'Unknown error'}`);
+            }
 
             if (data.success) {
                 const botMessage = {
