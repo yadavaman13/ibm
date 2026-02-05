@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Sprout, TrendingUp, AlertCircle, CheckCircle, Loader, Leaf, Droplets, Bug, Maximize2, PackagePlus, Info } from 'lucide-react';
 import { predictYield, checkServerHealth } from '../services/yieldService';
+import FieldHelpIcon from '../components/FieldHelpIcon';
+import FieldHelpModal from '../components/FieldHelpModal';
 import '../styles/pages.css';
 import '../styles/yield-prediction.css';
 
@@ -17,6 +19,11 @@ const YieldPrediction = () => {
     const [result, setResult] = useState(null);
     const [error, setError] = useState(null);
     const [serverStatus, setServerStatus] = useState(null);
+    
+    // Field help modal state
+    const [helpModalOpen, setHelpModalOpen] = useState(false);
+    const [helpFieldLabel, setHelpFieldLabel] = useState('');
+    const [helpFieldName, setHelpFieldName] = useState('');
 
     // Check server health on mount
     useEffect(() => {
@@ -83,6 +90,13 @@ const YieldPrediction = () => {
         });
         setResult(null);
         setError(null);
+    };
+    
+    // Handle help icon click
+    const handleHelpClick = (fieldName, fieldLabel) => {
+        setHelpFieldName(fieldName);
+        setHelpFieldLabel(fieldLabel);
+        setHelpModalOpen(true);
     };
 
     // Get icon for each factor
@@ -166,6 +180,10 @@ const YieldPrediction = () => {
                                 <div className="form-group">
                                     <label htmlFor="crop" className="form-label">
                                         Crop Type <span className="required">*</span>
+                                        <FieldHelpIcon 
+                                            fieldName="crop" 
+                                            onClick={() => handleHelpClick('crop', 'Crop Type')} 
+                                        />
                                     </label>
                                     <select
                                         id="crop"
@@ -206,6 +224,10 @@ const YieldPrediction = () => {
                                 <div className="form-group">
                                     <label htmlFor="season" className="form-label">
                                         Season <span className="required">*</span>
+                                        <FieldHelpIcon 
+                                            fieldName="season" 
+                                            onClick={() => handleHelpClick('season', 'Season')} 
+                                        />
                                     </label>
                                     <select
                                         id="season"
@@ -229,6 +251,10 @@ const YieldPrediction = () => {
                                 <div className="form-group">
                                     <label htmlFor="area" className="form-label">
                                         Cultivated Area (hectares) <span className="required">*</span>
+                                        <FieldHelpIcon 
+                                            fieldName="area" 
+                                            onClick={() => handleHelpClick('area', 'Cultivated Area (hectares)')} 
+                                        />
                                     </label>
                                     <input
                                         type="number"
@@ -248,6 +274,10 @@ const YieldPrediction = () => {
                                 <div className="form-group">
                                     <label htmlFor="fertilizer" className="form-label">
                                         Fertilizer (kg/hectare) <span className="required">*</span>
+                                        <FieldHelpIcon 
+                                            fieldName="fertilizer" 
+                                            onClick={() => handleHelpClick('fertilizer', 'Fertilizer (kg/hectare)')} 
+                                        />
                                     </label>
                                     <input
                                         type="number"
@@ -267,6 +297,10 @@ const YieldPrediction = () => {
                                 <div className="form-group">
                                     <label htmlFor="pesticide" className="form-label">
                                         Pesticide (kg/hectare) <span className="required">*</span>
+                                        <FieldHelpIcon 
+                                            fieldName="pesticide" 
+                                            onClick={() => handleHelpClick('pesticide', 'Pesticide (kg/hectare)')} 
+                                        />
                                     </label>
                                     <input
                                         type="number"
@@ -440,6 +474,14 @@ const YieldPrediction = () => {
                     </div>
                 )}
             </div>
+            
+            {/* Field Help Modal */}
+            <FieldHelpModal
+                isOpen={helpModalOpen}
+                onClose={() => setHelpModalOpen(false)}
+                fieldLabel={helpFieldLabel}
+                fieldName={helpFieldName}
+            />
         </div>
     );
 };

@@ -4,6 +4,8 @@ import ImageUpload from '../components/disease/ImageUpload';
 import DetectionResults from '../components/disease/DetectionResults';
 import DiseaseList from '../components/disease/DiseaseList';
 import TreatmentPlan from '../components/disease/TreatmentPlan';
+import FieldHelpIcon from '../components/FieldHelpIcon';
+import FieldHelpModal from '../components/FieldHelpModal';
 import '../styles/disease-detection.css';
 import '../styles/pages.css';
 
@@ -16,6 +18,11 @@ const DiseaseDetection = () => {
     const [detectionResult, setDetectionResult] = useState(null);
     const [error, setError] = useState(null);
     const [diseases, setDiseases] = useState([]);
+    
+    // Field help modal state
+    const [helpModalOpen, setHelpModalOpen] = useState(false);
+    const [helpFieldLabel, setHelpFieldLabel] = useState('');
+    const [helpFieldName, setHelpFieldName] = useState('');
 
     const cropOptions = [
         'Rice', 'Wheat', 'Cotton', 'Tomato', 'Potato', 'Maize', 'Sugarcane',
@@ -92,6 +99,13 @@ const DiseaseDetection = () => {
         setDetectionResult(null);
         setError(null);
         setLocation('');
+    };
+    
+    // Handle help icon click
+    const handleHelpClick = (fieldName, fieldLabel) => {
+        setHelpFieldName(fieldName);
+        setHelpFieldLabel(fieldLabel);
+        setHelpModalOpen(true);
     };
 
     return (
@@ -193,7 +207,13 @@ const DiseaseDetection = () => {
 
                                     {/* Crop Selection */}
                                     <div className="form-group">
-                                        <label className="form-label">Crop Type</label>
+                                        <label className="form-label">
+                                            Crop Type
+                                            <FieldHelpIcon 
+                                                fieldName="crop" 
+                                                onClick={() => handleHelpClick('crop', 'Crop Type')} 
+                                            />
+                                        </label>
                                         <select
                                             value={cropType}
                                             onChange={(e) => setCropType(e.target.value)}
@@ -290,6 +310,14 @@ const DiseaseDetection = () => {
                     />
                 )}
             </div>
+            
+            {/* Field Help Modal */}
+            <FieldHelpModal
+                isOpen={helpModalOpen}
+                onClose={() => setHelpModalOpen(false)}
+                fieldLabel={helpFieldLabel}
+                fieldName={helpFieldName}
+            />
         </div>
     );
 };
