@@ -33,7 +33,11 @@
   "weather": {
     "title": "Weather",
     "refreshWeather": "Refresh weather data",
-    "moderate": "Moderate"
+    "moderate": "Moderate",
+    "precipitation": "Precipitation",
+    "windSpeed": "Wind Speed",
+    "humidity": "Humidity",
+    "airQuality": "Air Quality"
   },
   "crops": {
     "Rice": "Rice",

@@ -61,7 +61,7 @@ export const WeatherStats = ({ currentWeather, airQuality, weatherData }) => {
       <div className="weather-stat-item">
         <div className="weather-stat-header">
           <img 
-            src="/src/assets/220-2208684_wind-speed-comments-wind-speed-icon-png.png" 
+            src="/src/assets/wind.jpg" 
             alt="Wind Speed" 
             className="weather-stat-icon"
             onError={(e) => {
@@ -91,7 +91,7 @@ export const WeatherStats = ({ currentWeather, airQuality, weatherData }) => {
       <div className="weather-stat-item">
         <div className="weather-stat-header">
           <img 
-            src="/src/assets/air quality.png" 
+            src="/src/assets/air_quality.png" 
             alt="Air Quality" 
             className="weather-stat-icon"
             onError={(e) => {
