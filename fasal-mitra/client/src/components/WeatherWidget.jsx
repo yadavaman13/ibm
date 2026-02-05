@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { MapPin, RefreshCw } from 'lucide-react';
 import { 
     getCurrentWeather, 
@@ -11,6 +12,7 @@ import {
 import '../styles/weather-widget.css';
 
 const WeatherWidget = () => {
+    const { t } = useTranslation('common');
     const [isCelsius, setIsCelsius] = useState(true);
     const [location, setLocation] = useState({ city: 'Ahmedabad', country: 'IN' });
     const [currentWeather, setCurrentWeather] = useState(null);
@@ -92,13 +94,13 @@ const WeatherWidget = () => {
         
         const minutes = Math.floor((Date.now() - lastUpdated) / 60000);
         
-        if (minutes < 1) return 'Updated just now';
-        if (minutes === 1) return 'Updated 1 min ago';
-        if (minutes < 60) return `Updated ${minutes} mins ago`;
+        if (minutes < 1) return `${t('updated')} just now`;
+        if (minutes === 1) return `${t('updated')} 1 min ${t('ago')}`;
+        if (minutes < 60) return `${t('updated')} ${minutes} mins ${t('ago')}`;
         
         const hours = Math.floor(minutes / 60);
-        if (hours === 1) return 'Updated 1 hour ago';
-        return `Updated ${hours} hours ago`;
+        if (hours === 1) return `${t('updated')} 1 hour ${t('ago')}`;
+        return `${t('updated')} ${hours} hours ${t('ago')}`;
     };
 
     // Get color class based on data age
@@ -114,11 +116,16 @@ const WeatherWidget = () => {
 
     // Format date and time
     const getFormattedDateTime = () => {
-        if (!currentWeather?.timestamp) return 'Loading...';
+        if (!currentWeather?.timestamp) return t('loading');
         
         const date = new Date(currentWeather.timestamp);
-        const options = { weekday: 'long', hour: 'numeric', minute: '2-digit', hour12: true };
-        return date.toLocaleString('en-US', options);
+        const dayName = date.toLocaleString('en-US', { weekday: 'long' });
+        const time = date.toLocaleString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+        
+        // Translate the day name
+        const translatedDay = t(`days.${dayName}`, dayName);
+        
+        return `${translatedDay} ${time}`;
     };
 
     if (loading && !currentWeather) {
@@ -177,7 +184,7 @@ const WeatherWidget = () => {
                         </div>
                         <p className="weather-datetime">{getFormattedDateTime()}</p>
                         <p className="weather-condition">
-                            {currentWeather?.condition || 'Loading...'}
+                            {currentWeather?.condition ? t(`conditions.${currentWeather.condition}`, currentWeather.condition) : t('loading')}
                         </p>
                         {lastUpdated && (
                             <span className={`weather-last-updated ${getUpdateStatusClass()}`}>
@@ -195,7 +202,7 @@ const WeatherWidget = () => {
                             {weeklyForecast.length > 0 ? (
                                 weeklyForecast.map((d, i) => (
                                     <div key={i} className={`weather-forecast-day${i === 0 ? ' weather-forecast-day-active' : ''}`}>
-                                        <div className="weather-forecast-day-label">{d.day}</div>
+                                        <div className="weather-forecast-day-label">{t(`dayAbbr.${d.day}`, d.day)}</div>
                                         <div className="weather-forecast-day-icon">{d.icon}</div>
                                         <div className="weather-forecast-day-temps">
                                             <span>{d.high}°</span>
@@ -205,7 +212,7 @@ const WeatherWidget = () => {
                                     </div>
                                 ))
                             ) : (
-                                <div className="weather-forecast-loading">Loading forecast...</div>
+                                <div className="weather-forecast-loading">{t('loading')}</div>
                             )}
                         </div>
                     </div>

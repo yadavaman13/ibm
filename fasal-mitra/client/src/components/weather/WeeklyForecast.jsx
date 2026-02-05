@@ -1,7 +1,9 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Sun, Cloud, CloudRain, Snowflake, Zap, CloudDrizzle, Moon } from 'lucide-react';
 
 const WeeklyForecast = ({ weeklyForecast, isCelsius }) => {
+  const { t } = useTranslation('common');
   // Get appropriate weather icon
   const getWeatherIcon = (condition, isNight = false) => {
     if (isNight) {
@@ -55,7 +57,7 @@ const WeeklyForecast = ({ weeklyForecast, isCelsius }) => {
               key={index} 
               className={`forecast-day ${isToday ? 'forecast-day-today' : ''}`}
             >
-              <div className="forecast-day-name">{day.day}</div>
+              <div className="forecast-day-name">{t(`dayAbbr.${day.day}`, day.day)}</div>
               <div className="forecast-icon-container">
                 {getWeatherIcon(day.condition, isNight)}
               </div>

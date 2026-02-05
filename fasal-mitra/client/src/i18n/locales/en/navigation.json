@@ -3,6 +3,11 @@
     "name": "FasalMitra",
     "tagline": "Smart Farming Assistant"
   },
+  "home": "Home",
+  "yieldPrediction": "Yield Prediction",
+  "soilAnalysis": "Soil Analysis",
+  "diseaseDetection": "Disease Detection",
+  "yieldGapAnalysis": "Yield Gap Analysis",
   "menu": {
     "dashboard": "Dashboard",
     "yieldPrediction": "Yield Prediction",

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { MapPin, RefreshCw, Cloud, Sun, CloudRain, Snowflake, Zap, CloudDrizzle } from 'lucide-react';
 import { WeatherStats } from './WeatherStats';
 
@@ -13,6 +14,7 @@ const WeatherSummaryCard = ({
   getLastUpdatedText,
   getUpdateStatusClass 
 }) => {
+  const { t } = useTranslation('common');
   const currentTemp = isCelsius ? currentWeather?.temp : currentWeather?.tempF;
 
   // Get weather icon based on condition
@@ -41,11 +43,16 @@ const WeatherSummaryCard = ({
   };
 
   const getFormattedDateTime = () => {
-    if (!currentWeather?.timestamp) return 'Loading...';
+    if (!currentWeather?.timestamp) return t('loading');
     
     const date = new Date(currentWeather.timestamp);
-    const options = { weekday: 'long', hour: 'numeric', minute: '2-digit', hour12: true };
-    return date.toLocaleString('en-US', options);
+    const dayName = date.toLocaleString('en-US', { weekday: 'long' });
+    const time = date.toLocaleString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+    
+    // Translate the day name
+    const translatedDay = t(`days.${dayName}`, dayName);
+    
+    return `${translatedDay} ${time}`;
   };
 
   // Create weatherData object compatible with WeatherStats
@@ -86,7 +93,7 @@ const WeatherSummaryCard = ({
           className="weather-refresh-btn"
           onClick={onRefresh}
           disabled={isRefreshing}
-          title="Refresh weather data"
+          title={t('weather.refreshWeather')}
         >
           <RefreshCw className={`weather-refresh-icon ${isRefreshing ? 'weather-refresh-spinning' : ''}`} />
         </button>
@@ -95,7 +102,7 @@ const WeatherSummaryCard = ({
       {/* Condition and status */}
       <div className="weather-condition-row">
         <h3 className="weather-condition">
-          {currentWeather?.condition || 'Loading...'}
+          {currentWeather?.condition ? t(`conditions.${currentWeather.condition}`, currentWeather.condition) : t('loading')}
         </h3>
         
         {lastUpdated && (

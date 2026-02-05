@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Sprout, Beaker, Bug, TrendingUp } from 'lucide-react';
 import FeatureCard from '../components/FeatureCard';
 import { WeatherDashboard } from '../components/weather';
@@ -6,29 +7,45 @@ import ChatbotWidget from '../components/ChatbotWidget';
 import '../styles/dashboard.css';
 
 const Dashboard = () => {
+    const { t, i18n, ready } = useTranslation('pages');
+    
+    // Wait for i18n to be ready
+    if (!ready) {
+        return (
+            <div className="dashboard-container">
+                <div className="flex items-center justify-center min-h-screen">
+                    <div className="text-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
+                        <p className="mt-4 text-gray-600">Loading...</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+    
     const features = [
         {
             icon: Sprout,
-            title: 'Crop Yield',
-            description: 'Predict how much your crops will produce this season using smart technology.',
+            title: t('dashboard.features.cropYield.title'),
+            description: t('dashboard.features.cropYield.description'),
             path: '/yield-prediction',
         },
         {
             icon: Beaker,
-            title: 'Soil Check',
-            description: 'Test your soil and get recommendations for better crop growth.',
+            title: t('dashboard.features.soilCheck.title'),
+            description: t('dashboard.features.soilCheck.description'),
             path: '/soil-analysis',
         },
         {
             icon: Bug,
-            title: 'Disease Help',
-            description: 'Take crop photos to identify diseases and get treatment advice.',
+            title: t('dashboard.features.diseaseHelp.title'),
+            description: t('dashboard.features.diseaseHelp.description'),
             path: '/disease-detection',
         },
         {
             icon: TrendingUp,
-            title: 'Improve Farm',
-            description: 'Compare your farm performance and find ways to grow more.',
+            title: t('dashboard.features.yieldGapAnalysis.title'),
+            description: t('dashboard.features.yieldGapAnalysis.description'),
             path: '/gap-analysis',
         },
     ];
@@ -47,10 +64,10 @@ const Dashboard = () => {
                     <div className="dashboard-features-section">
                         <div className="features-header">
                             <h2 className="features-title">
-                                Farm Tools
+                                {t('dashboard.farmTools.title')}
                             </h2>
                             <p className="features-subtitle">
-                                Smart tools for better farming
+                                {t('dashboard.farmTools.subtitle')}
                             </p>
                         </div>
 
@@ -70,24 +87,24 @@ const Dashboard = () => {
             </div>
 
             {/* Stats Section */}
-            <div className="bg-white border-t border-gray-200">
+            <div className="bg-white">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
                         <div>
                             <div className="dashboard-stats-value">55+</div>
-                            <div className="dashboard-stats-label">Crops Supported</div>
+                            <div className="dashboard-stats-label">{t('dashboard.stats.cropsSupported')}</div>
                         </div>
                         <div>
                             <div className="dashboard-stats-value">30+</div>
-                            <div className="dashboard-stats-label">States Covered</div>
+                            <div className="dashboard-stats-label">{t('dashboard.stats.statesCovered')}</div>
                         </div>
                         <div>
                             <div className="dashboard-stats-value">97.5%</div>
-                            <div className="dashboard-stats-label">ML Accuracy</div>
+                            <div className="dashboard-stats-label">{t('dashboard.stats.mlAccuracy')}</div>
                         </div>
                         <div>
                             <div className="dashboard-stats-value">24/7</div>
-                            <div className="dashboard-stats-label">AI Support</div>
+                            <div className="dashboard-stats-label">{t('dashboard.stats.aiSupport')}</div>
                         </div>
                     </div>
                 </div>

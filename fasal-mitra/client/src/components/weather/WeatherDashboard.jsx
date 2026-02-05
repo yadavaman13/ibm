@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import WeatherSummaryCard from './WeatherSummaryCard';
 import WeeklyForecast from './WeeklyForecast';
 import WeatherStats from './WeatherStats';
@@ -13,6 +14,7 @@ import {
 import './weather-dashboard.css';
 
 const WeatherDashboard = () => {
+  const { t } = useTranslation('common');
   const [isCelsius, setIsCelsius] = useState(true);
   const [location, setLocation] = useState({ city: 'Ahmedabad', country: 'IN' });
   const [currentWeather, setCurrentWeather] = useState(null);
@@ -94,13 +96,13 @@ const WeatherDashboard = () => {
     
     const minutes = Math.floor((Date.now() - lastUpdated) / 60000);
     
-    if (minutes < 1) return 'Updated just now';
-    if (minutes === 1) return 'Updated 1 min ago';
-    if (minutes < 60) return `Updated ${minutes} mins ago`;
+    if (minutes < 1) return `${t('updated')} just now`;
+    if (minutes === 1) return `${t('updated')} 1 min ${t('ago')}`;
+    if (minutes < 60) return `${t('updated')} ${minutes} mins ${t('ago')}`;
     
     const hours = Math.floor(minutes / 60);
-    if (hours === 1) return 'Updated 1 hour ago';
-    return `Updated ${hours} hours ago`;
+    if (hours === 1) return `${t('updated')} 1 hour ${t('ago')}`;
+    return `${t('updated')} ${hours} hours ${t('ago')}`;
   };
 
   // Get color class based on data age

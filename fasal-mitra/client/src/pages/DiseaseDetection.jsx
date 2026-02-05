@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Bug, AlertCircle, CheckCircle, Loader2, MessageCircle, ExternalLink } from 'lucide-react';
 import ImageUpload from '../components/disease/ImageUpload';
 import DetectionResults from '../components/disease/DetectionResults';
@@ -8,6 +9,7 @@ import '../styles/disease-detection.css';
 import '../styles/pages.css';
 
 const DiseaseDetection = () => {
+    const { t } = useTranslation(['pages', 'common']);
     const [activeTab, setActiveTab] = useState('detect');
     const [selectedImage, setSelectedImage] = useState(null);
     const [cropType, setCropType] = useState('Rice');
@@ -101,10 +103,10 @@ const DiseaseDetection = () => {
                 <div className="text-center mb-8">
                     <h1 className="page-header-title">
                         <Bug className="inline-block w-8 h-8 mr-3 text-green-600" />
-                        Disease Detection
+                        {t('diseaseDetection.title')}
                     </h1>
                     <p className="page-header-subtitle">
-                        Upload crop images to detect diseases and get treatment recommendations
+                        {t('diseaseDetection.subtitle')}
                     </p>
                 </div>
 

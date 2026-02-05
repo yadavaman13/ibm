@@ -1,8 +1,21 @@
 {
-  "home": "முகப்பு",
-  "dashboard": "டாஷ்போர்டு",
-  "yield_prediction": "விளைச்சல் முன்னறிவிப்பு",
-  "disease_detection": "நோய் கண்டறிதல்",
-  "soil_analysis": "மண் பகுப்பாய்வு",
-  "gap_analysis": "இடைவெளி பகுப்பாய்வு"
+  "brand": {
+    "name": "பசல்மித்ரா",
+    "tagline": "ஸ்மார்ட் வேளாண் துணைவர்"
+  },
+  "home": "வீடு",
+  "yieldPrediction": "விளைச்சல் முன்னறிவிப்பு",
+  "soilAnalysis": "மண் பகுப்பாய்வு",
+  "diseaseDetection": "நோய் கண்டறிவு",
+  "yieldGapAnalysis": "விளைச்சல் இடைவெளி பகுப்பாய்வு",
+  "auth": {
+    "login": "உள்நுழைவு",
+    "signup": "அங்கத்தவமாகவும்"
+  },
+  "user": {
+    "welcome": "வணக்கம்",
+    "profile": "என் சுயவிவரம்",
+    "preferences": "முன்னுரிமைகள்",
+    "notifications": "அறிவித்தல்கள்"
+  }
 }

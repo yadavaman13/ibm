@@ -1,6 +1,8 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 export const WeatherStats = ({ currentWeather, airQuality, weatherData }) => {
+  const { t } = useTranslation('common');
   // Handle both old prop structure and new weatherData structure
   const data = weatherData || currentWeather;
   
@@ -12,12 +14,12 @@ export const WeatherStats = ({ currentWeather, airQuality, weatherData }) => {
 
   const formatAirQuality = (aq) => {
     if (weatherData?.airQuality) {
-      return `${weatherData.airQuality.aqi || 103} ${weatherData.airQuality.level || 'Moderate'}`;
+      return `${weatherData.airQuality.aqi || 103} ${weatherData.airQuality.level || t('weather.moderate')}`;
     }
     if (airQuality) {
-      return `${airQuality.aqi || 103} ${airQuality.category || 'Moderate'}`;
+      return `${airQuality.aqi || 103} ${airQuality.category || t('weather.moderate')}`;
     }
-    return '103 Moderate';
+    return `103 ${t('weather.moderate')}`;
   };
 
   const getPrecipitation = () => {
@@ -53,7 +55,7 @@ export const WeatherStats = ({ currentWeather, airQuality, weatherData }) => {
           />
         </div>
         <p className="weather-stat-value">{getPrecipitation()}</p>
-        <p className="weather-stat-label">Precipitation</p>
+        <p className="weather-stat-label">{t('weather.precipitation')}</p>
       </div>
 
       <div className="weather-stat-item">
@@ -68,7 +70,7 @@ export const WeatherStats = ({ currentWeather, airQuality, weatherData }) => {
           />
         </div>
         <p className="weather-stat-value">{getWindSpeed()}</p>
-        <p className="weather-stat-label">Wind Speed</p>
+        <p className="weather-stat-label">{t('weather.windSpeed')}</p>
       </div>
 
       <div className="weather-stat-item">
@@ -83,7 +85,7 @@ export const WeatherStats = ({ currentWeather, airQuality, weatherData }) => {
           />
         </div>
         <p className="weather-stat-value">{getHumidity()}</p>
-        <p className="weather-stat-label">Humidity</p>
+        <p className="weather-stat-label">{t('weather.humidity')}</p>
       </div>
 
       <div className="weather-stat-item">
@@ -98,7 +100,7 @@ export const WeatherStats = ({ currentWeather, airQuality, weatherData }) => {
           />
         </div>
         <p className="weather-stat-value weather-stat-moderate">{formatAirQuality()}</p>
-        <p className="weather-stat-label">Air Quality</p>
+        <p className="weather-stat-label">{t('weather.airQuality')}</p>
       </div>
     </div>
   );
