@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MapPin, RefreshCw } from 'lucide-react';
+import { MapPin, RefreshCw, Info } from 'lucide-react';
 import { 
     getCurrentWeather, 
     getWeeklyForecast, 
@@ -20,6 +20,8 @@ const WeatherWidget = () => {
     const [error, setError] = useState(null);
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [lastUpdated, setLastUpdated] = useState(null);
+    const [isUsingGeolocation, setIsUsingGeolocation] = useState(false);
+    const [locationReady, setLocationReady] = useState(false);
 
     // Fetch weather data from API
     const fetchWeatherDataFromAPI = async () => {
@@ -81,10 +83,64 @@ const WeatherWidget = () => {
         setIsRefreshing(false);
     };
 
-    // Fetch data on component mount and location change
+    // Get user's geolocation on component mount
     useEffect(() => {
-        fetchWeatherData(); // Will check cache first
-    }, [location]);
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                // Success callback
+                async (position) => {
+                    const { latitude, longitude, accuracy } = position.coords;
+                    console.log('📍 Geolocation coordinates:', { latitude, longitude, accuracy: accuracy + 'm' });
+                    try {
+                        // Use reverse geocoding to get city name from coordinates
+                        const response = await fetch(
+                            `https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${import.meta.env.VITE_OPENWEATHER_API_KEY}`
+                        );
+                        const data = await response.json();
+                        
+                        if (data && data.length > 0) {
+                            console.log('🏙️ Detected city:', data[0].name, ',', data[0].country);
+                            setIsUsingGeolocation(true);
+                            setLocation({
+                                city: data[0].name,
+                                country: data[0].country,
+                                lat: latitude,
+                                lon: longitude
+                            });
+                        } else {
+                            console.log('⚠️ No city found for coordinates, using default');
+                        }
+                    } catch (err) {
+                        console.log('Reverse geocoding failed, using default location');
+                    } finally {
+                        setLocationReady(true);
+                    }
+                },
+                // Error callback
+                (error) => {
+                    console.log('Geolocation error:', error.message);
+                    // Keep default location (Ahmedabad)
+                    setLocationReady(true);
+                },
+                // Options
+                {
+                    enableHighAccuracy: true,  // Use GPS for precise location
+                    timeout: 10000,            // 10 seconds (GPS needs more time)
+                    maximumAge: 0              // Don't use cached position, get fresh location
+                }
+            );
+        } else {
+            // Browser doesn't support geolocation
+            setLocationReady(true);
+        }
+    }, []);
+
+    // Fetch data only after location is determined
+    useEffect(() => {
+        if (locationReady) {
+            fetchWeatherData(); // Will check cache first
+        }
+    }, [location, locationReady]);
 
     // Format last updated time
     const getLastUpdatedText = () => {
@@ -174,6 +230,12 @@ const WeatherWidget = () => {
                                 <MapPin className="weather-location-icon" />
                                 {location.city}, {location.country}
                             </span>
+                            {!isUsingGeolocation && locationReady && (
+                                <div className="location-permission-info">
+                                    <Info className="info-icon" size={14} />
+                                    <span>Allow location to see your weather</span>
+                                </div>
+                            )}
                         </div>
                         <p className="weather-datetime">{getFormattedDateTime()}</p>
                         <p className="weather-condition">
