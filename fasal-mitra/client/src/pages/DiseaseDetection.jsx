@@ -130,19 +130,22 @@ const DiseaseDetection = () => {
                         className={`tab-button ${activeTab === 'detect' ? 'tab-active' : ''}`}
                         onClick={() => setActiveTab('detect')}
                     >
-                        🔬 Disease Detection
+                        <Bug className="tab-icon" />
+                        Disease Detection
                     </button>
                     <button
                         className={`tab-button ${activeTab === 'database' ? 'tab-active' : ''}`}
                         onClick={() => setActiveTab('database')}
                     >
-                        📚 Disease Database
+                        <AlertCircle className="tab-icon" />
+                        Disease Database
                     </button>
                     <button
                         className={`tab-button ${activeTab === 'aiagent' ? 'tab-active' : ''}`}
                         onClick={() => setActiveTab('aiagent')}
                     >
-                        🤖 AI Agent
+                        <MessageCircle className="tab-icon" />
+                        AI Agent
                     </button>
                 </div>
 
@@ -197,16 +200,21 @@ const DiseaseDetection = () => {
                     </div>
                 ) : activeTab === 'detect' ? (
                     <div className="disease-detection-content">
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                            {/* Left Column - Input Section */}
-                            <div className="detection-input-section">
+                        <div className="detection-layout">
+                            {/* Left Column - Image Upload (50%) */}
+                            <div className="detection-image-section">
                                 <div className="input-card">
                                     <h2 className="section-title">Upload Image</h2>
                                     <ImageUpload
                                         onImageSelect={handleImageSelect}
                                         selectedImage={selectedImage}
                                     />
+                                </div>
+                            </div>
 
+                            {/* Right Column - Form Inputs (50%) */}
+                            <div className="detection-form-section">
+                                <div className="input-card">
                                     {/* Crop Selection */}
                                     <div className="form-group">
                                         <label className="form-label">
@@ -276,32 +284,32 @@ const DiseaseDetection = () => {
                                     )}
                                 </div>
                             </div>
+                        </div>
 
-                            {/* Right Column - Results Section */}
-                            <div className="detection-results-section">
-                                {detectionResult ? (
-                                    <div className="space-y-6">
-                                        <DetectionResults result={detectionResult} />
-                                        <TreatmentPlan 
-                                            treatmentPlan={detectionResult.treatment_plan}
-                                            severity={detectionResult.estimated_severity}
-                                            recommendations={detectionResult.recommendations}
-                                        />
+                        {/* Results Section - Full Width Below */}
+                        <div className="detection-results-section">
+                            {detectionResult ? (
+                                <div className="space-y-6">
+                                    <DetectionResults result={detectionResult} />
+                                    <TreatmentPlan 
+                                        treatmentPlan={detectionResult.treatment_plan}
+                                        severity={detectionResult.estimated_severity}
+                                        recommendations={detectionResult.recommendations}
+                                    />
+                                </div>
+                            ) : (
+                                <div className="results-placeholder">
+                                    <div className="placeholder-icon">
+                                        <Bug className="w-16 h-16 text-gray-300" />
                                     </div>
-                                ) : (
-                                    <div className="results-placeholder">
-                                        <div className="placeholder-icon">
-                                            <Bug className="w-16 h-16 text-gray-300" />
-                                        </div>
-                                        <h3 className="text-lg font-medium text-gray-500 mb-2">
-                                            No Detection Yet
-                                        </h3>
-                                        <p className="text-gray-400 text-center">
-                                            Upload an image and click "Detect Disease" to see results here
-                                        </p>
-                                    </div>
-                                )}
-                            </div>
+                                    <h3 className="text-lg font-medium text-gray-500 mb-2">
+                                        No Detection Yet
+                                    </h3>
+                                    <p className="text-gray-400 text-center">
+                                        Upload an image and click "Detect Disease" to see results here
+                                    </p>
+                                </div>
+                            )}
                         </div>
                     </div>
                 ) : (

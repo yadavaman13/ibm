@@ -7,7 +7,6 @@
 }
 
 .weather-widget-container {
-    max-width: 72rem;
     margin: 0 auto;
     padding: 0 1rem;
     width: 100%;
@@ -147,7 +146,7 @@
 
 .weather-location-icon {
     width: 1rem;
-    height: 1.5rem;
+    height: 1rem;
 }
 
 .location-permission-info {
@@ -245,7 +244,6 @@
 }
 
 /* Forecast Card (Left Bottom) */
-
 .weather-forecast-card {
     background: white;
     border: 1px solid var(--color-border);
@@ -271,6 +269,7 @@
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
 }
+
 .weather-forecast-7days::-webkit-scrollbar {
     display: none;
 }
@@ -286,25 +285,30 @@
     flex-shrink: 0;
     transition: background 0.2s;
 }
+
 .weather-forecast-day-active {
     background: var(--color-primary-light);
 }
+
 .weather-forecast-day-label {
     font-size: 1rem;
     font-weight: 500;
     color: var(--color-text-primary);
     margin-bottom: 0.25rem;
 }
+
 .weather-forecast-day-icon {
     font-size: 2.2rem;
     margin-bottom: 0.25rem;
 }
+
 .weather-forecast-day-temps {
     font-size: 1rem;
     color: var(--color-text-primary);
     display: flex;
     gap: 0.15rem;
 }
+
 .weather-forecast-day-sep {
     color: var(--color-text-secondary);
     margin: 0 0.1rem;
@@ -401,6 +405,7 @@
 @media (max-width: 639px) {
     .weather-widget {
         padding: 0;
+        background: white;
         max-width: 100%;
     }
 
@@ -452,6 +457,8 @@
 
     .weather-location-row {
         justify-content: center;
+        flex-direction: column;
+        gap: 0.5rem;
     }
 
     .weather-condition {
@@ -485,6 +492,7 @@
         min-height: 140px;
         padding: 1.25rem 0.75rem;
         border-radius: 0.75rem;
+        margin-bottom: 1rem;
     }
 
     .weather-forecast-7days {
@@ -529,4 +537,3 @@
         font-size: 0.9375rem;
     }
 }
-

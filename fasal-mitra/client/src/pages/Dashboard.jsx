@@ -87,25 +87,23 @@ const Dashboard = () => {
             </div>
 
             {/* Stats Section */}
-            <div className="bg-white">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-                        <div>
-                            <div className="dashboard-stats-value">55+</div>
-                            <div className="dashboard-stats-label">{t('dashboard.stats.cropsSupported')}</div>
-                        </div>
-                        <div>
-                            <div className="dashboard-stats-value">30+</div>
-                            <div className="dashboard-stats-label">{t('dashboard.stats.statesCovered')}</div>
-                        </div>
-                        <div>
-                            <div className="dashboard-stats-value">97.5%</div>
-                            <div className="dashboard-stats-label">{t('dashboard.stats.mlAccuracy')}</div>
-                        </div>
-                        <div>
-                            <div className="dashboard-stats-value">24/7</div>
-                            <div className="dashboard-stats-label">{t('dashboard.stats.aiSupport')}</div>
-                        </div>
+            <div className="dashboard-stats-section">
+                <div className="dashboard-stats-row">
+                    <div className="dashboard-stat">
+                        <div className="dashboard-stats-value">55+</div>
+                        <div className="dashboard-stats-label">{t('dashboard.stats.cropsSupported')}</div>
+                    </div>
+                    <div className="dashboard-stat">
+                        <div className="dashboard-stats-value">30+</div>
+                        <div className="dashboard-stats-label">{t('dashboard.stats.statesCovered')}</div>
+                    </div>
+                    <div className="dashboard-stat">
+                        <div className="dashboard-stats-value">97.5%</div>
+                        <div className="dashboard-stats-label">{t('dashboard.stats.mlAccuracy')}</div>
+                    </div>
+                    <div className="dashboard-stat">
+                        <div className="dashboard-stats-value">24/7</div>
+                        <div className="dashboard-stats-label">{t('dashboard.stats.aiSupport')}</div>
                     </div>
                 </div>
             </div>

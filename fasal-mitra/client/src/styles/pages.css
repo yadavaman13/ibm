@@ -2,6 +2,7 @@
 .page-container {
     min-height: 100vh;
     background-color: #fcfcff;
+    padding-top: 1rem;
 }
 
 .page-header-title {
