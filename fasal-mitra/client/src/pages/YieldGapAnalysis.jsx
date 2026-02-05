@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { TrendingUp, AlertCircle, Target, BarChart3, Award, Lightbulb, ArrowUp, ArrowDown, Minus } from 'lucide-react';
 import '../styles/yield-gap-analysis.css';
 import { analyzeYieldGap, getCrops, getStates, getSeasons } from '../services/gapAnalysisService';
 
 const YieldGapAnalysis = () => {
+    const { t } = useTranslation(['pages', 'common']);
     const [analysisMode, setAnalysisMode] = useState('post-harvest'); // 'post-harvest' or 'pre-harvest'
     const [formData, setFormData] = useState({
         crop: '',
@@ -116,8 +118,8 @@ const YieldGapAnalysis = () => {
             <div className="page-header">
                 <TrendingUp className="page-header-icon" />
                 <div>
-                    <h1 className="page-header-title">Yield Gap Analysis</h1>
-                    <p className="page-header-subtitle">Compare your yield against regional benchmarks and top performers</p>
+                    <h1 className="page-header-title">{t('yieldGapAnalysis.title')}</h1>
+                    <p className="page-header-subtitle">{t('yieldGapAnalysis.subtitle')}</p>
                 </div>
             </div>
 
@@ -129,8 +131,8 @@ const YieldGapAnalysis = () => {
                 >
                     <Award className="mode-icon" />
                     <div className="mode-content">
-                        <span className="mode-title">Post-Harvest Analysis</span>
-                        <span className="mode-description">I know my actual yield</span>
+                        <span className="mode-title">{t('yieldGapAnalysis.postHarvest')}</span>
+                        <span className="mode-description">{t('yieldGapAnalysis.actualYieldKnown')}</span>
                     </div>
                 </button>
                 <button
@@ -139,8 +141,8 @@ const YieldGapAnalysis = () => {
                 >
                     <Target className="mode-icon" />
                     <div className="mode-content">
-                        <span className="mode-title">Pre-Harvest Planning</span>
-                        <span className="mode-description">Predict and plan ahead</span>
+                        <span className="mode-title">{t('yieldGapAnalysis.preHarvest')}</span>
+                        <span className="mode-description">{t('yieldGapAnalysis.predictAndPlan')}</span>
                     </div>
                 </button>
             </div>
@@ -151,7 +153,7 @@ const YieldGapAnalysis = () => {
                     {/* Basic Information Row */}
                     <div className="form-row">
                         <div className="form-group">
-                            <label htmlFor="crop">Crop *</label>
+                            <label htmlFor="crop">{t('yieldGapAnalysis.crop')} *</label>
                             <select
                                 id="crop"
                                 name="crop"
@@ -159,15 +161,15 @@ const YieldGapAnalysis = () => {
                                 onChange={handleInputChange}
                                 required
                             >
-                                <option value="">Select Crop</option>
+                                <option value="">{t('pages:yieldGapAnalysis.selectCrop')}</option>
                                 {crops.map(crop => (
-                                    <option key={crop} value={crop}>{crop}</option>
+                                    <option key={crop} value={crop}>{t(`common:crops.${crop}`)}</option>
                                 ))}
                             </select>
                         </div>
 
                         <div className="form-group">
-                            <label htmlFor="state">State *</label>
+                            <label htmlFor="state">{t('yieldGapAnalysis.state')} *</label>
                             <select
                                 id="state"
                                 name="state"
@@ -175,24 +177,24 @@ const YieldGapAnalysis = () => {
                                 onChange={handleInputChange}
                                 required
                             >
-                                <option value="">Select State</option>
+                                <option value="">{t('pages:yieldGapAnalysis.selectState')}</option>
                                 {states.map(state => (
-                                    <option key={state} value={state}>{state}</option>
+                                    <option key={state} value={state}>{t(`common:states.${state}`)}</option>
                                 ))}
                             </select>
                         </div>
 
                         <div className="form-group">
-                            <label htmlFor="season">Season</label>
+                            <label htmlFor="season">{t('yieldGapAnalysis.season')}</label>
                             <select
                                 id="season"
                                 name="season"
                                 value={formData.season}
                                 onChange={handleInputChange}
                             >
-                                <option value="">Select Season (Optional)</option>
+                                <option value="">{t('pages:yieldGapAnalysis.selectSeason')}</option>
                                 {seasons.map(season => (
-                                    <option key={season} value={season}>{season}</option>
+                                    <option key={season} value={season}>{t(`common:seasons.${season}`)}</option>
                                 ))}
                             </select>
                         </div>
@@ -202,7 +204,7 @@ const YieldGapAnalysis = () => {
                     {analysisMode === 'post-harvest' ? (
                         <div className="form-row">
                             <div className="form-group full-width">
-                                <label htmlFor="actual_yield">Actual Yield (tons/hectare) *</label>
+                                <label htmlFor="actual_yield">{t('yieldGapAnalysis.actualYield')} *</label>
                                 <input
                                     type="number"
                                     id="actual_yield"
@@ -219,7 +221,7 @@ const YieldGapAnalysis = () => {
                     ) : (
                         <div className="form-row">
                             <div className="form-group">
-                                <label htmlFor="area">Area (hectares) *</label>
+                                <label htmlFor="area">{t('yieldGapAnalysis.area')} *</label>
                                 <input
                                     type="number"
                                     id="area"
@@ -234,7 +236,7 @@ const YieldGapAnalysis = () => {
                             </div>
 
                             <div className="form-group">
-                                <label htmlFor="fertilizer">Fertilizer (kg) *</label>
+                                <label htmlFor="fertilizer">{t('yieldGapAnalysis.fertilizer')} *</label>
                                 <input
                                     type="number"
                                     id="fertilizer"
@@ -249,7 +251,7 @@ const YieldGapAnalysis = () => {
                             </div>
 
                             <div className="form-group">
-                                <label htmlFor="pesticide">Pesticide (kg) *</label>
+                                <label htmlFor="pesticide">{t('yieldGapAnalysis.pesticide')} *</label>
                                 <input
                                     type="number"
                                     id="pesticide"
@@ -278,12 +280,12 @@ const YieldGapAnalysis = () => {
                         {loading ? (
                             <>
                                 <div className="spinner"></div>
-                                <span>Analyzing...</span>
+                                <span>{t('yieldGapAnalysis.analyzing')}</span>
                             </>
                         ) : (
                             <>
                                 <BarChart3 className="button-icon" />
-                                <span>Analyze Yield Gap</span>
+                                <span>{t('yieldGapAnalysis.analyzeYieldGap')}</span>
                             </>
                         )}
                     </button>

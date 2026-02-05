@@ -1,0 +1,124 @@
+{
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Your farming command center",
+    "farmTools": {
+      "title": "Farm Tools",
+      "subtitle": "Smart tools for better farming"
+    },
+    "stats": {
+      "cropsSupported": "Crops Supported",
+      "statesCovered": "States Covered",
+      "mlAccuracy": "ML Accuracy",
+      "aiSupport": "AI Support"
+    },
+    "hero": {
+      "title": "Smart Farming Made Simple",
+      "subtitle": "Get AI-powered insights for better crop management and higher yields"
+    },
+    "features": {
+      "title": "Features",
+      "cropYield": {
+        "title": "Crop Yield",
+        "description": "Predict how much your crops will produce this season using smart technology."
+      },
+      "soilCheck": {
+        "title": "Soil Check",
+        "description": "Test your soil and get recommendations for better crop growth."
+      },
+      "diseaseHelp": {
+        "title": "Disease Help",
+        "description": "Take crop photos to identify diseases and get treatment advice."
+      },
+      "yieldGapAnalysis": {
+        "title": "Yield Gap Analysis",
+        "description": "Compare your yield with benchmarks and discover opportunities for improvement."
+      },
+      "chatbot": {
+        "title": "AI Assistant",
+        "description": "Chat with our farming expert AI"
+      }
+    }
+  },
+  "yieldPrediction": {
+    "title": "Yield Prediction",
+    "subtitle": "Predict your crop yield based on farming inputs",
+    "comingSoon": "This feature will be implemented next",
+    "serverStatus": "Server Status",
+    "healthy": "Healthy",
+    "offline": "Offline",
+    "crop": "Crop",
+    "state": "State",
+    "season": "Season",
+    "area": "Area (Hectares)",
+    "fertilizer": "Fertilizer (kg/ha)",
+    "pesticide": "Pesticide (kg/ha)",
+    "predict": "Predict Yield",
+    "selectCrop": "Select a crop",
+    "selectState": "Select a state",
+    "selectSeason": "Select a season",
+    "farmDetails": "Farm Details",
+    "farmDetailsSubtitle": "Enter your farming parameters for prediction"
+  },
+  "diseaseDetection": {
+    "title": "Disease Detection",
+    "subtitle": "AI-powered crop disease identification",
+    "uploadImage": "Upload Image",
+    "takePhoto": "Take Photo",
+    "analyzing": "Analyzing image...",
+    "noDisease": "No disease detected",
+    "confidence": "Confidence",
+    "treatment": "Treatment",
+    "prevention": "Prevention",
+    "comingSoon": "This feature will be implemented soon"
+  },
+  "soilAnalysis": {
+    "title": "Soil Analysis",
+    "subtitle": "Comprehensive soil health assessment",
+    "selectLocationCrop": "Select Location & Crop",
+    "chooseStateAndCrop": "Choose your state and crop to analyze soil suitability",
+    "state": "State",
+    "crop": "Crop",
+    "selectState": "Select state...",
+    "selectCrop": "Select crop...",
+    "analyze": "Analyze Soil",
+    "nutrients": "Nutrients",
+    "ph": "pH Level",
+    "recommendations": "Recommendations",
+    "comingSoon": "This feature will be implemented soon"
+  },
+  "yieldGapAnalysis": {
+    "title": "Yield Gap Analysis",
+    "subtitle": "Compare your yield against regional benchmarks and top performers",
+    "mode": "Analysis Mode",
+    "postHarvest": "Post-Harvest Analysis",
+    "preHarvest": "Pre-Harvest Planning",
+    "actualYieldKnown": "I know my actual yield",
+    "predictAndPlan": "Predict and plan ahead",
+    "crop": "Crop",
+    "state": "State",
+    "season": "Season",
+    "selectCrop": "Select Crop",
+    "selectState": "Select State",
+    "selectSeason": "Select Season (Optional)",
+    "actualYield": "Actual Yield (tons/hectare)",
+    "area": "Area (hectares)",
+    "fertilizer": "Fertilizer (kg)",
+    "pesticide": "Pesticide (kg)",
+    "analyzing": "Analyzing...",
+    "analyzeYieldGap": "Analyze Yield Gap",
+    "benchmark": "Benchmark Yield",
+    "gap": "Yield Gap",
+    "improvement": "Improvement Potential",
+    "comingSoon": "This feature will be implemented soon"
+  },
+  "chatbot": {
+    "title": "AI Assistant",
+    "subtitle": "Chat with our AI-powered farming expert",
+    "comingSoon": "This feature will be implemented soon"
+  },
+  "common": {
+    "comingSoonTitle": "Coming Soon",
+    "comingSoonMessage": "This feature will be implemented soon"
+  }
+}

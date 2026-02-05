@@ -7,6 +7,7 @@ import YieldPrediction from './pages/YieldPrediction';
 import DiseaseDetection from './pages/DiseaseDetection';
 import SoilAnalysis from './pages/SoilAnalysis';
 import YieldGapAnalysis from './pages/YieldGapAnalysis';
+import './i18n'; // Initialize i18n
 import './styles/pages.css';
 
 const App = () => {

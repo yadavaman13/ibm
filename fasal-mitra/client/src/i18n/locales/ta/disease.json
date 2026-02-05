@@ -1,0 +1,8 @@
+{
+  "disease_detection": "நோய் கண்டறிதல்",
+  "upload_image": "படத்தை பதிவேற்றவும்",
+  "take_photo": "புகைப்படம் எடுக்கவும்",
+  "analyze": "பகுப்பாய்வு செய்யவும்",
+  "no_disease_detected": "எந்த நோயும் கண்டறியப்படவில்லை",
+  "treatment_recommendation": "சிகிச்சை பரிந்துரை"
+}

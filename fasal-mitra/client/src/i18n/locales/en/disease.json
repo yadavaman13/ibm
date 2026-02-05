@@ -1,0 +1,102 @@
+{
+  "title": "Disease Detection",
+  "subtitle": "Upload crop images to detect diseases and get treatment recommendations",
+  "tabs": {
+    "detect": "Disease Detection",
+    "database": "Disease Database"
+  },
+  "upload": {
+    "title": "Upload Image",
+    "dragDrop": "Click to upload or drag and drop",
+    "fileTypes": "JPG, PNG or WEBP (max. 10MB)",
+    "tips": {
+      "title": "Tips for best results:",
+      "lighting": "Ensure good lighting and clear focus",
+      "affected": "Show affected areas clearly",
+      "multiple": "Include multiple leaves if possible",
+      "shadows": "Avoid shadows and reflections"
+    },
+    "cameraHint": "Take a clear photo of affected leaves",
+    "changeImage": "Click to change image",
+    "removeImage": "Remove image"
+  },
+  "form": {
+    "cropType": "Crop Type",
+    "location": "Location (Optional)",
+    "locationPlaceholder": "e.g., Punjab, Maharashtra"
+  },
+  "actions": {
+    "detect": "Detect Disease",
+    "analyzing": "Analyzing...",
+    "reset": "Reset",
+    "savePlan": "Save Treatment Plan",
+    "shareExpert": "Share with Expert"
+  },
+  "results": {
+    "noDetection": "No Detection Yet",
+    "noDetectionMessage": "Upload an image and click \"Detect Disease\" to see results here",
+    "confidence": "Confidence",
+    "detectedAt": "Detected:",
+    "crop": "Crop:",
+    "location": "Location:"
+  },
+  "disease": {
+    "symptoms": "Symptoms",
+    "causes": "Causes",
+    "affects": "Commonly Affects",
+    "prevention": "Prevention"
+  },
+  "treatment": {
+    "title": "Treatment Plan",
+    "mild": "Mild Treatment Plan",
+    "moderate": "Moderate Treatment Plan",
+    "severe": "Severe Treatment Plan",
+    "cost": "Estimated Treatment Cost:",
+    "steps": "Treatment Steps",
+    "recommendations": "Additional Recommendations",
+    "urgency": {
+      "mild": "Monitor and take preventive action",
+      "moderate": "Start treatment within 2-3 days",
+      "severe": "Immediate treatment required!"
+    },
+    "urgencyDetails": {
+      "mild": "Disease is manageable with proper care",
+      "moderate": "Early intervention can prevent spread",
+      "severe": "Delay may cause significant crop loss"
+    }
+  },
+  "database": {
+    "title": "Disease Database",
+    "count": "diseases",
+    "search": "Search diseases...",
+    "filterAll": "All Crops",
+    "noResults": "No diseases found",
+    "noResultsMessage": "Try adjusting your search or filter criteria",
+    "showMore": "Show {{count}} more symptoms",
+    "showLess": "Show less"
+  },
+  "crops": {
+    "Rice": "Rice",
+    "Wheat": "Wheat",
+    "Cotton": "Cotton",
+    "Tomato": "Tomato",
+    "Potato": "Potato",
+    "Maize": "Maize",
+    "Sugarcane": "Sugarcane",
+    "Soybean": "Soybean",
+    "Barley": "Barley",
+    "Mustard": "Mustard",
+    "Groundnut": "Groundnut",
+    "Sunflower": "Sunflower"
+  },
+  "errors": {
+    "selectImage": "Please select an image first",
+    "invalidFile": "Please select a valid image file (JPG, PNG, WEBP)",
+    "detectionFailed": "Detection failed",
+    "networkError": "Failed to detect disease. Please try again.",
+    "fetchFailed": "Failed to fetch diseases"
+  },
+  "footer": {
+    "consultNote": "⚠️ Consult with local agricultural experts before applying treatments"
+  }
+}
