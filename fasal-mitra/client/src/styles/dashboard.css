@@ -2,6 +2,14 @@
 .dashboard-container {
     min-height: 100vh;
     background-color: var(--color-background);
+    width: 100%;
+    overflow-x: hidden;
+}
+
+@media (max-width: 640px) {
+    .dashboard-container {
+        padding-bottom: 0;
+    }
 }
 
 .dashboard-hero {

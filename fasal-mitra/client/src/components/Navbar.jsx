@@ -11,11 +11,11 @@ const Navbar = () => {
         { name: 'Yield Prediction', path: '/yield-prediction' },
         { name: 'Soil Analysis', path: '/soil-analysis' },
         { name: 'Disease Detection', path: '/disease-detection' },
-        { name: 'Gap Analysis', path: '/gap-analysis' },
+        { name: 'Yield Gap Analysis', path: '/gap-analysis' },
     ];
 
     return (
-        <nav className="navbar">
+        <nav className="navbar shadow-">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-16">
                     {/* Logo */}

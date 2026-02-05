@@ -27,7 +27,7 @@ const Dashboard = () => {
         },
         {
             icon: TrendingUp,
-            title: 'Gap Analysis',
+            title: 'Yield Gap Analysis',
             description: 'Compare your yield with benchmarks and discover opportunities for improvement.',
             path: '/gap-analysis',
         },
