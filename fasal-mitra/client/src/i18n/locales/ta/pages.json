@@ -54,7 +54,18 @@
     "selectState": "மாநிலத்தைத் தேர்ந்தெடுக்கவும்",
     "selectSeason": "பருவத்தைத் தேர்ந்தெடுக்கவும்",
     "farmDetails": "பண்ணை விவரங்கள்",
-    "farmDetailsSubtitle": "முன்னறிவிப்புக்காக உங்கள் விவசாய அளவுருக்களை உள்ளிடவும்"
+    "farmDetailsSubtitle": "முன்னறிவிப்புக்காக உங்கள் விவசாய அளவுருக்களை உள்ளிடவும்",
+    "cropType": "பயிர் வகை",
+    "seasonLabel": "பருவம்",
+    "cultivatedArea": "சாகுபடி பரப்பு (ஹெக்டேர்)",
+    "cultivatedAreaPlaceholder": "எ.கா., 100",
+    "fertilizerLabel": "உரம் (கிலோ/ஹெக்டேர்)",
+    "fertilizerPlaceholder": "எ.கா., 25000",
+    "pesticideLabel": "பூச்சிக்கொல்லி (கிலோ/ஹெக்டேர்)",
+    "pesticidePlaceholder": "எ.கா., 500",
+    "predicting": "முன்னறிவிக்கிறது...",
+    "askAI": "AIயிடம் கேளுங்கள்",
+    "serverNotRunning": "பின்புல சர்வர் இயங்கவில்லை. தயவுசெய்து http://localhost:8000 இல் சர்வரை தொடங்கவும்"
   },
   "weather": {
     "title": "வானிலை முன்னறிவிப்பு",
@@ -70,7 +81,9 @@
     "noDisease": "நோய் எதுவும் கண்டறியப்படவில்லை",
     "confidence": "நம்பிக்கை அளவு",
     "treatment": "சிகிச்சை",
-    "prevention": "தடுப்பு"
+    "prevention": "தடுப்பு",
+    "pleaseSelectImage": "தயவுசெய்து முதலில் படத்தைத் தேர்ந்தெடுக்கவும்",
+    "locationPlaceholder": "எ.கா., பஞ்சாப், மகாராஷ்ட்ரா"
   },
   "soilAnalysis": {
     "title": "மண் பகுப்பாய்வு",
@@ -85,7 +98,36 @@
     "analyze": "பகுப்பாய்வு செய்யுங்கள்",
     "nutrients": "ஊட்டச்சத்துகள்",
     "ph": "pH அளவு",
-    "recommendations": "பரிந்துரைகள்"
+    "recommendations": "பரிந்துரைகள்",
+
+    "results": {
+      "soilHealthReport": "மண் ஆரோக்கிய அறிக்கை",
+      "yourSoilNutrients": "உங்கள் மண் ஊட்டச்சத்து பகுப்பாய்வு",
+      "nitrogen": "நைட்ரஜன் (N)",
+      "phosphorus": "பாஸ்பரஸ் (P)",
+      "potassium": "பொட்டாசியம் (K)",
+      "forGreenGrowth": "பசுமை வளர்ச்சிக்கு",
+      "forRootStrength": "வேர் வலிமைக்கு",
+      "forDiseaseResistance": "நோய் எதிர்ப்பிற்கு",
+      "good": "நல்லது",
+      "fair": "சராசரி",
+      "low": "குறைவு",
+      "cropSuitability": "பயிர் பொருத்தம்",
+      "howSuitableIs": "உங்கள் மண் எவ்வளவு பொருத்தமானது",
+      "excellent": "சிறந்தது",
+      "poor": "மோசம்",
+      "cultivationIs": "சாகுபடி",
+      "in": "இல்",
+      "considerSoilTreatment": "மண் சிகிச்சையைக் கருத்தில் கொள்ளுங்கள் அல்லது கீழே பரிந்துரைக்கப்பட்ட பயிர்களைத் தேர்ந்தெடுக்கவும்",
+      "soilAmendmentsMayImprove": "மண் மேம்பாடுகள் பயிர் விளைச்சலை மேம்படுத்தலாம்",
+      "goodConditions": "ஆரோக்கியமான பயிர் வளர்ச்சிக்கான நல்ல நிலைமைகள்",
+      "excellentConditions": "அதிகபட்ச விளைச்சலுக்கான சிறந்த நிலைமைகள்",
+      "irrigationAnalysis": "நீர்ப்பாசன பகுப்பாய்வு",
+      "cropsGrowWell": "உங்கள் மண் நிலைமைகளில் நன்கு வளரும் பயிர்கள்",
+      "bestCropsFor": "க்கான சிறந்த பயிர்கள்",
+      "nitrogenBonus": "நைட்ரஜன் போனஸ் கிடைக்கும்",
+      "waterQualityAlert": "நீர் தரம் விளைச்சலை பாதிக்கலாம்"
+    }
   },
   "yieldGapAnalysis": {
     "title": "விளைச்சல் இடைவெளி பகுப்பாய்வு",
@@ -110,7 +152,11 @@
     "analyzeYieldGap": "விளைச்சல் இடைவெளி பகுப்பாய்வு செய்யுங்கள்",
     "benchmark": "அளவுகோல்",
     "gap": "இடைவெளி",
-    "improvement": "மேம்பாட்டுக்கான சாத்தியம்"
+    "improvement": "மேம்பாட்டு சாத்தியம்",
+    "actualYieldPlaceholder": "எ.கா., 2.5",
+    "areaPlaceholder": "எ.கா., 50",
+    "fertilizerPlaceholder": "எ.கா., 20000",
+    "pesticidePlaceholder": "எ.கா., 300"
   },
   "gapAnalysis": {
     "title": "இடைவெளி பகுப்பாய்வு",
