@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { MapPin, RefreshCw, Info } from 'lucide-react';
+import { MapPin, RefreshCw, Info, Navigation, Loader, AlertCircle, Trash2 } from 'lucide-react';
 import { 
     getCurrentWeather, 
     getWeeklyForecast, 
     getAirQuality,
     getCachedWeather,
     setCachedWeather,
-    getCacheAge
+    getCacheAge,
+    clearWeatherCache
 } from '../services/weatherService';
 import '../styles/weather-widget.css';
 
@@ -23,7 +24,9 @@ const WeatherWidget = () => {
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [lastUpdated, setLastUpdated] = useState(null);
     const [isUsingGeolocation, setIsUsingGeolocation] = useState(false);
-    const [locationReady, setLocationReady] = useState(false);
+    const [locationReady, setLocationReady] = useState(true);
+    const [locationLoading, setLocationLoading] = useState(false);
+    const [locationError, setLocationError] = useState('');
 
     // Fetch weather data from API
     const fetchWeatherDataFromAPI = async () => {
@@ -44,7 +47,7 @@ const WeatherWidget = () => {
             
             return true;
         } catch (err) {
-            console.error('Error fetching weather data:', err);
+            console.error('❌ Error fetching weather data');
             setError('Unable to fetch weather data');
             return false;
         }
@@ -59,7 +62,6 @@ const WeatherWidget = () => {
         if (!forceRefresh) {
             const cached = getCachedWeather();
             if (cached) {
-                console.log('✅ Using cached weather data (age: ' + getCacheAge() + ' mins)');
                 setCurrentWeather(cached.current);
                 setWeeklyForecast(cached.forecast);
                 setLastUpdated(cached.timestamp);
@@ -73,7 +75,6 @@ const WeatherWidget = () => {
         }
         
         // No cache or force refresh - fetch from API
-        console.log(forceRefresh ? '🔄 Force refresh from API' : '📡 No cache found, fetching from API');
         await fetchWeatherDataFromAPI();
         setLoading(false);
     };
@@ -85,64 +86,93 @@ const WeatherWidget = () => {
         setIsRefreshing(false);
     };
 
-    // Get user's geolocation on component mount
-    useEffect(() => {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                // Success callback
-                async (position) => {
-                    const { latitude, longitude, accuracy } = position.coords;
-                    console.log('📍 Geolocation coordinates:', { latitude, longitude, accuracy: accuracy + 'm' });
-                    try {
-                        // Use reverse geocoding to get city name from coordinates
-                        const response = await fetch(
-                            `https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${import.meta.env.VITE_OPENWEATHER_API_KEY}`
-                        );
-                        const data = await response.json();
-                        
-                        if (data && data.length > 0) {
-                            console.log('🏙️ Detected city:', data[0].name, ',', data[0].country);
-                            setIsUsingGeolocation(true);
-                            setLocation({
-                                city: data[0].name,
-                                country: data[0].country,
-                                lat: latitude,
-                                lon: longitude
-                            });
-                        } else {
-                            console.log('⚠️ No city found for coordinates, using default');
-                        }
-                    } catch (err) {
-                        console.log('Reverse geocoding failed, using default location');
-                    } finally {
-                        setLocationReady(true);
-                    }
-                },
-                // Error callback
-                (error) => {
-                    console.log('Geolocation error:', error.message);
-                    // Keep default location (Ahmedabad)
-                    setLocationReady(true);
-                },
-                // Options
-                {
-                    enableHighAccuracy: true,  // Use GPS for precise location
-                    timeout: 10000,            // 10 seconds (GPS needs more time)
-                    maximumAge: 0              // Don't use cached position, get fresh location
-                }
-            );
-        } else {
-            // Browser doesn't support geolocation
-            setLocationReady(true);
+    // Clear cache and fetch fresh data
+    const handleClearCache = async () => {
+        clearWeatherCache();
+        setIsRefreshing(true);
+        await fetchWeatherData(true);
+        setIsRefreshing(false);
+    };
+
+    // Manual location detection (triggered by user)
+    const requestLocation = () => {
+        if (!navigator.geolocation) {
+            setLocationError('Geolocation not supported by your browser');
+            return;
         }
+
+        setLocationLoading(true);
+        setLocationError('');
+
+        navigator.geolocation.getCurrentPosition(
+            // Success callback
+            async (position) => {
+                const { latitude, longitude } = position.coords;
+                try {
+                    // Use reverse geocoding to get city name from coordinates
+                    const response = await fetch(
+                        `https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${import.meta.env.VITE_OPENWEATHER_API_KEY}`
+                    );
+                    const data = await response.json();
+                    
+                    if (data && data.length > 0) {
+                        setIsUsingGeolocation(true);
+                        setLocation({
+                            city: data[0].name,
+                            country: data[0].country,
+                            lat: latitude,
+                            lon: longitude
+                        });
+                        setLocationError('');
+                    } else {
+                        setLocationError('Could not determine city from your location');
+                    }
+                } catch (err) {
+                    setLocationError('Failed to get location name');
+                } finally {
+                    setLocationLoading(false);
+                }
+            },
+            // Error callback
+            (error) => {
+                let errorMsg = 'Unable to detect your location';
+                
+                switch(error.code) {
+                    case error.PERMISSION_DENIED:
+                        errorMsg = 'Location permission denied';
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        errorMsg = 'Location information unavailable';
+                        break;
+                    case error.TIMEOUT:
+                        errorMsg = 'Location request timed out';
+                        break;
+                }
+                
+                setLocationError(errorMsg);
+                setLocationLoading(false);
+            },
+            // Options
+            {
+                enableHighAccuracy: true,  // Use GPS for precise location
+                timeout: 10000,            // 10 seconds (GPS needs more time)
+                maximumAge: 0              // Don't use cached position, get fresh location
+            }
+        );
+    };
+
+    // Initialize with default location on mount
+    useEffect(() => {
+        // Start with default location immediately
+        fetchWeatherData();
     }, []);
 
-    // Fetch data only after location is determined
+    // Fetch data when location changes (user selects new location)
     useEffect(() => {
-        if (locationReady) {
-            fetchWeatherData(); // Will check cache first
+        if (isUsingGeolocation && location.lat && location.lon) {
+            fetchWeatherData(true); // Force refresh with new location
         }
-    }, [location, locationReady]);
+    }, [location.city, location.country]);
 
     // Format last updated time
     const getLastUpdatedText = () => {
@@ -223,27 +253,50 @@ const WeatherWidget = () => {
                     <div className="weather-main-right">
                         <div className="weather-title-row">
                             <h2 className="weather-title">Weather</h2>
-                            <button 
-                                className="weather-refresh-btn"
-                                onClick={handleRefresh}
-                                disabled={isRefreshing}
-                                title="Refresh weather data"
-                            >
-                                <RefreshCw className={`weather-refresh-icon ${isRefreshing ? 'weather-refresh-spinning' : ''}`} />
-                            </button>
+                            <div className="weather-actions">
+                                <button 
+                                    className="weather-location-btn"
+                                    onClick={requestLocation}
+                                    disabled={locationLoading}
+                                    title="Use my location"
+                                >
+                                    {locationLoading ? (
+                                        <Loader className="weather-location-icon weather-refresh-spinning" size={16} />
+                                    ) : (
+                                        <Navigation className="weather-location-icon" size={16} />
+                                    )}
+                                </button>
+                                <button 
+                                    className="weather-refresh-btn"
+                                    onClick={handleRefresh}
+                                    disabled={isRefreshing}
+                                    title="Refresh weather data"
+                                >
+                                    <RefreshCw className={`weather-refresh-icon ${isRefreshing ? 'weather-refresh-spinning' : ''}`} />
+                                </button>
+                                <button 
+                                    className="weather-refresh-btn"
+                                    onClick={handleClearCache}
+                                    disabled={isRefreshing}
+                                    title="Clear cache and reload"
+                                >
+                                    <Trash2 className="weather-refresh-icon" size={16} />
+                                </button>
+                            </div>
                         </div>
                         <div className="weather-location-row">
                             <span className="weather-location">
                                 <MapPin className="weather-location-icon" />
                                 {location.city}, {location.country}
+                                {isUsingGeolocation && <span className="location-badge">📍</span>}
                             </span>
-                            {!isUsingGeolocation && locationReady && (
-                                <div className="location-permission-info">
-                                    <Info className="info-icon" size={14} />
-                                    <span>Allow location to see your weather</span>
-                                </div>
-                            )}
                         </div>
+                        {locationError && (
+                            <div className="weather-location-error">
+                                <AlertCircle className="error-icon" size={14} />
+                                <span>{locationError}</span>
+                            </div>
+                        )}
                         <p className="weather-datetime">{getFormattedDateTime()}</p>
                         <p className="weather-condition">
                             {currentWeather?.condition ? t(`conditions.${currentWeather.condition}`, currentWeather.condition) : t('loading')}
@@ -284,7 +337,7 @@ const WeatherWidget = () => {
                         <div className="weather-details-grid">
                             <div className="weather-detail-box">
                                 <span className="weather-detail-label">precipitation</span>
-                                <span className="weather-detail-value">{currentWeather?.clouds || 0}%</span>
+                                <span className="weather-detail-value">{currentWeather?.precipitation || 0} mm</span>
                             </div>
                             <div className="weather-detail-box">
                                 <span className="weather-detail-label">wind speed</span>

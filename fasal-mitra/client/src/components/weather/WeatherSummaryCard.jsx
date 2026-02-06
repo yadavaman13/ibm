@@ -1,10 +1,11 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { MapPin, RefreshCw, Cloud, Sun, CloudRain, Snowflake, Zap, CloudDrizzle } from 'lucide-react';
+import { MapPin, RefreshCw, Cloud, Sun, CloudRain, Snowflake, Zap, CloudDrizzle, Navigation, Loader, AlertCircle } from 'lucide-react';
 import { WeatherStats } from './WeatherStats';
 
 const WeatherSummaryCard = ({ 
-  currentWeather, 
+  currentWeather,
+  airQuality,
   location, 
   isCelsius, 
   onToggleUnit, 
@@ -12,7 +13,14 @@ const WeatherSummaryCard = ({
   isRefreshing, 
   lastUpdated,
   getLastUpdatedText,
-  getUpdateStatusClass 
+  getUpdateStatusClass,
+  isUsingGeolocation,
+  locationLoading,
+  locationError,
+  onRequestLocation,
+  permissionState,
+  loading,
+  selectedDayIndex
 }) => {
   const { t } = useTranslation('common');
   const currentTemp = isCelsius ? currentWeather?.temp : currentWeather?.tempF;
@@ -43,7 +51,23 @@ const WeatherSummaryCard = ({
   };
 
   const getFormattedDateTime = () => {
-    if (!currentWeather?.timestamp) return t('loading');
+    // If showing forecast day, show that day's date
+    if (selectedDayIndex !== null && currentWeather?.timestamp) {
+      const date = new Date(currentWeather.timestamp);
+      const dayName = date.toLocaleString('en-US', { weekday: 'long' });
+      const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      const translatedDay = t(`days.${dayName}`, dayName);
+      return `${translatedDay}, ${dateStr}`;
+    }
+    
+    // Current weather - show time
+    if (!currentWeather?.timestamp) {
+      const date = new Date();
+      const dayName = date.toLocaleString('en-US', { weekday: 'long' });
+      const time = date.toLocaleString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+      const translatedDay = t(`days.${dayName}`, dayName);
+      return `${translatedDay} ${time}`;
+    }
     
     const date = new Date(currentWeather.timestamp);
     const dayName = date.toLocaleString('en-US', { weekday: 'long' });
@@ -59,15 +83,19 @@ const WeatherSummaryCard = ({
   const weatherData = currentWeather ? {
     main: {
       humidity: currentWeather.humidity,
-      // Convert precipitation from mm to percentage for display
-      precipitation: currentWeather.precipitation ? Math.min(100, Math.round(currentWeather.precipitation * 10)) : 0
+      // Keep precipitation in mm (actual rainfall amount)
+      precipitation: currentWeather.precipitation
     },
     wind: {
       speed: currentWeather.windSpeed
     },
-    // Add air quality data if available
-    airQuality: currentWeather.airQuality || { aqi: 103, level: 'Moderate' }
+    // Pass actual air quality data from parent
+    airQuality: airQuality
   } : null;
+  
+  console.log('💨 WeatherSummaryCard passing to WeatherStats:');
+  console.log('  - airQuality prop:', airQuality);
+  console.log('  - weatherData:', weatherData);
 
   return (
     <div className="weather-summary-card">
@@ -76,17 +104,63 @@ const WeatherSummaryCard = ({
         <div className="weather-location-info">
           <MapPin className="weather-location-icon" />
           <span>{location.city}, {location.country}</span>
+          {isUsingGeolocation && selectedDayIndex === null && <span className="location-live-badge">live</span>}
+          
+          {/* Show location button only if permission is not granted and showing current weather */}
+          {permissionState !== 'granted' && !isUsingGeolocation && selectedDayIndex === null && (
+            <button
+              className="location-detect-btn"
+              onClick={onRequestLocation}
+              disabled={locationLoading}
+              title="Use my location"
+            >
+              {locationLoading ? (
+                <>
+                  <Loader className="location-detect-icon spinning" size={14} />
+                  <span className="location-detect-text">Detecting...</span>
+                </>
+              ) : (
+                <>
+                  <Navigation className="location-detect-icon" size={14} />
+                  <span className="location-detect-text">Use my location</span>
+                </>
+              )}
+            </button>
+          )}
         </div>
         <div className="weather-time">
           {getFormattedDateTime()}
         </div>
       </div>
+      
+      {/* Location error/info message */}
+      {locationError && permissionState === 'denied' && (
+        <div className="location-info-message">
+          <AlertCircle size={12} />
+          <span>{locationError}</span>
+        </div>
+      )}
+      {locationError && permissionState !== 'denied' && (
+        <div className="location-error-message">
+          <AlertCircle size={12} />
+          <span>{locationError}</span>
+        </div>
+      )}
 
       {/* Main weather display */}
       <div className="weather-main-display">
         <div className="weather-main-left">
-          {getWeatherIcon(currentWeather?.condition, currentWeather?.icon)}
-          <span className="weather-temp-value">{currentTemp || '--'}°</span>
+          {loading && !currentWeather ? (
+            <>
+              <div className="skeleton skeleton-icon"></div>
+              <div className="skeleton skeleton-temp"></div>
+            </>
+          ) : (
+            <>
+              {getWeatherIcon(currentWeather?.condition, currentWeather?.icon)}
+              <span className="weather-temp-value">{currentTemp || '--'}°</span>
+            </>
+          )}
         </div>
         
         <button 
@@ -102,10 +176,11 @@ const WeatherSummaryCard = ({
       {/* Condition and status */}
       <div className="weather-condition-row">
         <h3 className="weather-condition">
-          {currentWeather?.condition ? t(`conditions.${currentWeather.condition}`, currentWeather.condition) : t('loading')}
+          {currentWeather?.condition ? t(`conditions.${currentWeather.condition}`, currentWeather.condition) : '-'}
         </h3>
         
-        {lastUpdated && (
+        {/* Only show "Updated" badge for current weather, not forecast */}
+        {lastUpdated && selectedDayIndex === null && (
           <div className="weather-status-badge">
             {getLastUpdatedText()}
           </div>
@@ -116,7 +191,24 @@ const WeatherSummaryCard = ({
       <div className="weather-separator"></div>
 
       {/* Weather stats integrated */}
-      {weatherData && <WeatherStats weatherData={weatherData} />}
+      {loading && !currentWeather ? (
+        <div className="weather-stats-grid">
+          <div className="weather-stat-item">
+            <div className="skeleton skeleton-stat"></div>
+          </div>
+          <div className="weather-stat-item">
+            <div className="skeleton skeleton-stat"></div>
+          </div>
+          <div className="weather-stat-item">
+            <div className="skeleton skeleton-stat"></div>
+          </div>
+          <div className="weather-stat-item">
+            <div className="skeleton skeleton-stat"></div>
+          </div>
+        </div>
+      ) : (
+        <WeatherStats weatherData={weatherData} />
+      )}
     </div>
   );
 };
