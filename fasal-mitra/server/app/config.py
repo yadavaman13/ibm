@@ -36,6 +36,7 @@ class Settings(BaseSettings):
     
     # API Keys
     GEMINI_API_KEY: str = ""
+    OPENAI_API_KEY: str = ""
     
     # File Upload
     MAX_UPLOAD_SIZE: int = 10 * 1024 * 1024  # 10MB
