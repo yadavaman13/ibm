@@ -3,7 +3,12 @@
  * Tests free-tier endpoints: Current Weather API 2.5, Geocoding, and 5-Day Forecast
  * 
  * Setup: Create a .env file with VITE_OPENWEATHER_API_KEY=your_key_here
- * Run: node testWeatherAPI.js
+ * 
+ * Usage:
+ *   node testWeatherAPI.js                    (tests Ahmedabad, IN by default)
+ *   node testWeatherAPI.js Mumbai             (tests Mumbai, IN)
+ *   node testWeatherAPI.js London GB          (tests London, UK)
+ *   node testWeatherAPI.js "New York" US      (tests New York, USA)
  * 
  * Expected Results:
  * ✅ All 3 tests pass: API key is active and working
@@ -12,16 +17,27 @@
  */
 
 // Load environment variables from .env file
-require('dotenv').config();
+import dotenv from 'dotenv';
+import { readFileSync } from 'fs';
 
-const API_KEY = process.env.VITE_OPENWEATHER_API_KEY;
+// Load .env file manually
+const envFile = readFileSync('.env', 'utf-8');
+const envVars = {};
+envFile.split('\n').forEach(line => {
+    const [key, ...valueParts] = line.split('=');
+    if (key && valueParts.length > 0) {
+        envVars[key.trim()] = valueParts.join('=').trim();
+    }
+});
 
-async function testCurrentWeather() {
-    console.log('\n🌤️  Testing Current Weather API...');
+const API_KEY = envVars.VITE_OPENWEATHER_API_KEY || process.env.VITE_OPENWEATHER_API_KEY;
+
+async function testCurrentWeather(city = 'Ahmedabad', country = 'IN') {
+    console.log(`\n🌤️  Testing Current Weather API for ${city}, ${country}...`);
     
     try {
         const response = await fetch(
-            `https://api.openweathermap.org/data/2.5/weather?q=Ahmedabad,IN&units=metric&appid=${API_KEY}`
+            `https://api.openweathermap.org/data/2.5/weather?q=${city},${country}&units=metric&appid=${API_KEY}`
         );
         
         if (!response.ok) {
@@ -35,6 +51,8 @@ async function testCurrentWeather() {
         console.log(`   Condition: ${data.weather[0].main} - ${data.weather[0].description}`);
         console.log(`   Humidity: ${data.main.humidity}%`);
         console.log(`   Wind Speed: ${Math.round(data.wind.speed * 3.6)} km/h`);
+        console.log(`   Precipitation: ${data.rain?.['1h'] || data.snow?.['1h'] || 0} mm`);
+        console.log(`   Cloud Cover: ${data.clouds.all}%`);
         return true;
     } catch (error) {
         console.log('❌ Current Weather API - FAILED');
@@ -43,12 +61,12 @@ async function testCurrentWeather() {
     }
 }
 
-async function testGeocodingAPI() {
-    console.log('\n📍 Testing Geocoding API...');
+async function testGeocodingAPI(city = 'Ahmedabad', country = 'IN') {
+    console.log(`\n📍 Testing Geocoding API for ${city}, ${country}...`);
     
     try {
         const response = await fetch(
-            `https://api.openweathermap.org/geo/1.0/direct?q=Ahmedabad,IN&limit=1&appid=${API_KEY}`
+            `https://api.openweathermap.org/geo/1.0/direct?q=${city},${country}&limit=1&appid=${API_KEY}`
         );
         
         if (!response.ok) {
@@ -97,6 +115,18 @@ async function testForecastAPI(lat, lon) {
 }
 
 async function runTests() {
+    // Get city and country from command line arguments
+    const args = process.argv.slice(2);
+    let city = 'Ahmedabad';
+    let country = 'IN';
+    
+    if (args.length > 0) {
+        city = args[0];
+        if (args.length > 1) {
+            country = args[1];
+        }
+    }
+    
     console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     console.log('  OpenWeatherMap API Integration Test');
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
@@ -107,11 +137,12 @@ async function runTests() {
         return;
     }
     
+    console.log(`  Location: ${city}, ${country}`);
     console.log(`  API Key: ${API_KEY.substring(0, 8)}...${API_KEY.substring(API_KEY.length - 4)}`);
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     
-    const test1 = await testCurrentWeather();
-    const geoData = await testGeocodingAPI();
+    const test1 = await testCurrentWeather(city, country);
+    const geoData = await testGeocodingAPI(city, country);
     const test3 = geoData ? await testForecastAPI(geoData.lat, geoData.lon) : false;
     
     console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');

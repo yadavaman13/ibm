@@ -111,7 +111,8 @@ export const getCacheAge = () => {
  */
 export const getCurrentWeather = async (city = 'Ahmedabad', countryCode = 'IN') => {
     if (!API_KEY) {
-        console.warn('OpenWeather API key not found. Using mock data.');
+        console.error('❌ OpenWeather API key not found in environment variables');
+        console.warn('⚠️  Using mock data. Add VITE_OPENWEATHER_API_KEY to .env file');
         return getMockCurrentWeather();
     }
 
@@ -123,15 +124,11 @@ export const getCurrentWeather = async (city = 'Ahmedabad', countryCode = 'IN') 
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
             if (response.status === 401) {
-                console.error('❌ API Key Error: Invalid or inactive API key. Please check:');
-                console.error('   1. API key is correct in .env file');
-                console.error('   2. Email verification is complete');
-                console.error('   3. Wait up to 2 hours for new key activation');
-                console.error('   Visit: https://home.openweathermap.org/api_keys');
+                console.error('❌ API Key Error: Invalid or inactive API key');
             } else if (response.status === 404) {
-                console.error(`❌ City "${city}" not found. Try a different location.`);
+                console.error(`❌ City "${city}" not found`);
             } else {
-                console.error(`❌ Weather API Error: ${response.status} - ${errorData.message || response.statusText}`);
+                console.error(`❌ Weather API Error: ${response.status}`);
             }
             throw new Error(`API Error: ${response.status}`);
         }
@@ -204,6 +201,14 @@ export const getWeeklyForecast = async (city = 'Ahmedabad', countryCode = 'IN') 
 const parseCurrentWeather = (data) => {
     const weatherIcon = getWeatherIcon(data.weather[0].id, data.weather[0].icon);
     
+    // Get precipitation data (rain or snow in last hour)
+    let precipitation = 0;
+    if (data.rain && data.rain['1h']) {
+        precipitation = Math.round(data.rain['1h']); // Rain in mm
+    } else if (data.snow && data.snow['1h']) {
+        precipitation = Math.round(data.snow['1h']); // Snow in mm
+    }
+    
     return {
         temp: Math.round(data.main.temp),
         tempF: Math.round((data.main.temp * 9/5) + 32),
@@ -216,6 +221,7 @@ const parseCurrentWeather = (data) => {
         pressure: data.main.pressure,
         visibility: Math.round(data.visibility / 1000), // meters to km
         clouds: data.clouds.all,
+        precipitation: precipitation, // Rain/snow in mm
         timestamp: new Date(data.dt * 1000)
     };
 };
@@ -236,15 +242,34 @@ const parseWeeklyForecast = (data) => {
         if (!dailyData[dateKey]) {
             dailyData[dateKey] = {
                 day: dayName,
+                date: date,
                 temps: [],
                 icons: [],
-                weatherIds: []
+                weatherIds: [],
+                conditions: [],
+                humidity: [],
+                windSpeed: [],
+                precipitation: [],
+                fullData: [] // Store full item data
             };
         }
         
         dailyData[dateKey].temps.push(item.main.temp);
         dailyData[dateKey].weatherIds.push(item.weather[0].id);
         dailyData[dateKey].icons.push(item.weather[0].icon);
+        dailyData[dateKey].conditions.push(item.weather[0].main);
+        dailyData[dateKey].humidity.push(item.main.humidity);
+        dailyData[dateKey].windSpeed.push(item.wind.speed);
+        
+        // Extract precipitation
+        let precip = 0;
+        if (item.rain && item.rain['3h']) {
+            precip = item.rain['3h'];
+        } else if (item.snow && item.snow['3h']) {
+            precip = item.snow['3h'];
+        }
+        dailyData[dateKey].precipitation.push(precip);
+        dailyData[dateKey].fullData.push(item);
     });
 
     // Convert to array and ensure we have 7 days (pad with estimates if needed)
@@ -253,11 +278,35 @@ const parseWeeklyForecast = (data) => {
         const low = Math.round(Math.min(...day.temps));
         const icon = getMostCommonIcon(day.weatherIds, day.icons);
         
+        // Calculate averages for detailed view
+        const avgTemp = Math.round(day.temps.reduce((a, b) => a + b, 0) / day.temps.length);
+        const avgHumidity = Math.round(day.humidity.reduce((a, b) => a + b, 0) / day.humidity.length);
+        const avgWindSpeed = Math.round((day.windSpeed.reduce((a, b) => a + b, 0) / day.windSpeed.length) * 3.6); // m/s to km/h
+        const totalPrecipitation = Math.round(day.precipitation.reduce((a, b) => a + b, 0));
+        
+        // Get most common condition
+        const conditionCounts = {};
+        day.conditions.forEach(c => {
+            conditionCounts[c] = (conditionCounts[c] || 0) + 1;
+        });
+        const condition = Object.keys(conditionCounts).reduce((a, b) => 
+            conditionCounts[a] > conditionCounts[b] ? a : b
+        );
+        
         return {
             day: day.day,
+            date: day.date,
             high,
             low,
-            icon
+            icon,
+            // Detailed data for when day is clicked
+            temp: avgTemp,
+            tempF: Math.round((avgTemp * 9/5) + 32),
+            condition: condition,
+            humidity: avgHumidity,
+            windSpeed: avgWindSpeed,
+            precipitation: totalPrecipitation,
+            timestamp: day.date
         };
     });
 
@@ -268,11 +317,24 @@ const parseWeeklyForecast = (data) => {
         const currentDayIndex = daysOfWeek.indexOf(lastDay.day);
         const nextDayIndex = (currentDayIndex + 1) % 7;
         
+        // Create next day's date
+        const nextDate = new Date(lastDay.date);
+        nextDate.setDate(nextDate.getDate() + 1);
+        
         forecastDays.push({
             day: daysOfWeek[nextDayIndex],
+            date: nextDate,
             high: lastDay.high,
             low: lastDay.low,
-            icon: lastDay.icon
+            icon: lastDay.icon,
+            // Copy detailed data from last day for padding
+            temp: lastDay.temp,
+            tempF: lastDay.tempF,
+            condition: lastDay.condition,
+            humidity: lastDay.humidity,
+            windSpeed: lastDay.windSpeed,
+            precipitation: lastDay.precipitation,
+            timestamp: nextDate
         });
     }
 
@@ -356,6 +418,7 @@ const getMockCurrentWeather = () => ({
     pressure: 1013,
     visibility: 10,
     clouds: 0,
+    precipitation: 0,
     timestamp: new Date()
 });
 
@@ -370,15 +433,65 @@ const getMockWeeklyForecast = () => [
 ];
 
 /**
- * Get air quality index (requires separate API or service)
- * For now, returns mock data
+ * Get air quality index from OpenWeather Air Pollution API
+ * @param {number} lat - Latitude (required)
+ * @param {number} lon - Longitude (required)
+ * @returns {Object|null} Air quality data with AQI and category, or null if coordinates not provided
  */
-export const getAirQuality = async () => {
-    // OpenWeather Air Pollution API can be used here
-    // http://api.openweathermap.org/data/2.5/air_pollution
-    return {
-        aqi: 103,
-        category: 'Moderate',
-        color: 'yellow'
-    };
+export const getAirQuality = async (lat, lon) => {
+    // Return null if no coordinates provided
+    if (!lat || !lon) {
+        console.warn('⚠️ Air Quality: No coordinates provided');
+        return null;
+    }
+    
+    if (!API_KEY) {
+        console.warn('⚠️ Air Quality: No API key');
+        return null;
+    }
+
+    try {
+        const url = `${BASE_URL}/air_pollution?lat=${lat}&lon=${lon}&appid=${API_KEY}`;
+        console.log(`🌬️ Fetching Air Quality for coordinates: ${lat}, ${lon}`);
+        
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            console.error(`❌ Air Quality API Error: ${response.status}`);
+            throw new Error(`API Error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Air Quality API Response:', data);
+        
+        if (data.list && data.list.length > 0) {
+            const aqi = data.list[0].main.aqi;
+            
+            // Map AQI scale (1-5) to categories
+            const categories = {
+                1: { category: 'Good', color: 'green' },
+                2: { category: 'Fair', color: 'lightgreen' },
+                3: { category: 'Moderate', color: 'yellow' },
+                4: { category: 'Poor', color: 'orange' },
+                5: { category: 'Very Poor', color: 'red' }
+            };
+            
+            const aqiInfo = categories[aqi] || categories[3];
+            
+            const result = {
+                aqi: aqi,
+                category: aqiInfo.category,
+                color: aqiInfo.color,
+                components: data.list[0].components // PM2.5, PM10, etc.
+            };
+            
+            console.log(`✅ Air Quality: ${result.aqi} (${result.category})`);
+            return result;
+        }
+        
+        throw new Error('No air quality data available');
+    } catch (error) {
+        console.error('❌ Error fetching air quality data:', error.message);
+        return null;
+    }
 };
