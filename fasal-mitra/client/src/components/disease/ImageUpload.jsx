@@ -108,13 +108,16 @@ const ImageUpload = ({ onImageSelect, selectedImage }) => {
             </div>
             
             {/* Help Text */}
-            <div className="mt-3 text-xs text-gray-500">
-                <p className="font-medium mb-1">📸 Tips for best results:</p>
-                <ul className="space-y-1 ml-4">
-                    <li>• Ensure good lighting and clear focus</li>
-                    <li>• Show affected areas clearly</li>
-                    <li>• Include multiple leaves if possible</li>
-                    <li>• Avoid shadows and reflections</li>
+            <div className="tips-section">
+                <p className="tips-title">
+                    <Camera className="tips-icon" />
+                    Tips for best results:
+                </p>
+                <ul className="tips-list">
+                    <li>Ensure good lighting and clear focus</li>
+                    <li>Show affected areas clearly</li>
+                    <li>Include multiple leaves if possible</li>
+                    <li>Avoid shadows and reflections</li>
                 </ul>
             </div>
         </div>

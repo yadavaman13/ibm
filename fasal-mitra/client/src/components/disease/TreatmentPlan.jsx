@@ -1,5 +1,5 @@
 import React from 'react';
-import { IndianRupee, CheckCircle, AlertTriangle, Clock } from 'lucide-react';
+import { IndianRupee, CheckCircle, AlertTriangle, Clock, Pill, Lightbulb } from 'lucide-react';
 
 const TreatmentPlan = ({ treatmentPlan, severity, recommendations }) => {
     if (!treatmentPlan) return null;
@@ -60,7 +60,10 @@ const TreatmentPlan = ({ treatmentPlan, severity, recommendations }) => {
             {/* Treatment Steps */}
             {treatmentPlan.treatments && treatmentPlan.treatments.length > 0 && (
                 <div className="info-section">
-                    <h3 className="info-title">💊 Treatment Steps</h3>
+                    <h3 className="info-title">
+                        <Pill className="info-icon" />
+                        Treatment Steps
+                    </h3>
                     <div className="space-y-3">
                         {treatmentPlan.treatments.map((treatment, index) => (
                             <div key={index} className="flex items-start">
@@ -77,7 +80,10 @@ const TreatmentPlan = ({ treatmentPlan, severity, recommendations }) => {
             {/* Recommendations */}
             {recommendations && recommendations.length > 0 && (
                 <div className="info-section">
-                    <h3 className="info-title">💡 Additional Recommendations</h3>
+                    <h3 className="info-title">
+                        <Lightbulb className="info-icon" />
+                        Additional Recommendations
+                    </h3>
                     <ul className="info-list">
                         {recommendations.map((recommendation, index) => (
                             <li key={index}>{recommendation}</li>

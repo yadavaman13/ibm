@@ -1,12 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import { ArrowRight } from 'lucide-react';
 import '../styles/feature-card.css';
 
 const FeatureCard = ({ icon: Icon, title, description, path }) => {
-    const { t } = useTranslation('common');
-    
     return (
         <Link to={path} className="feature-card">
             {/* Icon Container */}
@@ -26,7 +23,7 @@ const FeatureCard = ({ icon: Icon, title, description, path }) => {
 
             {/* Arrow Icon */}
             <div className="feature-card-arrow mt-4 flex items-center text-sm font-medium transition-opacity">
-                <span>{t('buttons.getStarted')}</span>
+                <span>Get Started</span>
                 <ArrowRight className="ml-2 w-4 h-4 transition-transform" />
             </div>
         </Link>

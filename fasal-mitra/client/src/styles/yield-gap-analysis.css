@@ -22,8 +22,6 @@
 
 .page-container {
     max-width: 1400px;
-    margin: 0 auto;
-    padding: 2rem;
 }
 
 /* Header */
@@ -235,7 +233,9 @@
 }
 
 @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* Results Section */
@@ -540,7 +540,7 @@
 
 @media (max-width: 768px) {
     .page-container {
-        padding: 1rem;
+        padding-top: 1rem;
     }
 
     .mode-selector {
@@ -569,6 +569,10 @@
 }
 
 @media (max-width: 640px) {
+    .page-container {
+        padding-top: 1rem;
+    }
+
     .page-header-title {
         font-size: 1.5rem;
     }
