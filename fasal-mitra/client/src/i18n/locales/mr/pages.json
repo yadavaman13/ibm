@@ -54,7 +54,18 @@
     "selectState": "राज्य निवडा",
     "selectSeason": "हंगाम निवडा",
     "farmDetails": "शेताचे तपशील",
-    "farmDetailsSubtitle": "अंदाजासाठी तुमचे शेती मापदंड प्रविष्ट करा"
+    "farmDetailsSubtitle": "अंदाजासाठी तुमचे शेती मापदंड प्रविष्ट करा",
+    "cropType": "पिकाचा प्रकार",
+    "seasonLabel": "हंगाम",
+    "cultivatedArea": "लागवड केलेले क्षेत्र (हेक्टर)",
+    "cultivatedAreaPlaceholder": "उदा., 100",
+    "fertilizerLabel": "खत (किलो/हेक्टर)",
+    "fertilizerPlaceholder": "उदा., 25000",
+    "pesticideLabel": "कीटकनाशके (किलो/हेक्टर)",
+    "pesticidePlaceholder": "उदा., 500",
+    "predicting": "अंदाज करत आहे...",
+    "askAI": "AI ला विचारा",
+    "serverNotRunning": "बॅकएंड सर्व्हर चालू नाही. कृपया http://localhost:8000 वर सर्व्हर सुरू करा"
   },
   "weather": {
     "title": "हवामान अंदाज",
@@ -70,7 +81,9 @@
     "noDisease": "कोणताही रोग आढळला नाही",
     "confidence": "विश्वासार्हता स्तर",
     "treatment": "उपचार",
-    "prevention": "प्रतिबंध"
+    "prevention": "प्रतिबंध",
+    "pleaseSelectImage": "कृपया प्रथम प्रतिमा निवडा",
+    "locationPlaceholder": "उदा., पंजाब, महाराष्ट्र"
   },
   "soilAnalysis": {
     "title": "माती विश्लेषण",
@@ -85,7 +98,36 @@
     "analyze": "विश्लेषण करा",
     "nutrients": "पोषक तत्व",
     "ph": "pH स्तर",
-    "recommendations": "शिफारसी"
+    "recommendations": "शिफारसी",
+
+    "results": {
+      "soilHealthReport": "माती आरोग्य अहवाल",
+      "yourSoilNutrients": "तुमच्या मातीचे पोषक तत्व विश्लेषण",
+      "nitrogen": "नायट्रोजन (N)",
+      "phosphorus": "फॉस्फरस (P)",
+      "potassium": "पोटॅशियम (K)",
+      "forGreenGrowth": "हिरव्या वाढीसाठी",
+      "forRootStrength": "मूळ मजबुती साठी",
+      "forDiseaseResistance": "रोग प्रतिकार साठी",
+      "good": "चांगले",
+      "fair": "मध्यम",
+      "low": "कमी",
+      "cropSuitability": "पीक योग्यता",
+      "howSuitableIs": "तुमची माती किती योग्य आहे",
+      "excellent": "उत्कृष्ट",
+      "poor": "खराब",
+      "cultivationIs": "ची लागवड",
+      "in": "मध्ये",
+      "considerSoilTreatment": "माती उपचार विचारात घ्या किंवा खाली शिफारस केलेली पिके निवडा",
+      "soilAmendmentsMayImprove": "माती सुधारणांमुळे पीक उत्पन्न वाढू शकते",
+      "goodConditions": "निरोगी पीक वाढीसाठी चांगली परिस्थिती",
+      "excellentConditions": "कमाल उत्पन्नासाठी उत्कृष्ट परिस्थिती",
+      "irrigationAnalysis": "सिंचन विश्लेषण",
+      "cropsGrowWell": "तुमच्या मातीच्या परिस्थितीत चांगली वाढणारी पिके",
+      "bestCropsFor": "साठी सर्वोत्तम पिके",
+      "nitrogenBonus": "नायट्रोजन बोनस उपलब्ध",
+      "waterQualityAlert": "पाण्याची गुणवत्ता उत्पन्नावर परिणाम करू शकते"
+    }
   },
   "yieldGapAnalysis": {
     "title": "उत्पादन अंतर विश्लेषण",
@@ -110,7 +152,11 @@
     "analyzeYieldGap": "उत्पादन अंतराचे विश्लेषण करा",
     "benchmark": "बेंचमार्क",
     "gap": "अंतर",
-    "improvement": "सुधारणेची शक्यता"
+    "improvement": "सुधारणेची शक्यता",
+    "actualYieldPlaceholder": "उदा., 2.5",
+    "areaPlaceholder": "उदा., 50",
+    "fertilizerPlaceholder": "उदा., 20000",
+    "pesticidePlaceholder": "उदा., 300"
   },
   "gapAnalysis": {
     "title": "अंतर विश्लेषण",

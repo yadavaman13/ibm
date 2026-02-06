@@ -1,83 +1,207 @@
 /* Dashboard Styles */
 .dashboard-container {
-    min-height: 100vh;
     background-color: #fcfcff;
 }
 
 /* Main Layout - Weather + Features */
+
 .dashboard-main-layout {
     display: grid;
-    grid-template-columns: 480px 1fr;
-    gap: 2rem;
-    align-items: start;
+    grid-template-columns: 520px 1fr;
+    gap: 1rem;
+    align-items: stretch;
+    margin-top: 1rem;
+    min-height: 0;
+    height: 100%;
 }
 
 .dashboard-weather-section {
     position: sticky;
-    top: 1rem;
+    top: 5.5rem;
+    align-self: stretch;
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 .dashboard-features-section {
-    padding: 0.5rem 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    border-radius: 1rem;
+    padding: 1rem;
+    border: 1px solid #e5e7eb;
+    height: 100%;
+    min-height: 0;
+    box-sizing: border-box;
+    justify-content: stretch;
 }
 
 /* Features Header */
 .features-header {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
 }
 
 .features-title {
-    font-size: 1.5rem;
+    font-size: 1.875rem;
     font-weight: 700;
     color: #111827;
+    margin: 0;
     margin-bottom: 0.5rem;
-    line-height: 1.3;
+    line-height: 1.2;
 }
 
 .features-subtitle {
     color: #6b7280;
-    font-size: 0.875rem;
+    font-size: 1rem;
     margin: 0;
-    line-height: 1.4;
+    line-height: 1.5;
 }
 
 /* Features Grid */
 .features-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    width: 100%;
+    align-items: stretch;
+    flex: 1 1 auto;
 }
 
 /* Responsive Design */
+
+/* Large Tablet (1024px and below) */
+@media (max-width: 1200px) {
+    .dashboard-main-layout {
+        grid-template-columns: 450px 1fr;
+        gap: 1rem;
+    }
+}
+
 @media (max-width: 1024px) {
     .dashboard-main-layout {
         grid-template-columns: 1fr;
-        gap: 1.5rem;
+        gap: 1rem
     }
-    
     .dashboard-weather-section {
         position: static;
+        top: 0;
+        height: auto;
+        min-height: unset;
     }
-    
+    .dashboard-features-section {
+        height: auto;
+        min-height: unset;
+    }
     .features-grid {
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+    }
+}
+
+/* Tablet (768px and below) */
+@media (max-width: 768px) {
+    .dashboard-main-layout {
+        gap: 1rem;
+    }
+
+    .features-header {
+        margin-bottom: 1rem;
+    }
+
+    .features-title {
+        font-size: 1.5rem;
+    }
+
+    .features-subtitle {
+        font-size: 0.9375rem;
+    }
+
+    .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+}
+
+/* Mobile (640px and below) */
+@media (max-width: 900px) {
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
     }
 }
 
 @media (max-width: 640px) {
+    .dashboard-main-layout {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    .dashboard-features-section {
+        padding: 1rem;
+    }
+    .features-title {
+        font-size: 1.1rem;
+    }
+    .features-subtitle {
+        font-size: 0.8rem;
+    }
     .features-grid {
         grid-template-columns: 1fr;
+        gap: 0.4rem;
     }
 }
 
+
+.dashboard-stats-section {
+    background: #fff;
+    width: 100%;
+    margin: 2rem 0 0 0;
+    padding: 1.5rem 0.5rem;
+    border-radius: 0.5rem;
+    box-sizing: border-box;
+}
+
+.dashboard-stats-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0;
+    width: 100%;
+    max-width: 100%;
+}
+
+.dashboard-stat {
+    flex: 1 1 0;
+    text-align: center;
+    padding: 0.5rem 0;
+}
+
 .dashboard-stats-value {
-    color: #16a34a;
-    font-size: 1.875rem;
+    color: #99BC85;
+    font-size: 1.5rem;
     font-weight: 700;
+    margin-bottom: 0.25rem;
 }
 
 .dashboard-stats-label {
-    color: #6b7280;
-    font-size: 0.875rem;
+    color: #222;
+    font-size: 0.95rem;
     margin-top: 0.25rem;
+    font-weight: 400;
 }
+
+@media (max-width: 900px) {
+    .dashboard-stats-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        gap: 0.5rem;
+    }
+    .dashboard-stat {
+        padding: 0.5rem 0;
+    }
+}
+
+/* Remove vertical stacking for mobile, always keep 2x2 grid */

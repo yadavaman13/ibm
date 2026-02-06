@@ -1,5 +1,5 @@
 import React from 'react';
-import { AlertTriangle, CheckCircle, Clock, Bug } from 'lucide-react';
+import { AlertTriangle, CheckCircle, Clock, Bug, Search, AlertCircle as VirusIcon, Sprout, Shield } from 'lucide-react';
 
 const DetectionResults = ({ result }) => {
     if (!result) return null;
@@ -67,7 +67,10 @@ const DetectionResults = ({ result }) => {
             {/* Symptoms */}
             {detected_disease.symptoms && detected_disease.symptoms.length > 0 && (
                 <div className="info-section">
-                    <h3 className="info-title">🔍 Symptoms</h3>
+                    <h3 className="info-title">
+                        <Search className="info-icon" />
+                        Symptoms
+                    </h3>
                     <ul className="info-list">
                         {detected_disease.symptoms.map((symptom, index) => (
                             <li key={index}>{symptom}</li>
@@ -79,7 +82,10 @@ const DetectionResults = ({ result }) => {
             {/* Causes */}
             {detected_disease.causes && detected_disease.causes.length > 0 && (
                 <div className="info-section">
-                    <h3 className="info-title">🦠 Causes</h3>
+                    <h3 className="info-title">
+                        <VirusIcon className="info-icon" />
+                        Causes
+                    </h3>
                     <ul className="info-list">
                         {detected_disease.causes.map((cause, index) => (
                             <li key={index}>{cause}</li>
@@ -91,7 +97,10 @@ const DetectionResults = ({ result }) => {
             {/* Affected Crops */}
             {detected_disease.crops_affected && detected_disease.crops_affected.length > 0 && (
                 <div className="info-section">
-                    <h3 className="info-title">🌾 Commonly Affects</h3>
+                    <h3 className="info-title">
+                        <Sprout className="info-icon" />
+                        Commonly Affects
+                    </h3>
                     <div className="flex flex-wrap gap-1">
                         {detected_disease.crops_affected.map((crop, index) => (
                             <span key={index} className="crop-tag">{crop}</span>
@@ -103,7 +112,10 @@ const DetectionResults = ({ result }) => {
             {/* Prevention */}
             {detected_disease.prevention && detected_disease.prevention.length > 0 && (
                 <div className="info-section">
-                    <h3 className="info-title">🛡️ Prevention</h3>
+                    <h3 className="info-title">
+                        <Shield className="info-icon" />
+                        Prevention
+                    </h3>
                     <ul className="info-list">
                         {detected_disease.prevention.map((prevention, index) => (
                             <li key={index}>{prevention}</li>

@@ -55,8 +55,17 @@
     "selectSeason": "મોસમ પસંદ કરો",
     "farmDetails": "ખેતરની વિગતો",
     "farmDetailsSubtitle": "અનુમાન માટે તમારા ખેતીના પરિમાણો દાખલ કરો",
-    "farmDetails": "ખેતરની વિગતો",
-    "farmDetailsSubtitle": "અનુમાન માટે તમારા ખેતીના પરિમાણો દાખલ કરો"
+    "cropType": "પાકનો પ્રકાર",
+    "seasonLabel": "મોસમ",
+    "cultivatedArea": "ખેતી કરેલ વિસ્તાર (હેક્ટર)",
+    "cultivatedAreaPlaceholder": "દાખલો., 100",
+    "fertilizerLabel": "ખાતર (કિલો/હેક્ટર)",
+    "fertilizerPlaceholder": "દાખલો., 25000",
+    "pesticideLabel": "જંતુનાશક (કિલો/હેક્ટર)",
+    "pesticidePlaceholder": "દાખલો., 500",
+    "predicting": "અનુમાન કરી રહ્યા છે...",
+    "askAI": "AI ને પૂછો",
+    "serverNotRunning": "બૅકએન્ડ સર્વર ચાલી રહ્યું નથી. કૃપા કરી http://localhost:8000 પર સર્વર શરૂ કરો"
   },
   "weather": {
     "title": "હવામાન પૂર્વાનુમાન",
@@ -72,7 +81,9 @@
     "noDisease": "કોઈ રોગ મળ્યો નથી",
     "confidence": "વિશ્વાસ સ્તર",
     "treatment": "સારવાર",
-    "prevention": "રોકથામ"
+    "prevention": "રોકથામ",
+    "pleaseSelectImage": "કૃપા કરી પહેલા છબી પસંદ કરો",
+    "locationPlaceholder": "દાખલો., પંજાબ, મહારાષ્ટ્ર"
   },
   "soilAnalysis": {
     "title": "માટી વિશ્લેષણ",
@@ -87,7 +98,36 @@
     "analyze": "વિશ્લેષણ કરો",
     "nutrients": "પોષક તત્વો",
     "ph": "pH સ્તર",
-    "recommendations": "સૂચનો"
+    "recommendations": "સૂચનો",
+
+    "results": {
+      "soilHealthReport": "માટી આરોગ્ય અહેવાલ",
+      "yourSoilNutrients": "તમારી માટીનું પોષક તત્વ વિશ્લેષણ",
+      "nitrogen": "નાઇટ્રોજન (N)",
+      "phosphorus": "ફોસ્ફરસ (P)",
+      "potassium": "પોટેશિયમ (K)",
+      "forGreenGrowth": "લીલા વિકાસ માટે",
+      "forRootStrength": "મૂળની મજબૂતી માટે",
+      "forDiseaseResistance": "રોગ પ્રતિકાર માટે",
+      "good": "સારું",
+      "fair": "સામાન્ય",
+      "low": "ઓછું",
+      "cropSuitability": "પાક યોગ્યતા",
+      "howSuitableIs": "તમારી માટી કેટલી યોગ્ય છે",
+      "excellent": "ઉત્તમ",
+      "poor": "નબળું",
+      "cultivationIs": "ની ખેતી",
+      "in": "માં",
+      "considerSoilTreatment": "માટી સારવાર પર વિચાર કરો અથવા નીચે ભલામણ કરેલ પાક પસંદ કરો",
+      "soilAmendmentsMayImprove": "માટીમાં સુધારાથી પાક ઉપજ વધી શકે છે",
+      "goodConditions": "તંદુરસ્ત પાક વૃદ્ધિ માટે સારી પરિસ્થિતિઓ",
+      "excellentConditions": "મહત્તમ ઉપજ માટે ઉત્તમ પરિસ્થિતિઓ",
+      "irrigationAnalysis": "સિંચાઈ વિશ્લેષણ",
+      "cropsGrowWell": "તમારી માટીની સ્થિતિમાં સારી રીતે ઉગતા પાકો",
+      "bestCropsFor": "માટે શ્રેષ્ઠ પાક",
+      "nitrogenBonus": "નાઇટ્રોજન બોનસ ઉપલબ્ધ",
+      "waterQualityAlert": "પાણીની ગુણવત્તા ઉપજને અસર કરી શકે છે"
+    }
   },
   "yieldGapAnalysis": {
     "title": "ઉત્પાદન ગેપ વિશ્લેષણ",
@@ -112,7 +152,11 @@
     "analyzeYieldGap": "ઉત્પાદન ગેપનું વિશ્લેષણ કરો",
     "benchmark": "બેન્ચમાર્ક",
     "gap": "ગેપ",
-    "improvement": "સુધારાની સંભાવના"
+    "improvement": "સુધારણાની સંભાવના",
+    "actualYieldPlaceholder": "દાખલો., 2.5",
+    "areaPlaceholder": "દાખલો., 50",
+    "fertilizerPlaceholder": "દાખલો., 20000",
+    "pesticidePlaceholder": "દાખલો., 300"
   },
   "gapAnalysis": {
     "title": "ગેપ વિશ્લેષણ",

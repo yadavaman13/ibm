@@ -212,7 +212,7 @@ const YieldGapAnalysis = () => {
                                     name="actual_yield"
                                     value={formData.actual_yield}
                                     onChange={handleInputChange}
-                                    placeholder="e.g., 2.5"
+                                    placeholder={t('pages:yieldGapAnalysis.actualYieldPlaceholder')}
                                     step="0.01"
                                     min="0"
                                     required
@@ -229,7 +229,7 @@ const YieldGapAnalysis = () => {
                                     name="area"
                                     value={formData.area}
                                     onChange={handleInputChange}
-                                    placeholder="e.g., 50"
+                                    placeholder={t('pages:yieldGapAnalysis.areaPlaceholder')}
                                     step="0.01"
                                     min="0"
                                     required
@@ -244,7 +244,7 @@ const YieldGapAnalysis = () => {
                                     name="fertilizer"
                                     value={formData.fertilizer}
                                     onChange={handleInputChange}
-                                    placeholder="e.g., 20000"
+                                    placeholder={t('pages:yieldGapAnalysis.fertilizerPlaceholder')}
                                     step="1"
                                     min="0"
                                     required
@@ -259,7 +259,7 @@ const YieldGapAnalysis = () => {
                                     name="pesticide"
                                     value={formData.pesticide}
                                     onChange={handleInputChange}
-                                    placeholder="e.g., 300"
+                                    placeholder={t('pages:yieldGapAnalysis.pesticidePlaceholder')}
                                     step="1"
                                     min="0"
                                     required

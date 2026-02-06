@@ -22,7 +22,8 @@ const YieldPrediction = () => {
     const [result, setResult] = useState(null);
     const [error, setError] = useState(null);
     const [serverStatus, setServerStatus] = useState(null);
-    
+    const [serverError, setServerError] = useState(null);
+
     // Field help modal state
     const [helpModalOpen, setHelpModalOpen] = useState(false);
     const [helpFieldLabel, setHelpFieldLabel] = useState('');
@@ -94,7 +95,7 @@ const YieldPrediction = () => {
         setResult(null);
         setError(null);
     };
-    
+
     // Handle help icon click
     const handleHelpClick = (fieldName, fieldLabel) => {
         setHelpFieldName(fieldName);
@@ -151,18 +152,25 @@ const YieldPrediction = () => {
         <div className="page-container">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {/* Page Header */}
-                <div className="page-header">
-                    <div className="flex items-center gap-3 mb-2">
-                        <Sprout className="page-icon" />
-                        <h1 className="page-header-title">{t('pages:yieldPrediction.title')}</h1>
+                <div >
+                    <div className="page-header">
+                        <Sprout className="page-header-icon" />
+                        <div>
+                            <h1 className="page-header-title">{t('pages:yieldPrediction.title')}</h1>
+                            <p className="page-header-subtitle">{t('pages:yieldPrediction.subtitle')}</p>
+                        </div>
                     </div>
-                    <p className="page-header-subtitle">
-                        {t('pages:yieldPrediction.subtitle')}
-                    </p>
+
                     {serverStatus === false && (
                         <div className="server-alert">
                             <AlertCircle className="alert-icon" />
-                            <span>Backend server is not running. Please start the server at http://localhost:8000</span>
+                            <span>{t('pages:yieldPrediction.serverNotRunning')}</span>
+                        </div>
+                    )}
+                    {serverError && (
+                        <div className="server-alert">
+                            <AlertCircle className="server-alert-icon" />
+                            <span>{serverError}</span>
                         </div>
                     )}
                 </div>
@@ -182,10 +190,10 @@ const YieldPrediction = () => {
                                 {/* Crop Selection */}
                                 <div className="form-group">
                                     <label htmlFor="crop" className="form-label">
-                                        Crop Type <span className="required">*</span>
-                                        <FieldHelpIcon 
-                                            fieldName="crop" 
-                                            onClick={() => handleHelpClick('crop', 'Crop Type')} 
+                                        {t('pages:yieldPrediction.cropType')} <span className="required">*</span>
+                                        <FieldHelpIcon
+                                            fieldName="crop"
+                                            onClick={() => handleHelpClick('crop', t('pages:yieldPrediction.cropType'))}
                                         />
                                     </label>
                                     <select
@@ -206,7 +214,7 @@ const YieldPrediction = () => {
                                 {/* State Selection */}
                                 <div className="form-group">
                                     <label htmlFor="state" className="form-label">
-                                        {t('yieldPrediction.state')} <span className="required">*</span>
+                                        {t('pages:yieldPrediction.state')} <span className="required">*</span>
                                     </label>
                                     <select
                                         id="state"
@@ -226,10 +234,10 @@ const YieldPrediction = () => {
                                 {/* Season Selection */}
                                 <div className="form-group">
                                     <label htmlFor="season" className="form-label">
-                                        Season <span className="required">*</span>
-                                        <FieldHelpIcon 
-                                            fieldName="season" 
-                                            onClick={() => handleHelpClick('season', 'Season')} 
+                                        {t('pages:yieldPrediction.seasonLabel')} <span className="required">*</span>
+                                        <FieldHelpIcon
+                                            fieldName="season"
+                                            onClick={() => handleHelpClick('season', t('pages:yieldPrediction.seasonLabel'))}
                                         />
                                     </label>
                                     <select
@@ -253,10 +261,10 @@ const YieldPrediction = () => {
                                 {/* Area Input */}
                                 <div className="form-group">
                                     <label htmlFor="area" className="form-label">
-                                        Cultivated Area (hectares) <span className="required">*</span>
-                                        <FieldHelpIcon 
-                                            fieldName="area" 
-                                            onClick={() => handleHelpClick('area', 'Cultivated Area (hectares)')} 
+                                        {t('pages:yieldPrediction.cultivatedArea')} <span className="required">*</span>
+                                        <FieldHelpIcon
+                                            fieldName="area"
+                                            onClick={() => handleHelpClick('area', t('pages:yieldPrediction.cultivatedArea'))}
                                         />
                                     </label>
                                     <input
@@ -268,7 +276,7 @@ const YieldPrediction = () => {
                                         required
                                         min="0.01"
                                         step="0.01"
-                                        placeholder="e.g., 100"
+                                        placeholder={t('pages:yieldPrediction.cultivatedAreaPlaceholder')}
                                         className="form-input"
                                     />
                                 </div>
@@ -276,10 +284,10 @@ const YieldPrediction = () => {
                                 {/* Fertilizer Input */}
                                 <div className="form-group">
                                     <label htmlFor="fertilizer" className="form-label">
-                                        Fertilizer (kg/hectare) <span className="required">*</span>
-                                        <FieldHelpIcon 
-                                            fieldName="fertilizer" 
-                                            onClick={() => handleHelpClick('fertilizer', 'Fertilizer (kg/hectare)')} 
+                                        {t('pages:yieldPrediction.fertilizerLabel')} <span className="required">*</span>
+                                        <FieldHelpIcon
+                                            fieldName="fertilizer"
+                                            onClick={() => handleHelpClick('fertilizer', t('pages:yieldPrediction.fertilizerLabel'))}
                                         />
                                     </label>
                                     <input
@@ -291,7 +299,7 @@ const YieldPrediction = () => {
                                         required
                                         min="0"
                                         step="0.1"
-                                        placeholder="e.g., 25000"
+                                        placeholder={t('pages:yieldPrediction.fertilizerPlaceholder')}
                                         className="form-input"
                                     />
                                 </div>
@@ -299,10 +307,10 @@ const YieldPrediction = () => {
                                 {/* Pesticide Input */}
                                 <div className="form-group">
                                     <label htmlFor="pesticide" className="form-label">
-                                        Pesticide (kg/hectare) <span className="required">*</span>
-                                        <FieldHelpIcon 
-                                            fieldName="pesticide" 
-                                            onClick={() => handleHelpClick('pesticide', 'Pesticide (kg/hectare)')} 
+                                        {t('pages:yieldPrediction.pesticideLabel')} <span className="required">*</span>
+                                        <FieldHelpIcon
+                                            fieldName="pesticide"
+                                            onClick={() => handleHelpClick('pesticide', t('pages:yieldPrediction.pesticideLabel'))}
                                         />
                                     </label>
                                     <input
@@ -314,7 +322,7 @@ const YieldPrediction = () => {
                                         required
                                         min="0"
                                         step="0.1"
-                                        placeholder="e.g., 500"
+                                        placeholder={t('pages:yieldPrediction.pesticidePlaceholder')}
                                         className="form-input"
                                     />
                                 </div>
@@ -331,12 +339,12 @@ const YieldPrediction = () => {
                                 {loading ? (
                                     <>
                                         <Loader className="btn-icon spin" />
-                                        Predicting...
+                                        {t('pages:yieldPrediction.predicting')}
                                     </>
                                 ) : (
                                     <>
                                         <TrendingUp className="btn-icon" />
-                                        {t('yieldPrediction.predict')}
+                                        {t('pages:yieldPrediction.predict')}
                                     </>
                                 )}
                             </button>
@@ -431,42 +439,42 @@ const YieldPrediction = () => {
                                     <h3 className="card-title">Key Factors Influencing Yield</h3>
                                     <p className="card-subtitle">These factors have the most impact on your predicted yield</p>
                                     <div className="factors-list">
-                                            {result.factors_affecting.map((factor, index) => {
-                                                const Icon = getFactorIcon(factor.factor);
-                                                const importance = factor.importance || 0;
-                                                const importancePercent = (importance * 100).toFixed(1);
-                                                
-                                                return (
-                                                    <div key={index} className="factor-card">
-                                                        <div className="factor-header">
-                                                            <div className="factor-icon-wrapper">
-                                                                {typeof Icon === 'string' ? (
-                                                                    <span className="factor-emoji">{Icon}</span>
-                                                                ) : (
-                                                                    <Icon className="factor-icon" />
-                                                                )}
-                                                            </div>
-                                                            <div className="factor-info">
-                                                                <span className="factor-name">{formatFactorName(factor.factor)}</span>
-                                                                <span className="factor-value">{factor.factor}</span>
-                                                            </div>
-                                                            <div className="factor-importance">
-                                                                <span className={`importance-badge ${getImportanceClass(importance)}`}>
-                                                                    {importancePercent}%
-                                                                </span>
-                                                            </div>
+                                        {result.factors_affecting.map((factor, index) => {
+                                            const Icon = getFactorIcon(factor.factor);
+                                            const importance = factor.importance || 0;
+                                            const importancePercent = (importance * 100).toFixed(1);
+
+                                            return (
+                                                <div key={index} className="factor-card">
+                                                    <div className="factor-header">
+                                                        <div className="factor-icon-wrapper">
+                                                            {typeof Icon === 'string' ? (
+                                                                <span className="factor-emoji">{Icon}</span>
+                                                            ) : (
+                                                                <Icon className="factor-icon" />
+                                                            )}
                                                         </div>
-                                                        <div className="importance-bar">
-                                                            <div 
-                                                                className={`importance-bar-fill ${getImportanceClass(importance)}`}
-                                                                style={{ width: `${importancePercent}%` }}
-                                                            >
-                                                            </div>
+                                                        <div className="factor-info">
+                                                            <span className="factor-name">{formatFactorName(factor.factor)}</span>
+                                                            <span className="factor-value">{factor.factor}</span>
+                                                        </div>
+                                                        <div className="factor-importance">
+                                                            <span className={`importance-badge ${getImportanceClass(importance)}`}>
+                                                                {importancePercent}%
+                                                            </span>
                                                         </div>
                                                     </div>
-                                                );
-                                            })}
-                                        </div>
+                                                    <div className="importance-bar">
+                                                        <div
+                                                            className={`importance-bar-fill ${getImportanceClass(importance)}`}
+                                                            style={{ width: `${importancePercent}%` }}
+                                                        >
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
                                 </div>
                             )}
                         </div>
@@ -497,7 +505,7 @@ const YieldPrediction = () => {
                     </div>
                 )}
             </div>
-            
+
             {/* Field Help Modal */}
             <FieldHelpModal
                 isOpen={helpModalOpen}
@@ -505,7 +513,7 @@ const YieldPrediction = () => {
                 fieldLabel={helpFieldLabel}
                 fieldName={helpFieldName}
             />
-        </div>
+        </div >
     );
 };
 

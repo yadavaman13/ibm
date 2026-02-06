@@ -58,7 +58,18 @@
     "selectState": "Select a state",
     "selectSeason": "Select a season",
     "farmDetails": "Farm Details",
-    "farmDetailsSubtitle": "Enter your farming parameters for prediction"
+    "farmDetailsSubtitle": "Enter your farming parameters for prediction",
+    "cropType": "Crop Type",
+    "seasonLabel": "Season",
+    "cultivatedArea": "Cultivated Area (hectares)",
+    "cultivatedAreaPlaceholder": "e.g., 100",
+    "fertilizerLabel": "Fertilizer (kg/hectare)",
+    "fertilizerPlaceholder": "e.g., 25000",
+    "pesticideLabel": "Pesticide (kg/hectare)",
+    "pesticidePlaceholder": "e.g., 500",
+    "predicting": "Predicting...",
+    "askAI": "Ask AI",
+    "serverNotRunning": "Backend server is not running. Please start the server at http://localhost:8000"
   },
   "diseaseDetection": {
     "title": "Disease Detection",
@@ -70,7 +81,9 @@
     "confidence": "Confidence",
     "treatment": "Treatment",
     "prevention": "Prevention",
-    "comingSoon": "This feature will be implemented soon"
+    "comingSoon": "This feature will be implemented soon",
+    "pleaseSelectImage": "Please select an image first",
+    "locationPlaceholder": "e.g., Punjab, Maharashtra"
   },
   "soilAnalysis": {
     "title": "Soil Analysis",
@@ -107,6 +120,36 @@
     "noPreviousCrop": "First time farming / No previous crop",
     "waterQuality": "Water Source Quality",
     "selectWaterQuality": "Select water quality...",
+    "serverNotRunning": "Backend server is not running. Please start the server at http://localhost:8000",
+
+    "results": {
+      "soilHealthReport": "Soil Health Report",
+      "yourSoilNutrients": "Your soil nutrients analysis",
+      "nitrogen": "Nitrogen (N)",
+      "phosphorus": "Phosphorus (P)",
+      "potassium": "Potassium (K)",
+      "forGreenGrowth": "For green growth",
+      "forRootStrength": "For root strength",
+      "forDiseaseResistance": "For disease resistance",
+      "good": "Good",
+      "fair": "Fair",
+      "low": "Low",
+      "cropSuitability": "Crop Suitability",
+      "howSuitableIs": "How suitable is your soil for",
+      "excellent": "Excellent",
+      "poor": "Poor",
+      "cultivationIs": "cultivation is",
+      "in": "in",
+      "considerSoilTreatment": "Consider soil treatment or choose recommended crops below",
+      "soilAmendmentsMayImprove": "Soil amendments may improve crop yield",
+      "goodConditions": "Good conditions for healthy crop growth",
+      "excellentConditions": "Excellent conditions for maximum yield",
+      "irrigationAnalysis": "Irrigation Analysis",
+      "cropsGrowWell": "Crops that grow well in your soil conditions",
+      "bestCropsFor": "Best Crops for",
+      "nitrogenBonus": "Nitrogen Bonus Available",
+      "waterQualityAlert": "Water Quality May Affect Yield"
+    },
 
     "irrigation": {
       "rainfed": "Rain-fed only",
@@ -243,7 +286,11 @@
     "benchmark": "Benchmark Yield",
     "gap": "Yield Gap",
     "improvement": "Improvement Potential",
-    "comingSoon": "This feature will be implemented soon"
+    "comingSoon": "This feature will be implemented soon",
+    "actualYieldPlaceholder": "e.g., 2.5",
+    "areaPlaceholder": "e.g., 50",
+    "fertilizerPlaceholder": "e.g., 20000",
+    "pesticidePlaceholder": "e.g., 300"
   },
   "chatbot": {
     "title": "AI Assistant",
