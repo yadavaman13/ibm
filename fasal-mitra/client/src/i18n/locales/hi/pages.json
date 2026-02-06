@@ -54,7 +54,18 @@
     "selectState": "राज्य चुनें",
     "selectSeason": "मौसम चुनें",
     "farmDetails": "खेत विवरण",
-    "farmDetailsSubtitle": "भविष्यवाणी के लिए अपनी खेती के मापदंड दर्ज करें"
+    "farmDetailsSubtitle": "भविष्यवाणी के लिए अपनी खेती के मापदंड दर्ज करें",
+    "cropType": "फसल प्रकार",
+    "seasonLabel": "मौसम",
+    "cultivatedArea": "खेत का क्षेत्रफल (हेक्टेयर)",
+    "cultivatedAreaPlaceholder": "उदा., 100",
+    "fertilizerLabel": "उर्वरक (किलो/हेक्टेयर)",
+    "fertilizerPlaceholder": "उदा., 25000",
+    "pesticideLabel": "कीटनाशक (किलो/हेक्टेयर)",
+    "pesticidePlaceholder": "उदा., 500",
+    "predicting": "भविष्यवाणी हो रही है...",
+    "askAI": "AI से पूछें",
+    "serverNotRunning": "बैकेंड सर्वर चालू नहीं है। कृपया http://localhost:8000 पर सर्वर प्रारंभ करें"
   },
   "weather": {
     "title": "मौसम पूर्वानुमान",
@@ -70,7 +81,9 @@
     "noDisease": "कोई रोग नहीं मिला",
     "confidence": "विश्वास स्तर",
     "treatment": "उपचार",
-    "prevention": "रोकथाम"
+    "prevention": "रोकथाम",
+    "pleaseSelectImage": "कृपया पहले एक फोटो चुनें",
+    "locationPlaceholder": "उदा., पंजाब, महाराष्ट्र"
   },
   "soilAnalysis": {
     "title": "मिट्टी विश्लेषण",
@@ -101,6 +114,36 @@
     "noPreviousCrop": "पहली बार खेती / कोई पिछली फसल नहीं",
     "waterQuality": "पानी के स्रोत की गुणवत्ता",
     "selectWaterQuality": "पानी की गुणवत्ता चुनें...",
+    "serverNotRunning": "बैकेंड सर्वर चालू नहीं है। कृपया http://localhost:8000 पर सर्वर प्रारंभ करें",
+
+    "results": {
+      "soilHealthReport": "मिट्टी स्वास्थ्य रिपोर्ट",
+      "yourSoilNutrients": "आपकी मिट्टी के पोषक तत्व विश्लेषण",
+      "nitrogen": "नाइट्रोजन (N)",
+      "phosphorus": "फॉस्फोरस (P)",
+      "potassium": "पोटैशियम (K)",
+      "forGreenGrowth": "हरी विकास के लिए",
+      "forRootStrength": "जड़ मजबूती के लिए",
+      "forDiseaseResistance": "रोग प्रतिरोध के लिए",
+      "good": "अच्छा",
+      "fair": "मध्यम",
+      "low": "कम",
+      "cropSuitability": "फसल उपयुक्तता",
+      "howSuitableIs": "आपकी मिट्टी कितनी उपयुक्त है",
+      "excellent": "उत्कृष्ट",
+      "poor": "खराब",
+      "cultivationIs": "की खेती",
+      "in": "में",
+      "considerSoilTreatment": "मिट्टी उपचार पर विचार करें या नीचे अनुशंसित फसलें चुनें",
+      "soilAmendmentsMayImprove": "मिट्टी में सुधार से फसल उपज बढ़ सकती है",
+      "goodConditions": "स्वस्थ फसल विकास के लिए अच्छी परिस्थितियां",
+      "excellentConditions": "अधिकतम उपज के लिए उत्कृष्ट परिस्थितियां",
+      "irrigationAnalysis": "सिंचाई विश्लेषण",
+      "cropsGrowWell": "आपकी मिट्टी की स्थिति में अच्छी तरह से उगने वाली फसलें",
+      "bestCropsFor": "के लिए सर्वोत्तम फसलें",
+      "nitrogenBonus": "नाइट्रोजन बोनस उपलब्ध",
+      "waterQualityAlert": "जल गुणवत्ता उपज को प्रभावित कर सकती है"
+    },
 
     "irrigation": {
       "rainfed": "केवल बारिश पर निर्भर",
@@ -156,7 +199,11 @@
     "analyzeYieldGap": "उत्पादन अंतर का विश्लेषण करें",
     "benchmark": "बेंचमार्क",
     "gap": "अंतर",
-    "improvement": "सुधार की संभावना"
+    "improvement": "सुधार की संभावना",
+    "actualYieldPlaceholder": "उदा., 2.5",
+    "areaPlaceholder": "उदा., 50",
+    "fertilizerPlaceholder": "उदा., 20000",
+    "pesticidePlaceholder": "उदा., 300"
   },
   "gapAnalysis": {
     "title": "अंतर विश्लेषण",

@@ -62,7 +62,7 @@ const DiseaseDetection = () => {
 
     const handleDetectDisease = async () => {
         if (!selectedImage) {
-            setError('Please select an image first');
+            setError(t('pages:diseaseDetection.pleaseSelectImage'));
             return;
         }
 
@@ -115,14 +115,12 @@ const DiseaseDetection = () => {
         <div className="page-container">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {/* Header */}
-                <div className="text-center mb-8">
-                    <h1 className="page-header-title">
-                        <Bug className="inline-block w-8 h-8 mr-3 text-green-600" />
-                        {t('diseaseDetection.title')}
-                    </h1>
-                    <p className="page-header-subtitle">
-                        {t('diseaseDetection.subtitle')}
-                    </p>
+                <div className="page-header">
+                    <Bug className="page-header-icon" />
+                    <div>
+                        <h1 className="page-header-title">{t('diseaseDetection.title')}</h1>
+                        <p className="page-header-subtitle">{t('diseaseDetection.subtitle')}</p>
+                    </div>
                 </div>
 
                 {/* Tab Navigation */}
@@ -243,7 +241,7 @@ const DiseaseDetection = () => {
                                             type="text"
                                             value={location}
                                             onChange={(e) => setLocation(e.target.value)}
-                                            placeholder="e.g., Punjab, Maharashtra"
+                                            placeholder={t('pages:diseaseDetection.locationPlaceholder')}
                                             className="form-input"
                                         />
                                     </div>
@@ -324,7 +322,6 @@ const DiseaseDetection = () => {
                                 )}
                             </div>
                         </div>
-                    </div>
                 ) : (
                     <DiseaseList 
                         diseases={diseases} 
