@@ -28,9 +28,9 @@ export const getSoilData = async (state) => {
 };
 
 /**
- * Check soil suitability for a specific crop
- * @param {Object} data - { state: string, crop: string }
- * @returns {Promise<Object>} Suitability score and analysis
+ * Check soil suitability for a specific crop with enhanced parameters
+ * @param {Object} data - { state: string, crop: string, fieldSize?: number, irrigationType?: string, previousCrop?: string, waterQuality?: string }
+ * @returns {Promise<Object>} Enhanced suitability score and analysis
  */
 export const checkSoilSuitability = async (data) => {
     try {
@@ -39,6 +39,12 @@ export const checkSoilSuitability = async (data) => {
             state: data.state,
             crop: data.crop
         });
+        
+        // Add optional enhanced parameters
+        if (data.fieldSize) params.append('field_size', data.fieldSize.toString());
+        if (data.irrigationType) params.append('irrigation_type', data.irrigationType);
+        if (data.previousCrop) params.append('previous_crop', data.previousCrop);
+        if (data.waterQuality) params.append('water_quality', data.waterQuality);
         
         const response = await fetch(`${API_BASE_URL}/soil/suitability?${params}`, {
             method: 'POST'
@@ -132,5 +138,44 @@ export const checkServerHealth = async () => {
     } catch (error) {
         console.error('Server health check failed:', error);
         return false;
+    }
+};
+
+/**
+ * Analyze soil using both image and traditional data
+ * @param {Object} data - Analysis parameters including image file
+ * @returns {Promise<Object>} Combined image and traditional analysis results
+ */
+export const analyzeSoilWithImage = async (data) => {
+    try {
+        // Create FormData for multipart/form-data request
+        const formData = new FormData();
+        
+        // Add required fields
+        formData.append('state', data.state);
+        formData.append('crop', data.crop);
+        formData.append('image', data.soilImage);
+        
+        // Add optional enhanced parameters
+        if (data.fieldSize) formData.append('field_size', data.fieldSize.toString());
+        if (data.irrigationType) formData.append('irrigation_type', data.irrigationType);
+        if (data.previousCrop) formData.append('previous_crop', data.previousCrop);
+        if (data.waterQuality) formData.append('water_quality', data.waterQuality);
+        
+        const response = await fetch(`${API_BASE_URL}/soil/analyze-image`, {
+            method: 'POST',
+            body: formData
+            // Note: Don't set Content-Type header for FormData, browser will set it automatically
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Failed to analyze soil image: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        return result.data || {};
+    } catch (error) {
+        console.error('Error in image-based soil analysis:', error);
+        throw error;
     }
 };

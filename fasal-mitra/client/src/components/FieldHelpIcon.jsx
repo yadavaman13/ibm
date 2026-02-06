@@ -1,12 +1,12 @@
 import React from 'react';
-import { HelpCircle } from 'lucide-react';
+import { Zap } from 'lucide-react';
 import { shouldShowHelp } from '../utils/fieldHelpers';
 import '../styles/field-help-icon.css';
 
 /**
  * FieldHelpIcon Component
  * 
- * Small clickable help icon that appears next to agriculture-related input fields
+ * Clickable "Ask AI" button with lightning icon that appears next to agriculture-related input fields
  * Opens the FieldHelpModal when clicked
  */
 const FieldHelpIcon = ({ fieldName, onClick }) => {
@@ -18,12 +18,13 @@ const FieldHelpIcon = ({ fieldName, onClick }) => {
     return (
         <button
             type="button"
-            className="field-help-icon-btn"
+            className="field-help-btn"
             onClick={onClick}
-            aria-label="Get help about this field"
-            title="Click for explanation"
+            aria-label="Ask AI for help about this field"
+            title="Click to ask AI for help"
         >
-            <HelpCircle className="field-help-icon" />
+            <Zap className="lightning-icon" />
+            <span className="ask-sigma-text">Ask AI</span>
         </button>
     );
 };

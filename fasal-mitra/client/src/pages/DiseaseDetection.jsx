@@ -7,6 +7,7 @@ import DiseaseList from '../components/disease/DiseaseList';
 import TreatmentPlan from '../components/disease/TreatmentPlan';
 import FieldHelpIcon from '../components/FieldHelpIcon';
 import FieldHelpModal from '../components/FieldHelpModal';
+import { VoiceSummary } from '../components/voice';
 import '../styles/disease-detection.css';
 import '../styles/pages.css';
 
@@ -286,30 +287,42 @@ const DiseaseDetection = () => {
                             </div>
                         </div>
 
-                        {/* Results Section - Full Width Below */}
-                        <div className="detection-results-section">
-                            {detectionResult ? (
-                                <div className="space-y-6">
-                                    <DetectionResults result={detectionResult} />
-                                    <TreatmentPlan 
-                                        treatmentPlan={detectionResult.treatment_plan}
-                                        severity={detectionResult.estimated_severity}
-                                        recommendations={detectionResult.recommendations}
-                                    />
-                                </div>
-                            ) : (
-                                <div className="results-placeholder">
-                                    <div className="placeholder-icon">
-                                        <Bug className="w-16 h-16 text-gray-300" />
+                            {/* Right Column - Results Section */}
+                            <div className="detection-results-section">
+                                {detectionResult ? (
+                                    <div className="space-y-6">
+                                        <DetectionResults result={detectionResult} />
+                                        <TreatmentPlan 
+                                            treatmentPlan={detectionResult.treatment_plan}
+                                            severity={detectionResult.estimated_severity}
+                                            recommendations={detectionResult.recommendations}
+                                        />
+                                        
+                                        {/* Voice Summary for Disease Detection Results */}
+                                        <VoiceSummary
+                                            result={detectionResult}
+                                            resultType="diseaseDetection"
+                                            title="🎧 Disease Analysis Summary"
+                                            className="disease-voice-summary"
+                                            onSpeechStart={() => console.log('Started reading disease detection summary')}
+                                            onSpeechEnd={() => console.log('Finished reading disease detection summary')}
+                                            onSpeechError={(error) => console.error('Disease speech error:', error)}
+                                        />
                                     </div>
-                                    <h3 className="text-lg font-medium text-gray-500 mb-2">
-                                        No Detection Yet
-                                    </h3>
-                                    <p className="text-gray-400 text-center">
-                                        Upload an image and click "Detect Disease" to see results here
-                                    </p>
-                                </div>
-                            )}
+                                ) : (
+                                    <div className="results-placeholder">
+                                        <div className="placeholder-icon">
+                                            <Bug className="w-16 h-16 text-gray-300" />
+                                        </div>
+                                        <h3 className="text-lg font-medium text-gray-500 mb-2">
+                                            No Detection Yet
+                                        </h3>
+                                        <p className="text-gray-400 text-center">
+                                            Upload an image and click "Detect Disease" to see results here
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
                 ) : (

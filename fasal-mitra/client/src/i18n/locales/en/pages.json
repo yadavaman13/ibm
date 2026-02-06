@@ -79,13 +79,76 @@
     "chooseStateAndCrop": "Choose your state and crop to analyze soil suitability",
     "state": "State",
     "crop": "Crop",
+    "expectedState": "Expected State",
+    "analyzeCrop": "Analyze Crop",
+    "latitude": "Latitude",
+    "longitude": "Longitude",
+    "try": "Try",
+    "analyzing": "Analyzing...",
     "selectState": "Select state...",
     "selectCrop": "Select crop...",
     "analyze": "Analyze Soil",
     "nutrients": "Nutrients",
     "ph": "pH Level",
     "recommendations": "Recommendations",
-    "comingSoon": "This feature will be implemented soon"
+    "comingSoon": "This feature will be implemented soon",
+    "fieldSize": "Field Size (hectares)",
+    "fieldSizePlaceholder": "Enter field size in hectares",
+    "irrigationType": "Irrigation Type",
+    "selectIrrigation": "Select irrigation type...",
+    "previousCrop": "Previous Crop (Last Season)",
+    "selectPreviousCrop": "Select previous crop...",
+    "noPreviousCrop": "First time farming / No previous crop",
+    "waterQuality": "Water Source Quality",
+    "selectWaterQuality": "Select water quality...",
+
+    "irrigation": {
+      "rainfed": "Rain-fed only",
+      "drip": "Drip irrigation",
+      "sprinkler": "Sprinkler irrigation",
+      "flood": "Flood irrigation",
+      "mixed": "Mixed irrigation methods"
+    },
+    "waterTypes": {
+      "sweet": "Sweet water (good quality)",
+      "slightlySalty": "Slightly salty water",
+      "verySalty": "Very salty/brackish water",
+      "unknown": "Don't know / Not sure"
+    },
+
+    "soilImage": "Soil Image (Optional)",
+    "uploadImage": "Upload Image",
+    "captureImage": "Take Photo",
+    "changeImage": "Change Image", 
+    "imageReady": "Image Ready",
+    "imageHint": "Upload a clear photo of your soil sample for enhanced AI analysis",
+    "imageAnalysis": {
+      "title": "Visual Soil Analysis",
+      "description": "AI analysis of your soil image",
+      "soilColor": "Soil Color",
+      "textureType": "Texture Type",
+      "moistureLevel": "Moisture Level",
+      "healthScore": "Health Score",
+      "organicMatter": "Organic Matter",
+      "surfaceCondition": "Surface Condition",
+      "unavailable": "Visual analysis temporarily unavailable"
+    },
+    "location": {
+      "title": "Location Detection (Optional)",
+      "subtitle": "Detect your precise location for more accurate soil analysis",
+      "detectButton": "Detect My Location",
+      "detecting": "Detecting Location...",
+      "latitude": "Latitude:",
+      "longitude": "Longitude:",
+      "stateDetected": "State automatically detected and selected!",
+      "errors": {
+        "notSupported": "Geolocation is not supported by this browser.",
+        "permissionDenied": "Location access denied. Please enable location permissions in your browser.",
+        "unavailable": "Location information is unavailable. Please try again.",
+        "timeout": "Location request timed out. Please try again.",
+        "unknown": "An unknown error occurred while retrieving location."
+      }
+    }
   },
   "yieldGapAnalysis": {
     "title": "Yield Gap Analysis",

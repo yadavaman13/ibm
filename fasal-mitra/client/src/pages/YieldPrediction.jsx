@@ -4,6 +4,7 @@ import { Sprout, TrendingUp, AlertCircle, CheckCircle, Loader, Leaf, Droplets, B
 import { predictYield, checkServerHealth } from '../services/yieldService';
 import FieldHelpIcon from '../components/FieldHelpIcon';
 import FieldHelpModal from '../components/FieldHelpModal';
+import { VoiceSummary } from '../components/voice';
 import '../styles/pages.css';
 import '../styles/yield-prediction.css';
 
@@ -463,6 +464,19 @@ const YieldPrediction = () => {
                             )}
                         </div>
                     </>
+                )}
+
+                {/* Voice Summary Section */}
+                {result && (
+                    <VoiceSummary
+                        result={result}
+                        resultType="yieldPrediction"
+                        title="🎧 Yield Prediction Summary"
+                        className="yield-voice-summary"
+                        onSpeechStart={() => console.log('Started reading yield prediction summary')}
+                        onSpeechEnd={() => console.log('Finished reading yield prediction summary')}
+                        onSpeechError={(error) => console.error('Speech error:', error)}
+                    />
                 )}
 
                 {/* Error Display */}

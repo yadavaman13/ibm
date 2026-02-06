@@ -712,3 +712,39 @@ input[type="number"] {
         grid-template-columns: 1fr;
     }
 }
+
+/* Voice Summary Integration Styles for Yield Prediction */
+.yield-voice-summary {
+    margin-top: 2rem;
+    border: 2px solid #e5f3ff;
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border-radius: 1rem;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+.yield-voice-summary .voice-summary-header {
+    background: rgba(59, 130, 246, 0.05);
+    margin: -20px -20px 16px -20px;
+    padding: 20px;
+    border-radius: 1rem 1rem 0 0;
+    border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+}
+
+.yield-voice-summary .header-title {
+    color: #1e40af;
+    font-weight: 600;
+}
+
+/* Responsive adjustments for voice summary */
+@media (max-width: 768px) {
+    .yield-voice-summary {
+        margin-top: 1.5rem;
+        border-radius: 8px;
+    }
+    
+    .yield-voice-summary .voice-summary-header {
+        margin: -16px -16px 12px -16px;
+        padding: 16px;
+        border-radius: 8px 8px 0 0;
+    }
+}

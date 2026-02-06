@@ -1,0 +1,362 @@
+/* Voice Language Selector Component Styles */
+
+.voice-language-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.voice-language-selector.compact {
+    margin-bottom: 8px;
+}
+
+.voice-language-selector.unsupported {
+    padding: 12px;
+    background: #fef3f2;
+    border: 1px solid #fecaca;
+    border-radius: 6px;
+    color: #dc2626;
+}
+
+.unsupported-text {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.selector-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 4px;
+}
+
+.dropdown-container {
+    position: relative;
+    width: 100%;
+    max-width: 280px;
+}
+
+.dropdown-trigger {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: white;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+}
+
+.dropdown-trigger:hover {
+    border-color: #9ca3af;
+    background: #f9fafb;
+}
+
+.dropdown-trigger:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+    border-color: #3b82f6;
+}
+
+.selected-language {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+}
+
+.flag {
+    font-size: 18px;
+    width: 20px;
+    text-align: center;
+}
+
+.language-name {
+    color: #374151;
+    font-weight: 500;
+}
+
+.chevron {
+    width: 16px;
+    height: 16px;
+    color: #6b7280;
+    transition: transform 0.2s ease;
+}
+
+.chevron.open {
+    transform: rotate(180deg);
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    z-index: 50;
+    overflow: hidden;
+    margin-top: 4px;
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    position: relative;
+}
+
+.dropdown-item:hover {
+    background: #f9fafb;
+}
+
+.dropdown-item:focus {
+    background: #f3f4f6;
+    outline: none;
+}
+
+.dropdown-item.selected {
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.dropdown-item.selected:hover {
+    background: #dbeafe;
+}
+
+.dropdown-item.fallback {
+    opacity: 0.8;
+    background: #fafafa;
+}
+
+.dropdown-item.fallback:hover {
+    background: #f0f0f0;
+}
+
+.language-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.language-name {
+    color: #374151;
+    font-weight: 500;
+}
+
+.fallback-note {
+    font-size: 11px;
+    color: #f59e0b;
+    font-style: italic;
+}
+
+.check-mark {
+    margin-left: auto;
+    color: #10b981;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.support-status {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 4px;
+}
+
+.status-text {
+    font-size: 12px;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.status-indicator {
+    font-size: 8px;
+}
+
+.status-indicator.supported {
+    color: #10b981;
+}
+
+.status-indicator.fallback {
+    color: #f59e0b;
+}
+
+.hindi-help {
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: #fef3c7;
+    border: 1px solid #fbbf24;
+    border-radius: 4px;
+    border-left: 3px solid #f59e0b;
+}
+
+.hindi-help small {
+    color: #92400e;
+    line-height: 1.3;
+    display: block;
+}
+
+/* Compact variant */
+.voice-language-selector.compact .dropdown-trigger {
+    padding: 8px 12px;
+    font-size: 13px;
+}
+
+.voice-language-selector.compact .selected-language {
+    gap: 8px;
+}
+
+.voice-language-selector.compact .flag {
+    font-size: 16px;
+    width: 18px;
+}
+
+.voice-language-selector.compact .chevron {
+    width: 14px;
+    height: 14px;
+}
+
+.voice-language-selector.compact .dropdown-item {
+    padding: 10px 12px;
+    font-size: 13px;
+    gap: 8px;
+}
+
+.voice-language-selector.compact .support-status {
+    margin-top: 2px;
+}
+
+.voice-language-selector.compact .status-text {
+    font-size: 11px;
+}
+
+/* Responsive design */
+@media (max-width: 640px) {
+    .dropdown-container {
+        max-width: 100%;
+    }
+    
+    .dropdown-trigger {
+        padding: 10px 14px;
+        font-size: 13px;
+    }
+    
+    .flag {
+        font-size: 16px;
+        width: 18px;
+    }
+    
+    .dropdown-item {
+        padding: 10px 14px;
+        font-size: 13px;
+        gap: 10px;
+    }
+    
+    .selector-label {
+        font-size: 13px;
+    }
+}
+
+/* Dark mode support (if needed) */
+@media (prefers-color-scheme: dark) {
+    .dropdown-trigger {
+        background: #374151;
+        border-color: #4b5563;
+        color: white;
+    }
+    
+    .dropdown-trigger:hover {
+        background: #4b5563;
+        border-color: #6b7280;
+    }
+    
+    .dropdown-menu {
+        background: #374151;
+        border-color: #4b5563;
+    }
+    
+    .dropdown-item {
+        color: white;
+    }
+    
+    .dropdown-item:hover {
+        background: #4b5563;
+    }
+    
+    .dropdown-item:focus {
+        background: #6b7280;
+    }
+    
+    .dropdown-item.selected {
+        background: #1e40af;
+        color: #dbeafe;
+    }
+    
+    .dropdown-item.selected:hover {
+        background: #1d4ed8;
+    }
+}
+
+/* Animation for smoother dropdown */
+.dropdown-menu {
+    animation: slideDown 0.15s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Accessibility enhancements */
+.dropdown-item:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: -2px;
+}
+
+/* Integration with other components */
+.result-section .voice-language-selector {
+    margin-bottom: 12px;
+}
+
+.speech-summary-container .voice-language-selector {
+    margin-bottom: 8px;
+}
+
+/* Loading state */
+.voice-language-selector.loading .dropdown-trigger {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.voice-language-selector.loading .chevron {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}

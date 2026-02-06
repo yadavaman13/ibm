@@ -1,0 +1,327 @@
+/* Speech Controls Component Styles */
+
+.speech-controls {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 16px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.speech-controls.unsupported {
+    background: #fef3f2;
+    border-color: #fecaca;
+    color: #dc2626;
+}
+
+.unsupported-message {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.controls-main {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.playback-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.control-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid #d1d5db;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.control-btn:hover:not(:disabled) {
+    background: #f9fafb;
+    border-color: #9ca3af;
+    transform: translateY(-1px);
+}
+
+.control-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.play-btn, .resume-btn {
+    background: #10b981;
+    border-color: #10b981;
+    color: white;
+}
+
+.play-btn:hover, .resume-btn:hover {
+    background: #059669;
+    border-color: #059669;
+}
+
+.pause-btn {
+    background: #f59e0b;
+    border-color: #f59e0b;
+    color: white;
+}
+
+.pause-btn:hover {
+    background: #d97706;
+    border-color: #d97706;
+}
+
+.stop-btn {
+    background: #ef4444;
+    border-color: #ef4444;
+    color: white;
+}
+
+.stop-btn:hover {
+    background: #dc2626;
+    border-color: #dc2626;
+}
+
+.settings-btn {
+    background: #6b7280;
+    border-color: #6b7280;
+    color: white;
+}
+
+.settings-btn:hover {
+    background: #4b5563;
+    border-color: #4b5563;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #e5e7eb;
+    border-top: 2px solid #3b82f6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.speech-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.speech-status {
+    font-weight: 500;
+}
+
+/* Settings Panel */
+.settings-panel {
+    margin-top: 16px;
+    padding: 16px;
+    background: #f9fafb;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
+}
+
+.settings-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.settings-row:last-child {
+    margin-bottom: 0;
+}
+
+.settings-row label {
+    min-width: 60px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+}
+
+.range-input {
+    flex: 1;
+    height: 4px;
+    background: #e5e7eb;
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+}
+
+.range-input::-webkit-slider-thumb {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    background: #3b82f6;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.range-input::-webkit-slider-thumb:hover {
+    background: #2563eb;
+}
+
+.range-input::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background: #3b82f6;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+}
+
+.setting-value {
+    min-width: 40px;
+    text-align: right;
+    font-size: 12px;
+    color: #6b7280;
+    font-weight: 600;
+}
+
+/* Error Display */
+.speech-error {
+    margin-top: 12px;
+    padding: 12px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #dc2626;
+    font-size: 14px;
+}
+
+.error-text {
+    flex: 1;
+}
+
+.error-close {
+    background: none;
+    border: none;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 12px;
+    color: #dc2626;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.error-close:hover {
+    opacity: 1;
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+    .controls-main {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+    
+    .playback-controls {
+        justify-content: center;
+    }
+    
+    .speech-info {
+        justify-content: center;
+    }
+    
+    .control-btn {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .settings-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+    
+    .settings-row label {
+        min-width: auto;
+    }
+    
+    .setting-value {
+        text-align: center;
+    }
+}
+
+/* Accessibility */
+.control-btn:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}
+
+.range-input:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}
+
+/* Animation for status changes */
+.speech-status {
+    transition: color 0.3s ease;
+}
+
+.speech-controls:has(.speech-status:contains("Playing")) .speech-info {
+    color: #10b981;
+}
+
+.speech-controls:has(.speech-status:contains("Paused")) .speech-info {
+    color: #f59e0b;
+}
+
+/* Compact variant */
+.speech-controls.compact {
+    padding: 8px 12px;
+    margin: 8px 0;
+}
+
+.speech-controls.compact .controls-main {
+    gap: 8px;
+}
+
+.speech-controls.compact .control-btn {
+    width: 32px;
+    height: 32px;
+}
+
+.speech-controls.compact .speech-info {
+    font-size: 12px;
+}
+
+/* Integration with result cards */
+.result-card .speech-controls {
+    margin-top: 16px;
+    border: none;
+    background: #f8fafc;
+    border-radius: 6px;
+}
