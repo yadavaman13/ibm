@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TrendingUp, AlertCircle, Target, BarChart3, Award, Lightbulb, ArrowUp, ArrowDown, Minus } from 'lucide-react';
 import '../styles/yield-gap-analysis.css';
+import '../styles/pages.css';
 import { analyzeYieldGap, getCrops, getStates, getSeasons } from '../services/gapAnalysisService';
 
 const YieldGapAnalysis = () => {
@@ -295,6 +296,13 @@ const YieldGapAnalysis = () => {
             {/* Results */}
             {results && (
                 <div className="results-section">
+                    {/* Results Divider */}
+                    <div className="results-divider">
+                        <div className="divider-line"></div>
+                        <span className="divider-text">{t('yieldGapAnalysis.results', 'Analysis Results')}</span>
+                        <div className="divider-line"></div>
+                    </div>
+
                     {/* Performance Overview */}
                     <div className="result-card">
                         <div className="card-header">

@@ -104,13 +104,64 @@ class ResultSummaryGenerator {
             soilAnalysis: {
                 en: {
                     intro: "Soil analysis results are available.",
-                    suitability: "For {crop} cultivation, your soil suitability score is {score} out of 10.",
-                    nutrients: "Main nutrient levels: {nutrients}.",
-                    ph: "The soil pH level is {ph}.",
-                    recommendations: "Soil improvement recommendations: {recommendations}",
-                    conclusion: "Follow these guidelines for optimal soil health."
+                    suitability: "For {crop} cultivation in {state}, your soil suitability score is {score} out of 100.",
+                    nutrients: "Nutrient analysis shows: Nitrogen is {nitrogen}, Phosphorus is {phosphorus}, and Potassium is {potassium}.",
+                    ph: "The soil pH level is {ph}, which is {phLevel}.",
+                    organic: "Organic matter content is estimated at {organic} percent.",
+                    moisture: "Soil moisture level is {moisture}.",
+                    texture: "The soil texture is {texture}.",
+                    recommendations: "Key recommendations: {recommendations}",
+                    warning: "Important considerations: {warnings}",
+                    conclusion: "Follow these guidelines for optimal crop growth."
+                },
+                hi: {
+                    intro: "मिट्टी विश्लेषण के परिणाम उपलब्ध हैं।",
+                    suitability: "{state} में {crop} की खेती के लिए, आपका मिट्टी उपयुक्तता स्कोर 100 में से {score} है।",
+                    nutrients: "पोषक तत्व विश्लेषण: नाइट्रोजन {nitrogen} है, फॉस्फोरस {phosphorus} है, और पोटैशियम {potassium} है।",
+                    ph: "मिट्टी का पीएच स्तर {ph} है, जो {phLevel} है।",
+                    organic: "जैविक पदार्थ की मात्रा लगभग {organic} प्रतिशत है।",
+                    moisture: "मिट्टी की नमी का स्तर {moisture} है।",
+                    texture: "मिट्टी की बनावट {texture} है।",
+                    recommendations: "मुख्य सिफारिशें: {recommendations}",
+                    warning: "महत्वपूर्ण विचार: {warnings}",
+                    conclusion: "इष्टतम फसल वृद्धि के लिए इन दिशानिर्देशों का पालन करें।"
+                },
+                mr: {
+                    intro: "माती विश्लेषण निकाल उपलब्ध आहेत।",
+                    suitability: "{state} मध्ये {crop} लागवडीसाठी, तुमचा माती योग्यता गुण 100 पैकी {score} आहे।",
+                    nutrients: "पोषक घटक विश्लेषण: नायट्रोजन {nitrogen} आहे, फॉस्फरस {phosphorus} आहे, आणि पोटॅशियम {potassium} आहे।",
+                    ph: "मातीची पीएच पातळी {ph} आहे, जी {phLevel} आहे।",
+                    organic: "सेंद्रिय पदार्थाचे प्रमाण अंदाजे {organic} टक्के आहे।",
+                    moisture: "मातीतील ओलावा पातळी {moisture} आहे।",
+                    texture: "मातीची रचना {texture} आहे।",
+                    recommendations: "मुख्य शिफारशी: {recommendations}",
+                    warning: "महत्त्वाचे विचार: {warnings}",
+                    conclusion: "योग्य पीक वाढीसाठी या मार्गदर्शक तत्त्वांचे पालन करा।"
+                },
+                gu: {
+                    intro: "માટી વિશ્લેષણ પરિણામો ઉપલબ્ધ છે।",
+                    suitability: "{state}માં {crop}ની ખેતી માટે, તમારો માટી યોગ્યતા સ્કોર 100માંથી {score} છે।",
+                    nutrients: "પોષક તત્વ વિશ્લેષણ: નાઈટ્રોજન {nitrogen} છે, ફોસ્ફરસ {phosphorus} છે, અને પોટેશિયમ {potassium} છે।",
+                    ph: "માટીનું પીએચ સ્તર {ph} છે, જે {phLevel} છે।",
+                    organic: "કાર્બનિક પદાર્થનું પ્રમાણ લગભગ {organic} ટકા છે।",
+                    moisture: "માટીનું ભેજ સ્તર {moisture} છે।",
+                    texture: "માટીની રચના {texture} છે।",
+                    recommendations: "મુખ્ય ભલામણો: {recommendations}",
+                    warning: "મહત્વપૂર્ણ વિચારણાઓ: {warnings}",
+                    conclusion: "શ્રેષ્ઠ પાક વૃદ્ધિ માટે આ માર્ગદર્શિકાઓનું પાલન કરો।"
+                },
+                ta: {
+                    intro: "மண் பகுப்பாய்வு முடிவுகள் கிடைக்கின்றன.",
+                    suitability: "{state}இல் {crop} சாகுபடிக்கு, உங்கள் மண் பொருத்தம் மதிப்பெண் 100இல் {score} ஆகும்.",
+                    nutrients: "ஊட்டச்சத்து பகுப்பாய்வு: நைட்ரஜன் {nitrogen}, பாஸ்பரஸ் {phosphorus}, மற்றும் பொட்டாசியம் {potassium}.",
+                    ph: "மண்ணின் pH அளவு {ph}, இது {phLevel} ஆகும்.",
+                    organic: "கரிமப்பொருள் உள்ளடக்கம் தோராயமாக {organic} சதவீதம்.",
+                    moisture: "மண் ஈரப்பதம் நிலை {moisture} ஆகும்.",
+                    texture: "மண்ணின் அமைப்பு {texture} ஆகும்.",
+                    recommendations: "முக்கிய பரிந்துரைகள்: {recommendations}",
+                    warning: "முக்கியமான கருத்துகள்: {warnings}",
+                    conclusion: "சிறந்த பயிர் வளர்ச்சிக்கு இந்த வழிகாட்டுதல்களைப் பின்பற்றுங்கள்."
                 }
-                // Add other languages for soil analysis...
             }
         };
 
@@ -230,15 +281,185 @@ class ResultSummaryGenerator {
     }
 
     /**
-     * Generate speech summary for soil analysis results - placeholder for future implementation
+     * Generate speech summary for soil analysis results
      * @param {Object} result - Soil analysis result object  
      * @param {string} language - Language code
      * @returns {string}
      */
     generateSoilAnalysisSummary(result, language = 'en') {
         const template = this.templates.soilAnalysis[language] || this.templates.soilAnalysis.en;
-        // Implementation will be added when soil analysis results are available
-        return template.intro || 'Soil analysis results are available.';
+        const parts = [];
+        
+        // Intro
+        parts.push(template.intro);
+        
+        // Get data from different result structures
+        const analysisType = result.analysisType;
+        let soilData, suitabilityData, recommendations;
+        
+        if (analysisType === 'image_enhanced') {
+            soilData = result.traditionalAnalysis?.soil_data || result.imageAnalysis?.structured_analysis || {};
+            suitabilityData = result.traditionalAnalysis?.basic_suitability || {};
+            recommendations = result.combinedAnalysis?.enhanced_recommendations || 
+                              result.traditionalAnalysis?.recommendations || [];
+        } else {
+            soilData = result.soil || {};
+            suitabilityData = result.suitability?.basic_suitability || result.suitability || {};
+            recommendations = result.recommendations?.recommendations || result.recommendations || [];
+        }
+        
+        // Suitability score
+        const score = suitabilityData.suitability_score || suitabilityData.score || 
+                      result.combinedAnalysis?.soil_assessment?.chemical_suitability_score || 50;
+        const crop = result.crop || result.input_params?.crop || 'your selected crop';
+        const state = result.state || result.input_params?.state || 'your region';
+        
+        const suitabilityText = template.suitability
+            .replace('{crop}', crop)
+            .replace('{state}', state)
+            .replace('{score}', Math.round(score));
+        parts.push(suitabilityText);
+        
+        // Nutrients (NPK)
+        const nitrogen = soilData.N || soilData.nitrogen || 'moderate';
+        const phosphorus = soilData.P || soilData.phosphorus || 'moderate';
+        const potassium = soilData.K || soilData.potassium || 'moderate';
+        
+        const nutrientsText = template.nutrients
+            .replace('{nitrogen}', this.getNutrientLevel(nitrogen, language))
+            .replace('{phosphorus}', this.getNutrientLevel(phosphorus, language))
+            .replace('{potassium}', this.getNutrientLevel(potassium, language));
+        parts.push(nutrientsText);
+        
+        // pH Level
+        const ph = soilData.pH || soilData.ph || 7.0;
+        const phLevel = this.getPhLevel(ph, language);
+        const phText = template.ph
+            .replace('{ph}', typeof ph === 'number' ? ph.toFixed(1) : ph)
+            .replace('{phLevel}', phLevel);
+        parts.push(phText);
+        
+        // Image analysis specific fields
+        if (analysisType === 'image_enhanced' && result.imageAnalysis?.structured_analysis) {
+            const imageData = result.imageAnalysis.structured_analysis;
+            
+            // Organic matter
+            if (imageData.organic_matter_estimate) {
+                const organicText = template.organic
+                    .replace('{organic}', imageData.organic_matter_estimate);
+                parts.push(organicText);
+            }
+            
+            // Moisture level
+            if (imageData.moisture_level && imageData.moisture_level !== 'unknown') {
+                const moistureText = template.moisture
+                    .replace('{moisture}', this.translateMoisture(imageData.moisture_level, language));
+                parts.push(moistureText);
+            }
+            
+            // Texture
+            if (imageData.texture_type && imageData.texture_type !== 'unknown') {
+                const textureText = template.texture
+                    .replace('{texture}', this.translateTexture(imageData.texture_type, language));
+                parts.push(textureText);
+            }
+        }
+        
+        // Recommendations
+        let recsArray = [];
+        if (Array.isArray(recommendations)) {
+            recsArray = recommendations;
+        } else if (typeof recommendations === 'object') {
+            recsArray = recommendations.fertilizer_recommendations || 
+                        recommendations.soil_amendments || 
+                        Object.values(recommendations).flat().filter(r => typeof r === 'string');
+        }
+        
+        if (recsArray.length > 0) {
+            const recsText = recsArray.slice(0, 3).join('. ');
+            const recommendationsText = template.recommendations.replace('{recommendations}', recsText);
+            parts.push(recommendationsText);
+        }
+        
+        // Conclusion
+        parts.push(template.conclusion);
+        
+        return parts.join(' ');
+    }
+
+    /**
+     * Get nutrient level description
+     */
+    getNutrientLevel(value, language = 'en') {
+        const levels = {
+            en: { low: 'low', moderate: 'moderate', high: 'high', medium: 'moderate' },
+            hi: { low: 'कम', moderate: 'मध्यम', high: 'उच्च', medium: 'मध्यम' },
+            mr: { low: 'कमी', moderate: 'मध्यम', high: 'उच्च', medium: 'मध्यम' },
+            gu: { low: 'ઓછું', moderate: 'મધ્યમ', high: 'ઉચ્ચ', medium: 'મધ્યમ' },
+            ta: { low: 'குறைவு', moderate: 'நடுத்தரம்', high: 'உயர்வு', medium: 'நடுத்தரம்' }
+        };
+        
+        if (typeof value === 'number') {
+            // Convert numeric value to level
+            if (value < 100) return (levels[language] || levels.en).low;
+            if (value < 300) return (levels[language] || levels.en).moderate;
+            return (levels[language] || levels.en).high;
+        }
+        
+        const normalized = String(value).toLowerCase();
+        return (levels[language] || levels.en)[normalized] || value;
+    }
+
+    /**
+     * Get pH level description
+     */
+    getPhLevel(ph, language = 'en') {
+        const descriptions = {
+            en: { acidic: 'acidic', neutral: 'neutral', alkaline: 'alkaline' },
+            hi: { acidic: 'अम्लीय', neutral: 'तटस्थ', alkaline: 'क्षारीय' },
+            mr: { acidic: 'आम्लयुक्त', neutral: 'तटस्थ', alkaline: 'अल्कधर्मी' },
+            gu: { acidic: 'એસિડિક', neutral: 'તટસ્થ', alkaline: 'ક્ષારીય' },
+            ta: { acidic: 'அமிலத்தன்மை', neutral: 'நடுநிலை', alkaline: 'காரத்தன்மை' }
+        };
+        
+        const phValue = typeof ph === 'number' ? ph : parseFloat(ph) || 7;
+        const desc = descriptions[language] || descriptions.en;
+        
+        if (phValue < 6.5) return desc.acidic;
+        if (phValue <= 7.5) return desc.neutral;
+        return desc.alkaline;
+    }
+
+    /**
+     * Translate moisture level
+     */
+    translateMoisture(moisture, language = 'en') {
+        const translations = {
+            en: { low: 'low', moderate: 'moderate', high: 'high', dry: 'dry', wet: 'wet', moist: 'moist' },
+            hi: { low: 'कम', moderate: 'मध्यम', high: 'उच्च', dry: 'सूखा', wet: 'गीला', moist: 'नम' },
+            mr: { low: 'कमी', moderate: 'मध्यम', high: 'उच्च', dry: 'कोरडे', wet: 'ओले', moist: 'ओलसर' },
+            gu: { low: 'ઓછું', moderate: 'મધ્યમ', high: 'ઉચ્ચ', dry: 'સૂકું', wet: 'ભીનું', moist: 'ભેજવાળું' },
+            ta: { low: 'குறைவு', moderate: 'நடுத்தரம்', high: 'உயர்வு', dry: 'உலர்ந்த', wet: 'ஈரமான', moist: 'ஈரமான' }
+        };
+        
+        const normalized = String(moisture).toLowerCase();
+        return (translations[language] || translations.en)[normalized] || moisture;
+    }
+
+    /**
+     * Translate texture type
+     */
+    translateTexture(texture, language = 'en') {
+        const translations = {
+            en: { clay: 'clay', sandy: 'sandy', loamy: 'loamy', silty: 'silty' },
+            hi: { clay: 'चिकनी मिट्टी', sandy: 'रेतीली', loamy: 'दोमट', silty: 'गाद युक्त' },
+            mr: { clay: 'चिकणमाती', sandy: 'वाळूट', loamy: 'चिकणमातीयुक्त', silty: 'गाळयुक्त' },
+            gu: { clay: 'માટીવાળી', sandy: 'રેતાળ', loamy: 'દોમટ', silty: 'કાંપવાળી' },
+            ta: { clay: 'களிமண்', sandy: 'மணல்', loamy: 'களிமண்கலந்த', silty: 'வண்டல்' }
+        };
+        
+        const normalized = String(texture).toLowerCase();
+        return (translations[language] || translations.en)[normalized] || texture;
     }
 
     /**

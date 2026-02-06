@@ -82,25 +82,52 @@ class VoiceService {
         const availableVoices = this.getVoicesForLanguage(language);
         
         if (availableVoices.length === 0) {
-            console.warn(`No voices available for ${language}, falling back to English`);
-            const fallbackVoices = this.getVoicesForLanguage('en');
-            return fallbackVoices[0] || null;
+            console.warn(`No voices available for ${language}`);
+            return null;
         }
 
-        // Prioritize voices: local > Google > Microsoft > others
-        const prioritizeVoice = (voice) => {
-            const name = voice.name.toLowerCase();
-            if (voice.localService) return 4;
-            if (name.includes('google')) return 3;
-            if (name.includes('microsoft') || name.includes('david') || name.includes('zira')) return 2;
-            return 1;
-        };
+        // Check if we have a NATIVE voice for this language (not fallback)
+        const nativeVoices = availableVoices.filter(voice => {
+            const voiceLang = voice.lang.toLowerCase();
+            return voiceLang.startsWith(language.toLowerCase());
+        });
+
+        if (nativeVoices.length > 0) {
+            // Prioritize voices: local > Google > Microsoft > others
+            const prioritizeVoice = (voice) => {
+                const name = voice.name.toLowerCase();
+                if (voice.localService) return 4;
+                if (name.includes('google')) return 3;
+                if (name.includes('microsoft') || name.includes('david') || name.includes('zira')) return 2;
+                return 1;
+            };
+            
+            nativeVoices.sort((a, b) => prioritizeVoice(b) - prioritizeVoice(a));
+            
+            const selectedVoice = nativeVoices[0];
+            console.log(`Selected native voice for ${language}:`, selectedVoice.name, `(${selectedVoice.lang})`);
+            return selectedVoice;
+        }
         
-        availableVoices.sort((a, b) => prioritizeVoice(b) - prioritizeVoice(a));
+        console.warn(`No native voice for ${language}, returning null`);
+        return null;
+    }
+
+    /**
+     * Check if native voice is available for a language
+     * @param {string} language - Language code
+     * @returns {boolean}
+     */
+    hasNativeVoice(language) {
+        if (!this.supported) return false;
         
-        const selectedVoice = availableVoices[0];
-        console.log(`Selected voice for ${language}:`, selectedVoice.name, `(${selectedVoice.lang})`);
-        return selectedVoice;
+        // Refresh voices
+        this.voices = this.synthesis.getVoices();
+        
+        return this.voices.some(voice => {
+            const voiceLang = voice.lang.toLowerCase();
+            return voiceLang.startsWith(language.toLowerCase());
+        });
     }
 
     /**
@@ -122,15 +149,28 @@ class VoiceService {
 
             const utterance = new SpeechSynthesisUtterance(text);
             const voice = this.getBestVoice(language);
-
-            if (voice) {
+            
+            // If no native voice for the requested language, fall back to English voice & notify
+            if (!voice && language !== 'en') {
+                console.warn(`No native voice for ${language}, using English voice`);
+                const englishVoice = this.getBestVoice('en');
+                if (englishVoice) {
+                    utterance.voice = englishVoice;
+                    utterance.lang = englishVoice.lang;
+                    console.log(`Falling back to English voice: ${englishVoice.name}`);
+                    // Notify that we're using fallback
+                    options.onFallback && options.onFallback(language);
+                } else {
+                    utterance.lang = 'en-US';
+                }
+            } else if (voice) {
                 utterance.voice = voice;
                 utterance.lang = voice.lang;
                 console.log(`Speaking in ${language} using voice: ${voice.name} (${voice.lang})`);
             } else {
-                const fallbackLang = this.languageMap[language]?.[0] || 'en-US';
-                utterance.lang = fallbackLang;
-                console.warn(`No voice found for ${language}, using lang: ${fallbackLang}`);
+                // English fallback
+                utterance.lang = 'en-US';
+                console.warn(`No voice found, using lang: en-US`);
             }
 
             // Apply options

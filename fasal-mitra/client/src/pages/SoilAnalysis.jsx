@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Sprout, Droplets, TestTube, CheckCircle, AlertCircle, Loader, TrendingUp, MapPin, Navigation, Volume2, VolumeX, Play, Pause, Square, Camera, Upload, X, Eye, Lightbulb, ThumbsUp, Star, BarChart3, RotateCcw, Wheat, Calendar, IndianRupee, Package, Earth } from 'lucide-react';
+import { Sprout, Droplets, TestTube, CheckCircle, AlertCircle, Loader, TrendingUp, MapPin, Navigation, Volume2, VolumeX, Play, Pause, Square, Camera, Upload, X, Eye, Lightbulb, ThumbsUp, Star, BarChart3, RotateCcw, Wheat, Calendar, IndianRupee, Package, Earth, RefreshCw } from 'lucide-react';
 import '../styles/pages.css';
 import '../styles/soil-analysis-clean.css';
 import * as soilService from '../services/soilService';
 import FieldHelpIcon from '../components/FieldHelpIcon';
 import FieldHelpModal from '../components/FieldHelpModal';
+import { VoiceSummary } from '../components/voice';
 import worldIcon from '../assets/744483-removebg-preview.png';
 
 const SoilAnalysis = () => {
@@ -22,8 +23,16 @@ const SoilAnalysis = () => {
     // Image upload state
     const [soilImage, setSoilImage] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
-    const [imageAnalyzing, setImageAnalyzing] = useState(false);
+    const [_imageAnalyzing, setImageAnalyzing] = useState(false); // eslint-disable-line no-unused-vars
     const fileInputRef = useRef(null);
+    
+    // Camera capture state
+    const [cameraActive, setCameraActive] = useState(false);
+    const [cameraStream, setCameraStream] = useState(null);
+    const [facingMode, setFacingMode] = useState('environment'); // 'environment' = back, 'user' = front
+    const [cameraError, setCameraError] = useState(null);
+    const videoRef = useRef(null);
+    const canvasRef = useRef(null);
 
     const [states, setStates] = useState([]);
     const [crops, setCrops] = useState([]);
@@ -42,6 +51,11 @@ const SoilAnalysis = () => {
     const [helpModalOpen, setHelpModalOpen] = useState(false);
     const [helpFieldLabel, setHelpFieldLabel] = useState('');
     const [helpFieldName, setHelpFieldName] = useState('');
+    
+    // Custom field size state
+    const [isCustomFieldSize, setIsCustomFieldSize] = useState(false);
+    // eslint-disable-next-line no-unused-vars
+    const [_customFieldSize, _setCustomFieldSize] = useState('');
 
     // Load states and crops on mount
     useEffect(() => {
@@ -113,12 +127,114 @@ const SoilAnalysis = () => {
         }
     };
 
-    const captureFromCamera = () => {
-        if (fileInputRef.current) {
-            fileInputRef.current.setAttribute('capture', 'environment');
-            fileInputRef.current.click();
+    const captureFromCamera = async () => {
+        setCameraError(null);
+        try {
+            // Request camera permission and start stream
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: {
+                    facingMode: facingMode,
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
+                }
+            });
+            setCameraStream(stream);
+            setCameraActive(true);
+            
+            // Set video source after state update
+            setTimeout(() => {
+                if (videoRef.current) {
+                    videoRef.current.srcObject = stream;
+                }
+            }, 100);
+        } catch (err) {
+            console.error('Camera access error:', err);
+            if (err.name === 'NotAllowedError') {
+                setCameraError(t('pages:soilAnalysis.cameraPermissionDenied'));
+            } else if (err.name === 'NotFoundError') {
+                setCameraError(t('pages:soilAnalysis.cameraNotFound'));
+            } else {
+                setCameraError(t('pages:soilAnalysis.cameraError'));
+            }
         }
     };
+
+    const stopCamera = () => {
+        if (cameraStream) {
+            cameraStream.getTracks().forEach(track => track.stop());
+            setCameraStream(null);
+        }
+        setCameraActive(false);
+        setCameraError(null);
+    };
+
+    const switchCamera = async () => {
+        // Stop current stream
+        if (cameraStream) {
+            cameraStream.getTracks().forEach(track => track.stop());
+        }
+        
+        // Toggle facing mode
+        const newFacingMode = facingMode === 'environment' ? 'user' : 'environment';
+        setFacingMode(newFacingMode);
+        
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: {
+                    facingMode: newFacingMode,
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
+                }
+            });
+            setCameraStream(stream);
+            if (videoRef.current) {
+                videoRef.current.srcObject = stream;
+            }
+        } catch (err) {
+            console.error('Camera switch error:', err);
+            setCameraError(t('pages:soilAnalysis.cameraSwitchError'));
+        }
+    };
+
+    const capturePhoto = () => {
+        if (videoRef.current && canvasRef.current) {
+            const video = videoRef.current;
+            const canvas = canvasRef.current;
+            
+            // Set canvas dimensions to match video
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            
+            // Draw video frame to canvas
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            // Convert to blob
+            canvas.toBlob((blob) => {
+                if (blob) {
+                    // Create a File object from blob
+                    const file = new File([blob], 'soil-capture.jpg', { type: 'image/jpeg' });
+                    setSoilImage(file);
+                    
+                    // Create preview URL
+                    const previewUrl = URL.createObjectURL(blob);
+                    setImagePreview(previewUrl);
+                    
+                    // Stop camera after capture
+                    stopCamera();
+                }
+            }, 'image/jpeg', 0.9);
+        }
+    };
+
+    // Cleanup camera on unmount
+    useEffect(() => {
+        return () => {
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+            }
+        };
+    }, [cameraStream]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -418,13 +534,14 @@ const SoilAnalysis = () => {
     };
 
     const getSuitabilityLevel = (score) => {
-        if (score >= 80) return { label: 'Excellent', class: 'excellent' };
-        if (score >= 60) return { label: 'Good', class: 'good' };
-        if (score >= 40) return { label: 'Fair', class: 'fair' };
-        return { label: 'Poor', class: 'poor' };
+        if (score >= 80) return { label: t('pages:soilAnalysis.results.excellent'), class: 'excellent' };
+        if (score >= 60) return { label: t('pages:soilAnalysis.results.good'), class: 'good' };
+        if (score >= 40) return { label: t('pages:soilAnalysis.results.fair'), class: 'fair' };
+        return { label: t('pages:soilAnalysis.results.poor'), class: 'poor' };
     };
 
-    const getpHLevel = (pH) => {
+    // eslint-disable-next-line no-unused-vars
+    const _getpHLevel = (pH) => {
         if (pH < 6.5) return { label: 'Acidic', class: 'acidic' };
         if (pH <= 7.5) return { label: 'Neutral', class: 'neutral' };
         return { label: 'Alkaline', class: 'alkaline' };
@@ -473,9 +590,9 @@ const SoilAnalysis = () => {
                             <div className="location-icon-wrapper">
                                 <img src={worldIcon} alt="World Globe" className="world-icon" />
                             </div>
-                            <h3 className="location-heading">Allow location access</h3>
+                            <h3 className="location-heading">{t('pages:soilAnalysis.location.allowAccess')}</h3>
                             <p className="location-privacy-text">
-                                We use your location only to analyze soil and climate for your region.
+                                {t('pages:soilAnalysis.location.privacyText')}
                             </p>
 
                             <button
@@ -487,17 +604,29 @@ const SoilAnalysis = () => {
                                 {locationLoading ? (
                                     <>
                                         <Loader className="btn-icon spin" />
-                                        Detecting...
+                                        {t('pages:soilAnalysis.location.detecting')}
                                     </>
                                 ) : (
-                                    'Get Location'
+                                    t('pages:soilAnalysis.location.getLocation')
                                 )}
                             </button>
+
+                            {location.latitude && location.longitude && (
+                                <div className="coordinates-display-plain">
+                                    <span className="coordinate">
+                                        <strong>{t('pages:soilAnalysis.latitude')}:</strong> {location.latitude.toFixed(6)}
+                                    </span>
+                                    <span className="coordinate-separator">|</span>
+                                    <span className="coordinate">
+                                        <strong>{t('pages:soilAnalysis.longitude')}:</strong> {location.longitude.toFixed(6)}
+                                    </span>
+                                </div>
+                            )}
 
                             {stateAutoDetected && (
                                 <div className="state-detected-msg">
                                     <CheckCircle className="success-icon" />
-                                    <span>{t('soilAnalysis.location.stateDetected')}</span>
+                                    <span>{t('pages:soilAnalysis.location.stateDetected')}</span>
                                 </div>
                             )}
 
@@ -532,19 +661,6 @@ const SoilAnalysis = () => {
                                                 ))}
                                             </select>
                                         </div>
-
-                                        {/* Coordinates Display below State */}
-                                        {location.latitude && location.longitude && (
-                                            <div className="coordinates-display-inline">
-                                                <span className="coordinate">
-                                                    <strong>{t('pages:soilAnalysis.latitude')}:</strong> {location.latitude.toFixed(6)}
-                                                </span>
-                                                <span className="coordinate-separator">|</span>
-                                                <span className="coordinate">
-                                                    <strong>{t('pages:soilAnalysis.longitude')}:</strong> {location.longitude.toFixed(6)}
-                                                </span>
-                                            </div>
-                                        )}
                                     </div>
 
                                     {/* Field Size */}
@@ -557,16 +673,58 @@ const SoilAnalysis = () => {
                                                     onClick={() => handleHelpClick('fieldSize', 'Field Size')}
                                                 />
                                             </label>
-                                            <input
-                                                type="number"
-                                                name="fieldSize"
-                                                value={formData.fieldSize}
-                                                onChange={handleInputChange}
-                                                placeholder={t('pages:soilAnalysis.fieldSizePlaceholder')}
-                                                className="field-input"
-                                                min="0"
-                                                step="0.1"
-                                            />
+                                            {!isCustomFieldSize ? (
+                                                <select
+                                                    name="fieldSize"
+                                                    value={formData.fieldSize}
+                                                    onChange={(e) => {
+                                                        if (e.target.value === 'custom') {
+                                                            setIsCustomFieldSize(true);
+                                                            setFormData(prev => ({ ...prev, fieldSize: '' }));
+                                                        } else {
+                                                            handleInputChange(e);
+                                                        }
+                                                    }}
+                                                    className="field-input"
+                                                >
+                                                    <option value="">{t('pages:soilAnalysis.selectFieldSize')}</option>
+                                                    <option value="0.5">0.5 {t('pages:soilAnalysis.hectares')}</option>
+                                                    <option value="1">1 {t('pages:soilAnalysis.hectares')}</option>
+                                                    <option value="2">2 {t('pages:soilAnalysis.hectares')}</option>
+                                                    <option value="3">3 {t('pages:soilAnalysis.hectares')}</option>
+                                                    <option value="5">5 {t('pages:soilAnalysis.hectares')}</option>
+                                                    <option value="10">10 {t('pages:soilAnalysis.hectares')}</option>
+                                                    <option value="15">15 {t('pages:soilAnalysis.hectares')}</option>
+                                                    <option value="20">20 {t('pages:soilAnalysis.hectares')}</option>
+                                                    <option value="25">25+ {t('pages:soilAnalysis.hectares')}</option>
+                                                    <option value="custom">{t('pages:soilAnalysis.customSize')}</option>
+                                                </select>
+                                            ) : (
+                                                <div className="custom-field-size-input">
+                                                    <input
+                                                        type="number"
+                                                        name="fieldSize"
+                                                        value={formData.fieldSize}
+                                                        onChange={handleInputChange}
+                                                        placeholder={t('pages:soilAnalysis.enterCustomSize')}
+                                                        className="field-input"
+                                                        min="0.1"
+                                                        step="0.1"
+                                                        autoFocus
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        className="back-to-dropdown-btn"
+                                                        onClick={() => {
+                                                            setIsCustomFieldSize(false);
+                                                            setFormData(prev => ({ ...prev, fieldSize: '' }));
+                                                        }}
+                                                        title={t('pages:soilAnalysis.backToPresets')}
+                                                    >
+                                                        ✕
+                                                    </button>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
 
@@ -674,7 +832,10 @@ const SoilAnalysis = () => {
                                                 {getSuggestedCrops().map((crop) => {
                                                     const actualCrop = crops.find(c => c.toLowerCase().includes(crop.toLowerCase()));
                                                     const isSelected = actualCrop && formData.crop === actualCrop;
-
+                                                    // Use actualCrop for translation if found, otherwise capitalize the crop name
+                                                    const cropKey = actualCrop || crop.charAt(0).toUpperCase() + crop.slice(1);
+                                                    const translatedCropName = t(`common:crops.${cropKey}`, { defaultValue: crop.charAt(0).toUpperCase() + crop.slice(1) });
+                                                    
                                                     return (
                                                         <div
                                                             key={crop}
@@ -686,7 +847,7 @@ const SoilAnalysis = () => {
                                                             >
                                                                 <div className="crop-icon">{getCropIcon(crop)}</div>
                                                             </div>
-                                                            <span className="crop-name">{crop.charAt(0).toUpperCase() + crop.slice(1)}</span>
+                                                            <span className="crop-name">{translatedCropName}</span>
                                                         </div>
                                                     );
                                                 })}
@@ -708,9 +869,59 @@ const SoilAnalysis = () => {
                                             accept="image/*"
                                             className="image-input-hidden"
                                         />
-
-                                        {!imagePreview ? (
+                                        
+                                        {/* Hidden canvas for photo capture */}
+                                        <canvas ref={canvasRef} style={{ display: 'none' }} />
+                                        
+                                        {cameraActive ? (
+                                            <div className="camera-preview-container">
+                                                <video
+                                                    ref={videoRef}
+                                                    autoPlay
+                                                    playsInline
+                                                    muted
+                                                    className="camera-video"
+                                                />
+                                                <div className="camera-controls">
+                                                    <button
+                                                        type="button"
+                                                        onClick={stopCamera}
+                                                        className="camera-control-btn cancel-btn"
+                                                        title={t('pages:soilAnalysis.cancelCapture')}
+                                                    >
+                                                        <X className="btn-icon" />
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={capturePhoto}
+                                                        className="camera-control-btn capture-btn"
+                                                        title={t('pages:soilAnalysis.takePhoto')}
+                                                    >
+                                                        <Camera className="btn-icon" />
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={switchCamera}
+                                                        className="camera-control-btn switch-btn"
+                                                        title={t('pages:soilAnalysis.switchCamera')}
+                                                    >
+                                                        <RefreshCw className="btn-icon" />
+                                                    </button>
+                                                </div>
+                                                <p className="camera-hint">
+                                                    {facingMode === 'environment' 
+                                                        ? t('pages:soilAnalysis.usingBackCamera')
+                                                        : t('pages:soilAnalysis.usingFrontCamera')}
+                                                </p>
+                                            </div>
+                                        ) : !imagePreview ? (
                                             <div className="image-upload-area">
+                                                {cameraError && (
+                                                    <div className="camera-error">
+                                                        <AlertCircle className="error-icon" />
+                                                        {cameraError}
+                                                    </div>
+                                                )}
                                                 <div className="upload-actions">
                                                     <button
                                                         type="button"
@@ -812,14 +1023,33 @@ const SoilAnalysis = () => {
                 {/* Results Section */}
                 {results && (
                     <>
+                        {/* Results Divider */}
+                        <div className="results-divider">
+                            <div className="divider-line"></div>
+                            <span className="divider-text">{t('pages:soilAnalysis.results.title', 'Analysis Results')}</span>
+                            <div className="divider-line"></div>
+                        </div>
+
+                        {/* Voice Summary - Listen to Results */}
+                        <div className="voice-summary-section">
+                            <VoiceSummary
+                                result={{ ...results, crop: formData.crop, state: formData.state }}
+                                resultType="soilAnalysis"
+                                title={t('pages:soilAnalysis.listenToSummary', 'Listen to Summary')}
+                                showTitle={true}
+                                compact={false}
+                                className="soil-voice-summary"
+                            />
+                        </div>
+
                         {/* Image Analysis Display */}
                         {results.analysisType === 'image_enhanced' && (
                             <div className="image-enhanced-header">
                                 <div className="analysis-badge">
                                     <Camera className="badge-icon" />
-                                    <span>📸 AI Vision + Lab Analysis</span>
+                                    <span>📸 {t('pages:soilAnalysis.results.aiVisionAnalysis')}</span>
                                 </div>
-                                <p>Enhanced soil analysis with visual assessment</p>
+                                <p>{t('pages:soilAnalysis.results.enhancedAnalysis')}</p>
                             </div>
                         )}
 
@@ -830,35 +1060,38 @@ const SoilAnalysis = () => {
                                     <div className="card-icon-wrapper">
                                         <Eye className="header-icon" />
                                     </div>
-                                    <h3 className="card-title">🔍 Visual Soil Assessment</h3>
+                                    <h3 className="card-title">🔍 {t('pages:soilAnalysis.results.visualAssessment')}</h3>
                                 </div>
-                                <p className="card-description">AI-powered analysis of your soil sample</p>
+                                <p className="card-description">{t('pages:soilAnalysis.results.aiPoweredAnalysis')}</p>
 
-                                {results.imageAnalysis.structured_analysis && (
-                                    <div className="visual-analysis-grid">
-                                        <div className="visual-metric">
-                                            <span className="metric-label">Soil Color</span>
-                                            <span className="metric-value">{results.imageAnalysis.structured_analysis.soil_color?.replace('_', ' ') || 'Unknown'}</span>
-                                        </div>
-                                        <div className="visual-metric">
-                                            <span className="metric-label">Texture Type</span>
-                                            <span className="metric-value">{results.imageAnalysis.structured_analysis.texture_type || 'Unknown'}</span>
-                                        </div>
-                                        <div className="visual-metric">
-                                            <span className="metric-label">Moisture Level</span>
-                                            <span className="metric-value">{results.imageAnalysis.structured_analysis.moisture_level || 'Unknown'}</span>
-                                        </div>
-                                        <div className="visual-metric">
-                                            <span className="metric-label">Health Score</span>
-                                            <span className="metric-value">{results.imageAnalysis.structured_analysis.overall_health_score || 50}/100</span>
-                                        </div>
-                                    </div>
-                                )}
-
-                                {results.imageAnalysis.analysis_method === 'fallback' && (
+                                {results.imageAnalysis.analysis_method === 'fallback' ? (
                                     <div className="fallback-notice">
                                         <AlertCircle className="notice-icon" />
-                                        <p>Visual analysis unavailable. Using lab analysis only.</p>
+                                        <p>{t('pages:soilAnalysis.results.fallbackNotice')}</p>
+                                        <ul style={{ margin: '0.5rem 0', paddingLeft: '1.5rem', fontSize: '0.875rem' }}>
+                                            <li>{t('pages:soilAnalysis.results.imageQualityIssue')}</li>
+                                            <li>{t('pages:soilAnalysis.results.apiUnavailable')}</li>
+                                        </ul>
+                                        <p style={{ marginTop: '0.5rem' }}>{t('pages:soilAnalysis.results.usingTraditional')}</p>
+                                    </div>
+                                ) : results.imageAnalysis.structured_analysis && (
+                                    <div className="visual-analysis-grid">
+                                        <div className="visual-metric">
+                                            <span className="metric-label">{t('pages:soilAnalysis.results.soilColor')}</span>
+                                            <span className="metric-value">{results.imageAnalysis.structured_analysis.soil_color?.replace('_', ' ') || t('pages:soilAnalysis.results.unknown')}</span>
+                                        </div>
+                                        <div className="visual-metric">
+                                            <span className="metric-label">{t('pages:soilAnalysis.results.textureType')}</span>
+                                            <span className="metric-value">{results.imageAnalysis.structured_analysis.texture_type || t('pages:soilAnalysis.results.unknown')}</span>
+                                        </div>
+                                        <div className="visual-metric">
+                                            <span className="metric-label">{t('pages:soilAnalysis.results.moistureLevel')}</span>
+                                            <span className="metric-value">{results.imageAnalysis.structured_analysis.moisture_level || t('pages:soilAnalysis.results.unknown')}</span>
+                                        </div>
+                                        <div className="visual-metric">
+                                            <span className="metric-label">{t('pages:soilAnalysis.results.healthScore')}</span>
+                                            <span className="metric-value">{results.imageAnalysis.structured_analysis.overall_health_score || 50}/100</span>
+                                        </div>
                                     </div>
                                 )}
                             </div>
@@ -910,7 +1143,7 @@ const SoilAnalysis = () => {
                                                             : (results.traditionalAnalysis?.soil_data?.N || 0),
                                                         'N'
                                                     ) > 60 ? (
-                                                        <><CheckCircle className="status-icon status-good" /> Good</>
+                                                        <><CheckCircle className="status-icon status-good" /> {t('pages:soilAnalysis.results.good')}</>
                                                     ) : getNPKLevel(
                                                         results.analysisType === 'traditional'
                                                             ? (results.soil?.N || 0)
@@ -1029,93 +1262,79 @@ const SoilAnalysis = () => {
                             ) : null}
 
                             {/* Suitability Score Card - Only show for traditional analysis or when suitability data exists */}
-                            {((results.analysisType === 'traditional' && results.suitability) ||
-                                (results.analysisType === 'image_enhanced' && results.traditionalAnalysis?.basic_suitability)) && (
-                                    <div className="result-card suitability-card">
-                                        <div className="card-header">
-                                            <BarChart3 className="header-icon" />
-                                            <h3 className="card-title">{t('pages:soilAnalysis.results.cropSuitability')}</h3>
+                            {((results.analysisType === 'traditional' && results.suitability) || 
+                              (results.analysisType === 'image_enhanced' && results.traditionalAnalysis?.basic_suitability)) && (
+                            <div className="result-card suitability-card">
+                                <div className="card-header">
+                                    <div className="card-icon-wrapper">
+                                        <TrendingUp className="header-icon" />
+                                    </div>
+                                    <h3 className="card-title">📊 {t('pages:soilAnalysis.results.cropSuitability')}</h3>
+                                </div>
+                                <p className="card-description">{t('pages:soilAnalysis.results.howSuitable', { crop: t(`common:crops.${formData.crop}`, { defaultValue: formData.crop }) })}</p>
+
+                                <div className="suitability-content">
+                                    <div className={`score-circle ${getSuitabilityLevel(
+                                        results.analysisType === 'traditional' 
+                                            ? (results.suitability?.suitability_score || 0)
+                                            : (results.traditionalAnalysis?.basic_suitability?.suitability_score || 0)
+                                    ).class}`}>
+                                        <div className="score-value">
+                                            {Math.round(
+                                                results.analysisType === 'traditional' 
+                                                    ? (results.suitability?.suitability_score || 0)
+                                                    : (results.traditionalAnalysis?.basic_suitability?.suitability_score || 0)
+                                            )}
                                         </div>
-                                        <p className="card-description">{t('pages:soilAnalysis.results.howSuitableIs')} {t(`common:crops.${formData.crop}`, { defaultValue: formData.crop })}?</p>
+                                        <div className="score-max">/100</div>
+                                    </div>
 
-                                        <div className="suitability-content">
-                                            <div className={`score-circle ${getSuitabilityLevel(
-                                                results.analysisType === 'traditional'
-                                                    ? (results.suitability?.suitability_score || 0)
-                                                    : (results.traditionalAnalysis?.basic_suitability?.suitability_score || 0)
-                                            ).class}`}>
-                                                <div className="score-value">
-                                                    {Math.round(
-                                                        results.analysisType === 'traditional'
-                                                            ? (results.suitability?.suitability_score || 0)
-                                                            : (results.traditionalAnalysis?.basic_suitability?.suitability_score || 0)
-                                                    )}
-                                                </div>
-                                                <div className="score-max">/100</div>
-                                            </div>
-
-                                            <div className={`suitability-badge ${getSuitabilityLevel(
-                                                results.analysisType === 'traditional'
-                                                    ? (results.suitability?.suitability_score || 0)
-                                                    : (results.traditionalAnalysis?.basic_suitability?.suitability_score || 0)
-                                            ).class}`}>
-                                                {t(`pages:soilAnalysis.results.${getSuitabilityLevel(
-                                                    results.analysisType === 'traditional'
+                                    <div className="suitability-message">
+                                        <p className="suitability-description">
+                                            {t('pages:soilAnalysis.results.cultivationIs', { 
+                                                crop: t(`common:crops.${formData.crop}`, { defaultValue: formData.crop }), 
+                                                level: getSuitabilityLevel(
+                                                    results.analysisType === 'traditional' 
                                                         ? (results.suitability?.suitability_score || 0)
                                                         : (results.traditionalAnalysis?.basic_suitability?.suitability_score || 0)
-                                                ).label.toLowerCase()}`, { defaultValue: getSuitabilityLevel(
-                                                    results.analysisType === 'traditional'
-                                                        ? (results.suitability?.suitability_score || 0)
-                                                        : (results.traditionalAnalysis?.basic_suitability?.suitability_score || 0)
-                                                ).label }).toUpperCase()}
-                                            </div>
-
-                                            <div className="suitability-message">
-                                                <p className="suitability-description">
-                                                    <strong>{t(`common:crops.${formData.crop}`, { defaultValue: formData.crop })}</strong> {t('pages:soilAnalysis.results.cultivationIs')} <strong>{t(`pages:soilAnalysis.results.${getSuitabilityLevel(
-                                                        results.analysisType === 'traditional'
-                                                            ? (results.suitability?.suitability_score || 0)
-                                                            : (results.traditionalAnalysis?.basic_suitability?.suitability_score || 0)
-                                                    ).label.toLowerCase()}`, { defaultValue: getSuitabilityLevel(
-                                                        results.analysisType === 'traditional'
-                                                            ? (results.suitability?.suitability_score || 0)
-                                                            : (results.traditionalAnalysis?.basic_suitability?.suitability_score || 0)
-                                                    ).label })}</strong> {t('pages:soilAnalysis.results.in')} <strong>{t(`common:states.${formData.state}`, { defaultValue: formData.state })}</strong>
-                                                </p>
-                                                <div className="recommendation-tip">
-                                                    {getSuitabilityLevel(
-                                                        results.analysisType === 'traditional'
-                                                            ? (results.suitability?.suitability_score || 0)
-                                                            : (results.traditionalAnalysis?.basic_suitability?.suitability_score || 0)
-                                                    ).class === 'poor' && (
-                                                            <><Lightbulb className="tip-icon" /> {t('pages:soilAnalysis.results.considerSoilTreatment')}</>
-                                                        )}
-                                                    {getSuitabilityLevel(
-                                                        results.analysisType === 'traditional'
-                                                            ? (results.suitability?.suitability_score || 0)
-                                                            : (results.traditionalAnalysis?.basic_suitability?.suitability_score || 0)
-                                                    ).class === 'fair' && (
-                                                            <><Lightbulb className="tip-icon" /> {t('pages:soilAnalysis.results.soilAmendmentsMayImprove')}</>
-                                                        )}
-                                                    {getSuitabilityLevel(
-                                                        results.analysisType === 'traditional'
-                                                            ? (results.suitability?.suitability_score || 0)
-                                                            : (results.traditionalAnalysis?.basic_suitability?.suitability_score || 0)
-                                                    ).class === 'good' && (
-                                                            <><ThumbsUp className="tip-icon" /> {t('pages:soilAnalysis.results.goodConditions')}</>
-                                                        )}
-                                                    {getSuitabilityLevel(
-                                                        results.analysisType === 'traditional'
-                                                            ? (results.suitability?.suitability_score || 0)
-                                                            : (results.traditionalAnalysis?.basic_suitability?.suitability_score || 0)
-                                                    ).class === 'excellent' && (
-                                                            <><Star className="tip-icon" /> {t('pages:soilAnalysis.results.excellentConditions')}</>
-                                                        )}
-                                                </div>
-                                            </div>
+                                                ).label.toLowerCase(),
+                                                state: t(`common:states.${formData.state}`, { defaultValue: formData.state })
+                                            })}
+                                        </p>
+                                        <div className="recommendation-tip">
+                                            {getSuitabilityLevel(
+                                                results.analysisType === 'traditional' 
+                                                    ? (results.suitability?.suitability_score || 0)
+                                                    : (results.traditionalAnalysis?.basic_suitability?.suitability_score || 0)
+                                            ).class === 'poor' && 
+                                                `💡 ${t('pages:soilAnalysis.results.tipPoor')}`
+                                            }
+                                            {getSuitabilityLevel(
+                                                results.analysisType === 'traditional' 
+                                                    ? (results.suitability?.suitability_score || 0)
+                                                    : (results.traditionalAnalysis?.basic_suitability?.suitability_score || 0)
+                                            ).class === 'fair' && 
+                                                `💡 ${t('pages:soilAnalysis.results.tipFair')}`
+                                            }
+                                            {getSuitabilityLevel(
+                                                results.analysisType === 'traditional' 
+                                                    ? (results.suitability?.suitability_score || 0)
+                                                    : (results.traditionalAnalysis?.basic_suitability?.suitability_score || 0)
+                                            ).class === 'good' && 
+                                                `👍 ${t('pages:soilAnalysis.results.tipGood')}`
+                                            }
+                                            {getSuitabilityLevel(
+                                                results.analysisType === 'traditional' 
+                                                    ? (results.suitability?.suitability_score || 0)
+                                                    : (results.traditionalAnalysis?.basic_suitability?.suitability_score || 0)
+                                            ).class === 'excellent' && 
+                                                `🌟 ${t('pages:soilAnalysis.results.tipExcellent')}`
+                                            }
                                         </div>
                                     </div>
-                                )}
+                                </div>
+                            </div>
+                            )}
                         </div>
 
                         {/* Enhanced Analysis Cards */}
@@ -1128,74 +1347,76 @@ const SoilAnalysis = () => {
                                             <h3 className="card-title">{t('pages:soilAnalysis.results.irrigationAnalysis')}</h3>
                                         </div>
                                         <p className="card-description">
-                                            {results.analysisType === 'traditional'
-                                                ? results.suitability?.irrigation_analysis?.message
+                                            {results.analysisType === 'traditional' 
+                                                ? results.suitability?.irrigation_analysis?.message 
                                                 : results.traditionalAnalysis?.irrigation_analysis?.message}
                                         </p>
-
+                                        
                                         <div className="analysis-detail">
-                                            <div className={`compatibility-badge ${results.analysisType === 'traditional'
-                                                ? results.suitability?.irrigation_analysis?.compatibility
-                                                : results.traditionalAnalysis?.irrigation_analysis?.compatibility
-                                                }`}>
-                                                {(
-                                                    results.analysisType === 'traditional'
-                                                        ? results.suitability?.irrigation_analysis?.compatibility
-                                                        : results.traditionalAnalysis?.irrigation_analysis?.compatibility
-                                                )?.toUpperCase() || 'N/A'}
+                                            <div className={`compatibility-badge ${
+                                                results.analysisType === 'traditional' 
+                                                    ? results.suitability?.irrigation_analysis?.compatibility 
+                                                    : results.traditionalAnalysis?.irrigation_analysis?.compatibility
+                                                    }`}>
+                                                    {(
+                                                        results.analysisType === 'traditional'
+                                                            ? results.suitability?.irrigation_analysis?.compatibility
+                                                            : results.traditionalAnalysis?.irrigation_analysis?.compatibility
+                                                    )?.toUpperCase() || 'N/A'}
+                                                </div>
+                                                <p><strong>{t('pages:soilAnalysis.results.waterRequirement')}:</strong> {
+                                                    (
+                                                        results.analysisType === 'traditional'
+                                                            ? results.suitability?.irrigation_analysis?.crop_water_requirement
+                                                            : results.traditionalAnalysis?.irrigation_analysis?.crop_water_requirement
+                                                    )?.toUpperCase() || 'Medium'
+                                                }</p>
                                             </div>
-                                            <p><strong>Water Requirement:</strong> {
-                                                (
-                                                    results.analysisType === 'traditional'
-                                                        ? results.suitability?.irrigation_analysis?.crop_water_requirement
-                                                        : results.traditionalAnalysis?.irrigation_analysis?.crop_water_requirement
-                                                )?.toUpperCase() || 'Medium'
-                                            }</p>
                                         </div>
-                                    </div>
-                                )}
+                                    )}
 
                             {((results.analysisType === 'traditional' && results.suitability?.water_quality_impact) ||
                                 (results.analysisType === 'image_enhanced' && results.traditionalAnalysis?.water_quality_impact)) && (
                                     <div className="result-card enhanced-analysis-card">
                                         <div className="card-header">
                                             <TestTube className="header-icon" />
-                                            <h3 className="card-title">Water Quality Impact</h3>
+                                            <h3 className="card-title">{t('pages:soilAnalysis.results.waterQualityImpact')}</h3>
                                         </div>
                                         <p className="card-description">
-                                            {results.analysisType === 'traditional'
-                                                ? results.suitability?.water_quality_impact?.message
+                                            {results.analysisType === 'traditional' 
+                                                ? results.suitability?.water_quality_impact?.message 
                                                 : results.traditionalAnalysis?.water_quality_impact?.message}
                                         </p>
-
+                                        
                                         <div className="analysis-detail">
-                                            <div className={`impact-badge ${results.analysisType === 'traditional'
-                                                ? results.suitability?.water_quality_impact?.impact
-                                                : results.traditionalAnalysis?.water_quality_impact?.impact
-                                                }`}>
-                                                {(
-                                                    results.analysisType === 'traditional'
-                                                        ? results.suitability?.water_quality_impact?.impact
-                                                        : results.traditionalAnalysis?.water_quality_impact?.impact
-                                                )?.toUpperCase() || 'N/A'}
+                                            <div className={`impact-badge ${
+                                                results.analysisType === 'traditional' 
+                                                    ? results.suitability?.water_quality_impact?.impact 
+                                                    : results.traditionalAnalysis?.water_quality_impact?.impact
+                                                    }`}>
+                                                    {(
+                                                        results.analysisType === 'traditional'
+                                                            ? results.suitability?.water_quality_impact?.impact
+                                                            : results.traditionalAnalysis?.water_quality_impact?.impact
+                                                    )?.toUpperCase() || 'N/A'}
+                                                </div>
+                                                <p><strong>{t('pages:soilAnalysis.results.saltTolerance')}:</strong> {
+                                                    (
+                                                        results.analysisType === 'traditional' 
+                                                            ? results.suitability?.water_quality_impact?.crop_salt_tolerance
+                                                            : results.traditionalAnalysis?.water_quality_impact?.crop_salt_tolerance
+                                                    )?.toUpperCase() || 'Medium'
+                                                }</p>
                                             </div>
-                                            <p><strong>Salt Tolerance:</strong> {
-                                                (
-                                                    results.analysisType === 'traditional'
-                                                        ? results.suitability?.water_quality_impact?.crop_salt_tolerance
-                                                        : results.traditionalAnalysis?.water_quality_impact?.crop_salt_tolerance
-                                                )?.toUpperCase() || 'Medium'
-                                            }</p>
                                         </div>
-                                    </div>
-                                )}
+                                    )}
 
                             {((results.analysisType === 'traditional' && results.suitability?.rotation_analysis) ||
                                 (results.analysisType === 'image_enhanced' && results.traditionalAnalysis?.rotation_analysis)) && (
                                     <div className="result-card rotation-card">
                                         <div className="card-header">
                                             <RotateCcw className="header-icon" />
-                                            <h3 className="card-title">Crop Rotation Analysis</h3>
+                                            <h3 className="card-title">{t('pages:soilAnalysis.results.cropRotationAnalysis')}</h3>
                                         </div>
                                         <p className="card-description">
                                             {results.analysisType === 'traditional'
@@ -1204,33 +1425,38 @@ const SoilAnalysis = () => {
                                         </p>
 
                                         <div className="rotation-benefit">
-                                            <div className={`benefit-badge ${results.analysisType === 'traditional'
-                                                ? results.suitability?.rotation_analysis?.benefit
+                                        <div className={`benefit-badge ${
+                                            results.analysisType === 'traditional' 
+                                                ? results.suitability?.rotation_analysis?.benefit 
                                                 : results.traditionalAnalysis?.rotation_analysis?.benefit
-                                                }`}>
-                                                {(
-                                                    results.analysisType === 'traditional'
-                                                        ? results.suitability?.rotation_analysis?.benefit
-                                                        : results.traditionalAnalysis?.rotation_analysis?.benefit
-                                                )?.toUpperCase() || 'NEUTRAL'}
-                                            </div>
-
-
-                                            {((results.analysisType === 'traditional' && results.suitability?.rotation_analysis?.nitrogen_bonus) ||
-                                                (results.analysisType === 'image_enhanced' && results.traditionalAnalysis?.rotation_analysis?.nitrogen_bonus)) && (
-                                                    <div className="bonus-tag">
-                                                        <Sprout className="tag-icon" /> {t('pages:soilAnalysis.results.nitrogenBonus')}
-                                                    </div>
-                                                )}
-                                            {((results.analysisType === 'traditional' && results.suitability?.rotation_analysis?.risk_warning) ||
-                                                (results.analysisType === 'image_enhanced' && results.traditionalAnalysis?.rotation_analysis?.risk_warning)) && (
-                                                    <div className="warning-tag">
-                                                        <AlertCircle className="tag-icon" /> Increased Pest Risk
-                                                    </div>
-                                                )}
+                                        }`}>
+                                            {(
+                                                results.analysisType === 'traditional' 
+                                                    ? results.suitability?.rotation_analysis?.benefit 
+                                                    : results.traditionalAnalysis?.rotation_analysis?.benefit
+                                            )?.toUpperCase() || 'NEUTRAL'}
                                         </div>
+                                        {(
+                                            results.analysisType === 'traditional' 
+                                                ? results.suitability?.rotation_analysis?.nitrogen_bonus
+                                                : results.traditionalAnalysis?.rotation_analysis?.nitrogen_bonus
+                                        ) && (
+                                            <div className="bonus-tag">
+                                                🌿 {t('pages:soilAnalysis.results.nitrogenBonus')}
+                                            </div>
+                                        )}
+                                        {(
+                                            results.analysisType === 'traditional' 
+                                                ? results.suitability?.rotation_analysis?.risk_warning
+                                                : results.traditionalAnalysis?.rotation_analysis?.risk_warning
+                                        ) && (
+                                            <div className="warning-tag">
+                                                ⚠️ {t('pages:soilAnalysis.results.increasedPestRisk')}
+                                            </div>
+                                        )}
                                     </div>
-                                )}
+                                </div>
+                            )}
                         </div>
 
                         {/* Fertilizer Plan - Full Width */}
@@ -1255,7 +1481,7 @@ const SoilAnalysis = () => {
                                             </div>
                                             <div className="nutrient-requirements">
                                                 <div className="nutrient-item">
-                                                    <span className="nutrient-label">Nitrogen (N):</span>
+                                                    <span className="nutrient-label">{t('pages:soilAnalysis.results.nitrogen')}:</span>
                                                     <span className="nutrient-amount">{
                                                         results.analysisType === 'traditional'
                                                             ? results.suitability?.input_recommendations?.fertilizer_recommendations?.total_field?.N
@@ -1263,7 +1489,7 @@ const SoilAnalysis = () => {
                                                     } kg</span>
                                                 </div>
                                                 <div className="nutrient-item">
-                                                    <span className="nutrient-label">Phosphorus (P):</span>
+                                                    <span className="nutrient-label">{t('pages:soilAnalysis.results.phosphorus')}:</span>
                                                     <span className="nutrient-amount">{
                                                         results.analysisType === 'traditional'
                                                             ? results.suitability?.input_recommendations?.fertilizer_recommendations?.total_field?.P
@@ -1271,7 +1497,7 @@ const SoilAnalysis = () => {
                                                     } kg</span>
                                                 </div>
                                                 <div className="nutrient-item">
-                                                    <span className="nutrient-label">Potassium (K):</span>
+                                                    <span className="nutrient-label">{t('pages:soilAnalysis.results.potassium')}:</span>
                                                     <span className="nutrient-amount">{
                                                         results.analysisType === 'traditional'
                                                             ? results.suitability?.input_recommendations?.fertilizer_recommendations?.total_field?.K
@@ -1288,7 +1514,7 @@ const SoilAnalysis = () => {
                                             </div>
                                             <div className="cost-breakdown">
                                                 <div className="cost-item">
-                                                    <span>Total Cost:</span>
+                                                    <span>{t('pages:soilAnalysis.results.totalCost')}:</span>
                                                     <span className="cost-value">₹{
                                                         results.analysisType === 'traditional'
                                                             ? results.suitability?.input_recommendations?.estimated_cost?.total_inr
@@ -1296,7 +1522,7 @@ const SoilAnalysis = () => {
                                                     }</span>
                                                 </div>
                                                 <div className="cost-item">
-                                                    <span>Per Hectare:</span>
+                                                    <span>{t('pages:soilAnalysis.results.perHectare')}:</span>
                                                     <span className="cost-value">₹{
                                                         results.analysisType === 'traditional'
                                                             ? results.suitability?.input_recommendations?.estimated_cost?.per_hectare_inr
@@ -1329,10 +1555,11 @@ const SoilAnalysis = () => {
                             )}
 
                         {/* Recommended Crops Card */}
-                        <div className="result-card full-width recommendations-card">\n                            <div className="card-header">
-                            <Wheat className="header-icon" />
-                            <h3 className="card-title">Best Crops for {formData.state}</h3>
-                        </div>
+                        <div className="result-card full-width recommendations-card">
+                            <div className="card-header">
+                                <Wheat className="header-icon" />
+                                <h3 className="card-title">Best Crops for {formData.state}</h3>
+                            </div>
                             <p className="card-description">Crops that grow well in your soil conditions</p>
 
                             <div className="recommendations-grid">

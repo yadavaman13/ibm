@@ -363,6 +363,13 @@ const YieldPrediction = () => {
                 {/* Results Section - Match Wireframe Layout */}
                 {result && (
                     <>
+                        {/* Results Divider */}
+                        <div className="results-divider">
+                            <div className="divider-line"></div>
+                            <span className="divider-text">{t('pages:yieldPrediction.results.title', 'Prediction Results')}</span>
+                            <div className="divider-line"></div>
+                        </div>
+
                         {/* Top Section: 2-Column Layout */}
                         <div className="yield-results-grid">
                             {/* Left Column: Stacked Prediction + Confidence */}

@@ -253,6 +253,31 @@
     font-weight: bold;
 }
 
+/* Plain Coordinates Display (no background) */
+.coordinates-display-plain {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: #6b7280;
+    margin-top: 0.75rem;
+}
+
+.coordinates-display-plain .coordinate {
+    font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
+    font-size: 0.75rem;
+}
+
+.coordinates-display-plain .coordinate strong {
+    color: #4b5563;
+    font-weight: 500;
+}
+
+.coordinates-display-plain .coordinate-separator {
+    color: #9ca3af;
+}
+
 /* Inline Crop Suggestions */
 .crop-suggestions-inline {
     margin-top: 0.75rem;
@@ -1508,6 +1533,109 @@ input.field-input:focus {
     line-height: 1.4;
 }
 
+/* Camera Preview Styles */
+.camera-preview-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.camera-video {
+    width: 100%;
+    max-height: 300px;
+    border-radius: 0.75rem;
+    background: #000;
+    object-fit: cover;
+}
+
+.camera-controls {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.camera-control-btn {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    border: 2px solid;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.camera-control-btn .btn-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+.camera-control-btn.cancel-btn {
+    background: #fef2f2;
+    border-color: #fca5a5;
+    color: #dc2626;
+}
+
+.camera-control-btn.cancel-btn:hover {
+    background: #fee2e2;
+    border-color: #ef4444;
+}
+
+.camera-control-btn.capture-btn {
+    width: 4rem;
+    height: 4rem;
+    background: #10b981;
+    border-color: #10b981;
+    color: white;
+}
+
+.camera-control-btn.capture-btn:hover {
+    background: #059669;
+    border-color: #059669;
+    transform: scale(1.05);
+}
+
+.camera-control-btn.switch-btn {
+    background: #f3f4f6;
+    border-color: #d1d5db;
+    color: #374151;
+}
+
+.camera-control-btn.switch-btn:hover {
+    background: #e5e7eb;
+    border-color: #9ca3af;
+}
+
+.camera-hint {
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin: 0;
+}
+
+.camera-error {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 0.5rem;
+    color: #dc2626;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+    width: 100%;
+}
+
+.camera-error .error-icon {
+    width: 1rem;
+    height: 1rem;
+    flex-shrink: 0;
+}
+
 .image-preview-container {
     width: 100%;
 }
@@ -1720,5 +1848,185 @@ input.field-input:focus {
     .analysis-badge {
         padding: 0.625rem 1.25rem;
         font-size: 0.8125rem;
+    }
+}
+
+/* Results Divider - Clean Professional Separator */
+.results-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin: 3rem 0 2rem 0;
+    padding: 1rem 0;
+}
+
+.results-divider .divider-line {
+    flex: 1;
+    height: 1px;
+    border-top: 1px dashed #d1d5db;
+}
+
+.results-divider .divider-text {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+}
+
+/* Voice Summary Section - Clean Professional Design */
+.voice-summary-section {
+    margin-bottom: 1.5rem;
+}
+
+.soil-voice-summary {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-radius: 0.75rem;
+    padding: 1.25rem 1.5rem;
+}
+
+.soil-voice-summary .voice-summary-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.soil-voice-summary .header-content {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.soil-voice-summary .header-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0;
+}
+
+.soil-voice-summary .voice-summary-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.soil-voice-summary .speech-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.soil-voice-summary .playback-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.soil-voice-summary .control-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.soil-voice-summary .play-btn,
+.soil-voice-summary .resume-btn {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+}
+
+.soil-voice-summary .play-btn:hover,
+.soil-voice-summary .resume-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.soil-voice-summary .pause-btn {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: white;
+}
+
+.soil-voice-summary .stop-btn {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+}
+
+.soil-voice-summary .language-selector {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.soil-voice-summary .language-selector select {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    background: white;
+    font-size: 0.875rem;
+    color: #374151;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+}
+
+.soil-voice-summary .language-selector select:focus {
+    outline: none;
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.soil-voice-summary .loading-spinner {
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.soil-voice-summary .spinner {
+    width: 1.25rem;
+    height: 1.25rem;
+    border: 2px solid #e2e8f0;
+    border-top-color: #10b981;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive Voice Summary */
+@media (max-width: 640px) {
+    .soil-voice-summary {
+        padding: 1rem;
+    }
+    
+    .soil-voice-summary .speech-controls {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .soil-voice-summary .playback-controls {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .soil-voice-summary .language-selector {
+        width: 100%;
+    }
+    
+    .soil-voice-summary .language-selector select {
+        width: 100%;
     }
 }
