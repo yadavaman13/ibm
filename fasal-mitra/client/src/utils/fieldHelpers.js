@@ -25,7 +25,10 @@ export const AGRICULTURE_FIELDS = new Set([
     'symptoms', 'infection_level',
     
     // Irrigation and water
-    'irrigation_method', 'water_source', 'drainage',
+    'irrigation_method', 'water_source', 'drainage', 'irrigationtype', 'waterquality',
+    
+    // Field and farm details
+    'fieldsize', 'field_size',
     
     // Climate and weather
     'humidity_level', 'temperature', 'rainfall',
