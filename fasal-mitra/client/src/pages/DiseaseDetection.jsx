@@ -39,7 +39,7 @@ const DiseaseDetection = () => {
 
     const fetchDiseases = async (filterCrop = null) => {
         try {
-            const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+            const baseUrl = (import.meta.env.VITE_API_URL || 'http://localhost:8000').replace(/\/$/, '');
             console.log('🦠 Disease Detection - Using API URL:', baseUrl);
             const url = filterCrop 
                 ? `${baseUrl}/api/v1/disease/diseases?crop_type=${encodeURIComponent(filterCrop)}`
@@ -79,7 +79,7 @@ const DiseaseDetection = () => {
                 formData.append('location', location);
             }
 
-            const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+            const baseUrl = (import.meta.env.VITE_API_URL || 'http://localhost:8000').replace(/\/$/, '');
             const response = await fetch(`${baseUrl}/api/v1/disease/detect`, {
                 method: 'POST',
                 body: formData
