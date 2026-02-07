@@ -4,6 +4,7 @@
  */
 
 const API_BASE_URL = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/api/v1` : 'http://localhost:8000/api/v1';
+console.log('🌾 Yield Service - Using API URL:', API_BASE_URL);
 
 /**
  * Predict crop yield
