@@ -3,7 +3,7 @@
  * API integration for yield gap analysis features
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/api/v1` : 'http://localhost:8000/api/v1';
+const API_BASE_URL = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL.replace(/\/$/, '')}/api/v1` : 'http://localhost:8000/api/v1';
 console.log('📊 Gap Analysis Service - Using API URL:', API_BASE_URL);
 
 /**

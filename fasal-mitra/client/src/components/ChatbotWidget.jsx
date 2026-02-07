@@ -79,7 +79,7 @@ const ChatbotWidget = () => {
         setError(null);
 
         try {
-            const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+            const baseUrl = (import.meta.env.VITE_API_URL || 'http://localhost:8000').replace(/\/$/, '');
             console.log('🤖 Chatbot - Using API URL:', baseUrl);
             const response = await fetch(`${baseUrl}/api/v1/chatbot/query`, {
                 method: 'POST',
