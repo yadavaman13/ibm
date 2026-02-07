@@ -95,7 +95,7 @@ Please include:
 Keep the explanation short, friendly, and focused on practical farming knowledge.`;
 
         try {
-            const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+            const baseUrl = (import.meta.env.VITE_API_URL || 'http://localhost:8000').replace(/\/$/, '');
             const response = await fetch(`${baseUrl}/api/v1/chatbot/query`, {
                 method: 'POST',
                 headers: {
@@ -161,7 +161,7 @@ However, you can ask me anything about "${cleanLabel}" - just type your question
         setError(null);
 
         try {
-            const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+            const baseUrl = (import.meta.env.VITE_API_URL || 'http://localhost:8000').replace(/\/$/, '');
             const response = await fetch(`${baseUrl}/api/v1/chatbot/query`, {
                 method: 'POST',
                 headers: {
