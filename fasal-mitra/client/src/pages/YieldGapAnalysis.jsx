@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { TrendingUp, AlertCircle, Target, BarChart3, Award, Lightbulb, ArrowUp, ArrowDown, Minus } from 'lucide-react';
 import '../styles/yield-gap-analysis.css';
 import { analyzeYieldGap, getCrops, getStates, getSeasons } from '../services/gapAnalysisService';
 
 const YieldGapAnalysis = () => {
+    const { t } = useTranslation(['pages', 'common']);
     const [analysisMode, setAnalysisMode] = useState('post-harvest'); // 'post-harvest' or 'pre-harvest'
     const [formData, setFormData] = useState({
         crop: '',
