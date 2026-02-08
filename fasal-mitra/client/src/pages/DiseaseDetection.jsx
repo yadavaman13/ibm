@@ -39,9 +39,11 @@ const DiseaseDetection = () => {
 
     const fetchDiseases = async (filterCrop = null) => {
         try {
+            const baseUrl = (import.meta.env.VITE_API_URL || 'http://localhost:8000').replace(/\/$/, '');
+            console.log('🦠 Disease Detection - Using API URL:', baseUrl);
             const url = filterCrop 
-                ? `http://localhost:8000/api/v1/disease/diseases?crop_type=${encodeURIComponent(filterCrop)}`
-                : 'http://localhost:8000/api/v1/disease/diseases';
+                ? `${baseUrl}/api/v1/disease/diseases?crop_type=${encodeURIComponent(filterCrop)}`
+                : `${baseUrl}/api/v1/disease/diseases`;
             
             // Add timeout
             const controller = new AbortController();
@@ -90,7 +92,8 @@ const DiseaseDetection = () => {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
 
-            const response = await fetch('http://localhost:8000/api/v1/disease/detect', {
+            const baseUrl = (import.meta.env.VITE_API_URL || 'http://localhost:8000').replace(/\/$/, '');
+            const response = await fetch(`${baseUrl}/api/v1/disease/detect`, {
                 method: 'POST',
                 body: formData,
                 signal: controller.signal
@@ -221,95 +224,60 @@ const DiseaseDetection = () => {
                     </div>
                 ) : activeTab === 'detect' ? (
                     <div className="disease-detection-content">
-                        <div className="detection-layout">
-                            {/* Left Column - Image Upload (50%) */}
-                            <div className="detection-image-section">
-                                <div className="input-card">
+                        <div className="detection-layout" style={{ display: 'block' }}>
+                            {/* Full Width - Image Upload */}
+                            <div className="detection-image-section" style={{ width: '100%' }}>
+                                <div className="input-card" style={{ width: '100%', maxWidth: 'none' }}>
                                     <h2 className="section-title">Upload Image</h2>
                                     <ImageUpload
                                         onImageSelect={handleImageSelect}
                                         selectedImage={selectedImage}
                                     />
-                                </div>
-                            </div>
-
-                            {/* Right Column - Form Inputs (50%) */}
-                            <div className="detection-form-section">
-                                <div className="input-card">
-                                    {/* Crop Selection */}
-                                    <div className="form-group">
-                                        <label className="form-label">
-                                            Crop Type
-                                            <FieldHelpIcon 
-                                                fieldName="crop" 
-                                                onClick={() => handleHelpClick('crop', 'Crop Type')} 
-                                            />
-                                        </label>
-                                        <select
-                                            value={cropType}
-                                            onChange={(e) => setCropType(e.target.value)}
-                                            className="form-select"
-                                        >
-                                            {cropOptions.map(crop => (
-                                                <option key={crop} value={crop}>{crop}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-
-                                    {/* Location (Optional) */}
-                                    <div className="form-group">
-                                        <label className="form-label">Location (Optional)</label>
-                                        <input
-                                            type="text"
-                                            value={location}
-                                            onChange={(e) => setLocation(e.target.value)}
-                                            placeholder={t('pages:diseaseDetection.locationPlaceholder')}
-                                            className="form-input"
-                                        />
-                                    </div>
 
                                     {/* Action Buttons */}
-                                    <div className="action-buttons">
-                                        <button
-                                            onClick={handleDetectDisease}
-                                            disabled={!selectedImage || isDetecting}
-                                            className="detect-button"
-                                        >
-                                            {isDetecting ? (
-                                                <>
-                                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                                    Analyzing...
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <Bug className="w-4 h-4 mr-2" />
-                                                    Detect Disease
-                                                </>
-                                            )}
-                                        </button>
+                                    <div className="mt-6 space-y-4">
+                                        <div className="action-buttons">
+                                            <button
+                                                onClick={handleDetectDisease}
+                                                disabled={!selectedImage || isDetecting}
+                                                className="detect-button"
+                                            >
+                                                {isDetecting ? (
+                                                    <>
+                                                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                                        Analyzing...
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <Bug className="w-4 h-4 mr-2" />
+                                                        Detect Disease
+                                                    </>
+                                                )}
+                                            </button>
 
-                                        <button
-                                            onClick={handleReset}
-                                            className="reset-button"
-                                        >
-                                            Reset
-                                        </button>
-                                    </div>
-
-                                    {/* Error Display */}
-                                    {error && (
-                                        <div className="error-message">
-                                            <AlertCircle className="w-4 h-4 mr-2" />
-                                            {error}
+                                            <button
+                                                onClick={handleReset}
+                                                className="reset-button"
+                                            >
+                                                Reset
+                                            </button>
                                         </div>
-                                    )}
+
+                                        {/* Error Display */}
+                                        {error && (
+                                            <div className="error-message">
+                                                <AlertCircle className="w-4 h-4 mr-2" />
+                                                {error}
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                            {/* Right Column - Results Section */}
-                            <div className="detection-results-section">
-                                {detectionResult ? (
+                        {/* Full Width - Results Section */}
+                        <div className="detection-results-section" style={{ width: '100%', margin: '2rem 0 0' }}>
+                            {detectionResult ? (
                                     <div className="space-y-6">
                                         <DetectionResults result={detectionResult} />
                                         <TreatmentPlan 
@@ -343,7 +311,7 @@ const DiseaseDetection = () => {
                                     </div>
                                 )}
                             </div>
-                        </div>
+                    </div>
                 ) : (
                     <DiseaseList 
                         diseases={diseases} 

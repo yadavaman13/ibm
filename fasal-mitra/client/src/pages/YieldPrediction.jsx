@@ -77,7 +77,7 @@ const YieldPrediction = () => {
             }
         } catch (err) {
             console.error('Error:', err);
-            setError(err.message || 'Network error. Please ensure the backend server is running on http://localhost:8000');
+            setError(err.message || 'Network error. Please ensure the backend server is running.');
         } finally {
             setLoading(false);
         }
@@ -363,6 +363,13 @@ const YieldPrediction = () => {
                 {/* Results Section - Match Wireframe Layout */}
                 {result && (
                     <>
+                        {/* Results Divider */}
+                        <div className="results-divider">
+                            <div className="divider-line"></div>
+                            <span className="divider-text">{t('pages:yieldPrediction.results.title', 'Prediction Results')}</span>
+                            <div className="divider-line"></div>
+                        </div>
+
                         {/* Top Section: 2-Column Layout */}
                         <div className="yield-results-grid">
                             {/* Left Column: Stacked Prediction + Confidence */}

@@ -15,7 +15,6 @@
 /* Main Weather Card (Top) */
 .weather-main-card {
     background: white;
-    border: 1px solid var(--color-border);
     border-radius: 1rem;
     padding: 1.5rem;
     margin-bottom: 1rem;
@@ -80,7 +79,7 @@
 .weather-title-row {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: space-between;
     gap: 0.5rem;
     margin-bottom: 0.25rem;
 }
@@ -91,20 +90,55 @@
     color: var(--color-text-primary);
 }
 
-.weather-refresh-btn {
-    background: none;
-    border: none;
+.weather-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.weather-location-btn {
+    background: rgba(153, 188, 133, 0.2);
+    border: 1px solid rgba(153, 188, 133, 0.3);
     cursor: pointer;
-    padding: 0.25rem;
-    border-radius: 0.375rem;
+    padding: 0.625rem;
+    border-radius: 0.5rem;
     transition: all 0.2s ease;
     display: flex;
     align-items: center;
     justify-content: center;
+    min-width: 2.5rem;
+    min-height: 2.5rem;
+}
+
+.weather-location-btn:hover:not(:disabled) {
+    background: rgba(153, 188, 133, 0.35);
+    border-color: rgba(153, 188, 133, 0.5);
+    transform: scale(1.08);
+}
+
+.weather-location-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.weather-refresh-btn {
+    background: rgba(153, 188, 133, 0.2);
+    border: 1px solid rgba(153, 188, 133, 0.3);
+    cursor: pointer;
+    padding: 0.625rem;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.5rem;
+    min-height: 2.5rem;
 }
 
 .weather-refresh-btn:hover:not(:disabled) {
-    background: var(--color-primary-light);
+    background: rgba(153, 188, 133, 0.35);
+    border-color: rgba(153, 188, 133, 0.5);
+    transform: scale(1.08);
 }
 
 .weather-refresh-btn:disabled {
@@ -112,10 +146,12 @@
     cursor: not-allowed;
 }
 
-.weather-refresh-icon {
+.weather-refresh-icon,
+.weather-location-icon {
     width: 1.25rem;
     height: 1.25rem;
-    color: var(--color-primary);
+    color: #99BC85;
+    stroke-width: 2;
 }
 
 .weather-refresh-spinning {
@@ -147,6 +183,28 @@
 .weather-location-icon {
     width: 1rem;
     height: 1rem;
+}
+
+.location-badge {
+    margin-left: 0.25rem;
+    font-size: 0.75rem;
+}
+
+.weather-location-error {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    color: #dc2626;
+    font-size: 0.75rem;
+    background: #fee2e2;
+    padding: 0.375rem 0.625rem;
+    border-radius: 0.375rem;
+    border: 1px solid #fecaca;
+    margin-top: 0.5rem;
+}
+
+.weather-location-error .error-icon {
+    flex-shrink: 0;
 }
 
 .location-permission-info {
@@ -246,7 +304,6 @@
 /* Forecast Card (Left Bottom) */
 .weather-forecast-card {
     background: white;
-    border: 1px solid var(--color-border);
     border-radius: 1rem;
     padding: 1.25rem 1rem 1.5rem 1rem;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -317,7 +374,6 @@
 /* Details Card (Right Bottom) */
 .weather-details-card {
     background: white;
-    border: 1px solid var(--color-border);
     border-radius: 1rem;
     padding: 1.5rem;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);

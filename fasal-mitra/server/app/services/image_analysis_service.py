@@ -238,14 +238,14 @@ class ImageAnalysisService:
             "analysis_method": "fallback",
             "error": error,
             "structured_analysis": {
-                "soil_color": "unknown",
-                "texture_type": "unknown", 
-                "moisture_level": "unknown",
+                "soil_color": "N/A",
+                "texture_type": "N/A", 
+                "moisture_level": "N/A",
                 "organic_matter_estimate": 3.0,  # Average estimate
-                "compaction_level": "unknown",
-                "surface_condition": "unknown",
+                "compaction_level": "N/A",
+                "surface_condition": "N/A",
                 "overall_health_score": 50,  # Neutral score
-                "visual_indicators": ["Analysis unavailable - please rely on traditional soil testing"]
+                "visual_indicators": ["Visual analysis unavailable - please ensure a soil image is uploaded for AI analysis"]
             },
             "message": "Image analysis not available. Using traditional soil testing data only.",
             "analysis_timestamp": self._get_timestamp()

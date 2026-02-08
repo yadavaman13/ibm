@@ -291,6 +291,10 @@ class MLDiseaseDetectionService:
                 "severity": severity,
                 "cause": disease_info.get('cause', 'Unknown'),
                 "treatment": disease_info.get('cure', 'Consult expert'),
+                # Farmer-friendly additional information
+                "simple_explanation": disease_info.get('simple_explanation', 'Disease information being analyzed. Please consult local expert.'),
+                "how_to_spot": disease_info.get('how_to_spot', 'Check with agricultural expert for identification tips.'),
+                "prevention_tips": disease_info.get('prevention_tips', 'Follow general good agricultural practices.'),
                 "recommendations": self._generate_recommendations(disease_label, severity, confidence, detected_crop),
                 "next_steps": self._generate_next_steps(severity, is_healthy),
                 "model_used": "TensorFlow CNN (39 classes)"

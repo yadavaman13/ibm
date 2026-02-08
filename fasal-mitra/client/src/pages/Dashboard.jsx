@@ -3,12 +3,13 @@ import { useTranslation } from 'react-i18next';
 import { Sprout, Beaker, Bug, TrendingUp } from 'lucide-react';
 import FeatureCard from '../components/FeatureCard';
 import { WeatherDashboard } from '../components/weather';
+// import WeatherDashboard from '../components/WeatherWidget';
 import ChatbotWidget from '../components/ChatbotWidget';
 import '../styles/dashboard.css';
 
 const Dashboard = () => {
     const { t, i18n, ready } = useTranslation('pages');
-    
+
     // Wait for i18n to be ready
     if (!ready) {
         return (
@@ -22,7 +23,7 @@ const Dashboard = () => {
             </div>
         );
     }
-    
+
     const features = [
         {
             icon: Sprout,
@@ -59,7 +60,7 @@ const Dashboard = () => {
                     <div className="dashboard-weather-section">
                         <WeatherDashboard />
                     </div>
-                    
+
                     {/* Right - Features Section */}
                     <div className="dashboard-features-section">
                         <div className="features-header">

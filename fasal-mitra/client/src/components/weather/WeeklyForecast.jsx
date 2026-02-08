@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Sun, Cloud, CloudRain, Snowflake, Zap, CloudDrizzle, Moon } from 'lucide-react';
 
-const WeeklyForecast = ({ weeklyForecast, isCelsius }) => {
+const WeeklyForecast = ({ weeklyForecast, isCelsius, loading, selectedDayIndex, onDayClick }) => {
   const { t } = useTranslation('common');
   // Get appropriate weather icon
   const getWeatherIcon = (condition, isNight = false) => {
@@ -33,29 +33,51 @@ const WeeklyForecast = ({ weeklyForecast, isCelsius }) => {
     return <Sun className="weather-forecast-icon" />;
   };
 
-  if (!weeklyForecast || weeklyForecast.length === 0) {
+  // Show skeleton if loading with no cached data
+  if (loading && (!weeklyForecast || weeklyForecast.length === 0)) {
     return (
       <div className="weekly-forecast-card">
-        <div className="forecast-loading">
-          <p>Loading forecast...</p>
+        <div className="forecast-grid">
+          {[...Array(7)].map((_, index) => (
+            <div key={index} className="forecast-day">
+              <div className="skeleton skeleton-forecast-day"></div>
+            </div>
+          ))}
         </div>
       </div>
     );
   }
 
+  // Show empty forecast cards if no data (but not loading)
+  const displayForecast = weeklyForecast && weeklyForecast.length > 0 
+    ? weeklyForecast 
+    : [
+        { day: 'Mon', condition: null, high: '--', low: '--' },
+        { day: 'Tue', condition: null, high: '--', low: '--' },
+        { day: 'Wed', condition: null, high: '--', low: '--' },
+        { day: 'Thu', condition: null, high: '--', low: '--' },
+        { day: 'Fri', condition: null, high: '--', low: '--' },
+        { day: 'Sat', condition: null, high: '--', low: '--' },
+        { day: 'Sun', condition: null, high: '--', low: '--' }
+      ];
+
   return (
     <div className="weekly-forecast-card">
       <div className="forecast-grid">
-        {weeklyForecast.map((day, index) => {
-          // First day gets highlighted style
+        {displayForecast.map((day, index) => {
+          // First day (today) gets highlighted style when selected OR when showing current weather (selectedDayIndex === null)
           const isToday = index === 0;
+          const isTodayAndSelected = isToday && (selectedDayIndex === null || selectedDayIndex === 0);
+          const isOtherDaySelected = index !== 0 && selectedDayIndex === index;
           // Some days might be night (you can enhance this logic)
           const isNight = day.condition && day.condition.toLowerCase().includes('night');
           
           return (
             <div 
               key={index} 
-              className={`forecast-day ${isToday ? 'forecast-day-today' : ''}`}
+              className={`forecast-day ${isTodayAndSelected ? 'forecast-day-today' : ''} ${isOtherDaySelected ? 'forecast-day-selected' : ''}`}
+              onClick={() => onDayClick && onDayClick(index)}
+              style={{ cursor: 'pointer' }}
             >
               <div className="forecast-day-name">{t(`dayAbbr.${day.day}`, day.day)}</div>
               <div className="forecast-icon-container">

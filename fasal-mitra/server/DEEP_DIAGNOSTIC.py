@@ -290,7 +290,8 @@ except Exception as e:
 
 # Test 11: API Endpoint Availability
 print_header("TEST 11: API Endpoints Check")
-try:    from app.api.v1.endpoints import disease_detection
+try:
+    from app.api.v1.endpoints import disease_detection
     from app.api.v1.api import api_router
     
     print_success("API endpoints module loaded successfully")

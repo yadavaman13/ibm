@@ -1,5 +1,5 @@
 import React from 'react';
-import { AlertTriangle, CheckCircle, Clock, Bug, Search, AlertCircle as VirusIcon, Sprout, Shield, Sparkles } from 'lucide-react';
+import { AlertTriangle, CheckCircle, Clock, Bug, Search, AlertCircle as VirusIcon, Sprout, Shield, Sparkles, Eye, Lightbulb, BookOpen } from 'lucide-react';
 
 const DetectionResults = ({ result }) => {
     if (!result) return null;
@@ -25,6 +25,9 @@ const DetectionResults = ({ result }) => {
     const recommendations = result.recommendations;
     const nextSteps = result.next_steps;
     const llmAdvice = result.llm_advice; // New: AI-generated personalized advice
+    const simpleExplanation = result.simple_explanation; // Farmer-friendly explanation
+    const howToSpot = result.how_to_spot; // Visual identification guide
+    const preventionTips = result.prevention_tips; // Prevention measures
     
     const getSeverityIcon = (severity) => {
         switch (severity) {
@@ -98,6 +101,42 @@ const DetectionResults = ({ result }) => {
                     <span className="ml-2 text-gray-800">{formatDate(timestamp)}</span>
                 </div>
             </div>
+
+            {/* Understanding the Disease - Simple Explanation (FARMERS FRIENDLY) */}
+            {simpleExplanation && (
+                <div className="info-section bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-300">
+                    <h3 className="info-title text-green-800 flex items-center gap-2">
+                        <BookOpen className="info-icon text-green-600" />
+                        Understanding the Disease
+                        <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Easy to Understand</span>
+                    </h3>
+                    <p className="text-gray-800 text-base leading-relaxed">{simpleExplanation}</p>
+                </div>
+            )}
+
+            {/* How to Identify/Spot - Visual Symptoms (FARMERS FRIENDLY) */}
+            {howToSpot && !isHealthy && (
+                <div className="info-section bg-gradient-to-r from-yellow-50 to-amber-50 border-2 border-yellow-300">
+                    <h3 className="info-title text-yellow-900 flex items-center gap-2">
+                        <Eye className="info-icon text-yellow-600" />
+                        How to Identify This Disease
+                        <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full">Look for These Signs</span>
+                    </h3>
+                    <p className="text-gray-800 text-base leading-relaxed">{howToSpot}</p>
+                </div>
+            )}
+
+            {/* Prevention Tips (FARMERS FRIENDLY) */}
+            {preventionTips && (
+                <div className="info-section bg-gradient-to-r from-blue-50 to-cyan-50 border-2 border-blue-300">
+                    <h3 className="info-title text-blue-900 flex items-center gap-2">
+                        <Lightbulb className="info-icon text-blue-600" />
+                        Prevention Tips
+                        <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">Protect Your Crop</span>
+                    </h3>
+                    <p className="text-gray-800 text-base leading-relaxed">{preventionTips}</p>
+                </div>
+            )}
 
             {/* Treatment (New ML Format) */}
             {treatment && !isHealthy && (

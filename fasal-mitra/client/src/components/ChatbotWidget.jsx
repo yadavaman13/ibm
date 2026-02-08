@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { MessageCircle, X, Send, Loader2, AlertCircle } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
-import fasalMitraLogo from '../assets/Fasal Mitra logo.png';
+import fasalMitraLogo from '../assets/FasalMitraLogoCircle.png';
 import useVoiceRecognition from '../hooks/useVoiceRecognition';
 import useTextToSpeech from '../hooks/useTextToSpeech';
 import VoiceInputButton from './VoiceInputButton';
@@ -136,7 +136,9 @@ const ChatbotWidget = () => {
         setError(null);
 
         try {
-            const response = await fetch('http://localhost:8000/api/v1/chatbot/query', {
+            const baseUrl = (import.meta.env.VITE_API_URL || 'http://localhost:8000').replace(/\/$/, '');
+            console.log('🤖 Chatbot - Using API URL:', baseUrl);
+            const response = await fetch(`${baseUrl}/api/v1/chatbot/query`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
