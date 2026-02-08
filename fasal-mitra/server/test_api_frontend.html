@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Intelligence API Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #059669;
+            border-bottom: 3px solid #059669;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #333;
+            margin-top: 30px;
+        }
+        .input-group {
+            margin: 20px 0;
+        }
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            background: #059669;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #047857;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .success {
+            background: #d1fae5;
+            border: 2px solid #059669;
+            color: #065f46;
+        }
+        .error {
+            background: #fee2e2;
+            border: 2px solid #dc2626;
+            color: #991b1b;
+        }
+        .info {
+            background: #dbeafe;
+            border: 2px solid #2563eb;
+            color: #1e40af;
+        }
+        .loading {
+            color: #f59e0b;
+            font-weight: 600;
+        }
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .commodities-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .commodity-card {
+            background: #f9fafb;
+            padding: 10px;
+            border-radius: 4px;
+            border-left: 3px solid #059669;
+        }
+        .commodity-name {
+            font-weight: 600;
+            color: #111;
+        }
+        .commodity-info {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌾 Market Intelligence API Test</h1>
+        <p>Test if your backend is running and data is accessible</p>
+        
+        <div class="input-group">
+            <label for="apiUrl">Backend API URL:</label>
+            <input type="text" id="apiUrl" value="http://localhost:8000/api/v1/market" placeholder="http://localhost:8000/api/v1/market">
+        </div>
+        
+        <h2>Quick Tests</h2>
+        <div class="test-grid">
+            <button onclick="testHealth()">1. Test Health</button>
+            <button onclick="testCommodities()">2. Get Commodities</button>
+            <button onclick="testForecast()">3. Test Forecast</button>
+            <button onclick="testCompare()">4. Test Compare</button>
+            <button onclick="testRecommend()">5. Test Recommend</button>
+            <button onclick="runAllTests()">▶️ Run All Tests</button>
+        </div>
+        
+        <div id="result"></div>
+        <div id="commoditiesList"></div>
+    </div>
+
+    <script>
+        function getApiUrl() {
+            return document.getElementById('apiUrl').value.replace(/\/$/, '');
+        }
+
+        function showResult(message, type = 'info') {
+            const resultDiv = document.getElementById('result');
+            resultDiv.className = `result ${type}`;
+            resultDiv.textContent = message;
+        }
+
+        function showCommodities(commodities) {
+            const listDiv = document.getElementById('commoditiesList');
+            
+            if (!commodities || commodities.length === 0) {
+                listDiv.innerHTML = '<p class="error">No commodities found!</p>';
+                return;
+            }
+
+            // Group by category
+            const byCategory = {};
+            commodities.forEach(c => {
+                const cat = c.category || 'Other';
+                if (!byCategory[cat]) byCategory[cat] = [];
+                byCategory[cat].push(c);
+            });
+
+            let html = '<h2>📦 Available Commodities</h2>';
+            
+            for (const [category, items] of Object.entries(byCategory).sort()) {
+                html += `<h3>${category} (${items.length})</h3>`;
+                html += '<div class="commodities-list">';
+                
+                items.forEach(c => {
+                    html += `
+                        <div class="commodity-card">
+                            <div class="commodity-name">${c.name}</div>
+                            <div class="commodity-info">
+                                ${c.record_count} records<br>
+                                ${c.date_range ? c.date_range.days + ' days' : 'N/A'}
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += '</div>';
+            }
+            
+            listDiv.innerHTML = html;
+        }
+
+        async function testHealth() {
+            showResult('Testing health endpoint...', 'loading');
+            const url = `${getApiUrl()}/health`;
+            
+            try {
+                console.log('Fetching:', url);
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult(
+                        `✅ Backend is RUNNING!\n\n` +
+                        `Status: ${response.status}\n` +
+                        `Available Commodities: ${data.data.available_commodities}\n` +
+                        `Service Status: ${data.data.status}\n\n` +
+                        `Response:\n${JSON.stringify(data, null, 2)}`,
+                        'success'
+                    );
+                } else {
+                    showResult(
+                        `❌ Backend responded with error:\n\n` +
+                        `Status: ${response.status}\n` +
+                        `${JSON.stringify(data, null, 2)}`,
+                        'error'
+                    );
+                }
+            } catch (error) {
+                showResult(
+                    `❌ FAILED TO CONNECT TO BACKEND!\n\n` +
+                    `Error: ${error.message}\n\n` +
+                    `URL Tried: ${url}\n\n` +
+                    `Possible Issues:\n` +
+                    `1. Backend is not running (run: python run.py)\n` +
+                    `2. Wrong URL/port\n` +
+                    `3. CORS issue\n` +
+                    `4. Firewall blocking`,
+                    'error'
+                );
+                console.error('Connection error:', error);
+            }
+        }
+
+        async function testCommodities() {
+            showResult('Testing commodities endpoint...', 'loading');
+            document.getElementById('commoditiesList').innerHTML = '';
+            
+            const url = `${getApiUrl()}/commodities`;
+            
+            try {
+                console.log('Fetching:', url);
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    const commodities = data.data.commodities;
+                    showResult(
+                        `✅ Commodities loaded successfully!\n\n` +
+                        `Total: ${data.data.total_count}\n` +
+                        `Status: ${response.status}\n\n` +
+                        `Sample commodities:\n${commodities.slice(0, 5).map(c => `• ${c.name} (${c.record_count} records)`).join('\n')}`,
+                        'success'
+                    );
+                    showCommodities(commodities);
+                } else {
+                    showResult(
+                        `❌ Error fetching commodities:\n\n` +
+                        `Status: ${response.status}\n` +
+                        `${JSON.stringify(data, null, 2)}`,
+                        'error'
+                    );
+                }
+            } catch (error) {
+                showResult(
+                    `❌ Failed to fetch commodities!\n\n` +
+                    `Error: ${error.message}\n` +
+                    `URL: ${url}`,
+                    'error'
+                );
+            }
+        }
+
+        async function testForecast() {
+            showResult('Testing forecast endpoint...', 'loading');
+            const url = `${getApiUrl()}/forecast`;
+            
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ commodity: 'Cotton', days: 7 })
+                });
+                const data = await response.json();
+                
+                if (response.ok) {
+                    const forecast = data.data;
+                    showResult(
+                        `✅ Forecast generated!\n\n` +
+                        `Commodity: ${forecast.commodity}\n` +
+                        `Current Price: ₹${forecast.current_price}\n` +
+                        `Trend: ${forecast.trend.direction}\n` +
+                        `Forecast Days: ${forecast.forecast.length}\n\n` +
+                        `Sample predictions:\n${forecast.forecast.slice(0, 3).map(f => 
+                            `${f.date}: ₹${f.predicted_price}`
+                        ).join('\n')}`,
+                        'success'
+                    );
+                } else {
+                    showResult(
+                        `❌ Forecast error:\n\n${JSON.stringify(data, null, 2)}`,
+                        'error'
+                    );
+                }
+            } catch (error) {
+                showResult(`❌ Forecast failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function testCompare() {
+            showResult('Testing market comparison...', 'loading');
+            const url = `${getApiUrl()}/compare`;
+            
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ commodity: 'Wheat' })
+                });
+                const data = await response.json();
+                
+                if (response.ok) {
+                    const markets = data.data.markets;
+                    showResult(
+                        `✅ Market comparison done!\n\n` +
+                        `Total Markets: ${markets.length}\n\n` +
+                        `Top 5 by price:\n${markets.slice(0, 5).map((m, i) => 
+                            `${i+1}. ${m.market} - ₹${m.modal_price}`
+                        ).join('\n')}`,
+                        'success'
+                    );
+                } else {
+                    showResult(
+                        `❌ Comparison error:\n\n${JSON.stringify(data, null, 2)}`,
+                        'error'
+                    );
+                }
+            } catch (error) {
+                showResult(`❌ Comparison failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function testRecommend() {
+            showResult('Testing recommendation...', 'loading');
+            const url = `${getApiUrl()}/recommend`;
+            
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        commodity: 'Potato',
+                        user_district: 'Ahmedabad',
+                        quantity: 5
+                    })
+                });
+                const data = await response.json();
+                
+                if (response.ok) {
+                    const rec = data.data;
+                    showResult(
+                        `✅ Recommendation generated!\n\n` +
+                        `Best Market: ${rec.best_market.market}\n` +
+                        `District: ${rec.best_market.district}\n` +
+                        `Price: ₹${rec.best_market.modal_price}\n` +
+                        `Premium: ${rec.premium_percent}%\n` +
+                        `Potential Profit: ₹${rec.potential_total_profit || 'N/A'}`,
+                        'success'
+                    );
+                } else {
+                    showResult(
+                        `❌ Recommendation error:\n\n${JSON.stringify(data, null, 2)}`,
+                        'error'
+                    );
+                }
+            } catch (error) {
+                showResult(`❌ Recommendation failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function runAllTests() {
+            showResult('Running all tests...', 'loading');
+            
+            const tests = [
+                { name: 'Health', func: testHealth },
+                { name: 'Commodities', func: testCommodities },
+                { name: 'Forecast', func: testForecast },
+                { name: 'Compare', func: testCompare },
+                { name: 'Recommend', func: testRecommend }
+            ];
+            
+            let results = '🚀 RUNNING ALL TESTS\n\n';
+            
+            for (const test of tests) {
+                showResult(results + `Testing ${test.name}...`, 'loading');
+                try {
+                    await test.func();
+                    results += `✅ ${test.name}\n`;
+                } catch (error) {
+                    results += `❌ ${test.name}: ${error.message}\n`;
+                }
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+            
+            results += '\n✅ All tests completed!';
+            showResult(results, 'success');
+        }
+
+        // Auto-run health check on load
+        window.addEventListener('load', () => {
+            setTimeout(testHealth, 500);
+        });
+    </script>
+</body>
+</html>

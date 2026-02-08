@@ -7,6 +7,7 @@ import YieldPrediction from './pages/YieldPrediction';
 import DiseaseDetection from './pages/DiseaseDetection';
 import SoilAnalysis from './pages/SoilAnalysis';
 import YieldGapAnalysis from './pages/YieldGapAnalysis';
+import MarketIntelligence from './pages/MarketIntelligence';
 import './i18n'; // Initialize i18n
 import './styles/pages.css';
 
@@ -21,6 +22,7 @@ const App = () => {
           <Route path="/disease-detection" element={<DiseaseDetection />} />
           <Route path="/soil-analysis" element={<SoilAnalysis />} />
           <Route path="/gap-analysis" element={<YieldGapAnalysis />} />
+          <Route path="/market-intelligence" element={<MarketIntelligence />} />
         </Routes>
       </div>
     </Router>
