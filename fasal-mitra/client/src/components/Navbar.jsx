@@ -34,6 +34,7 @@ const Navbar = () => {
         { name: t('soilAnalysis'), path: '/soil-analysis' },
         { name: t('diseaseDetection'), path: '/disease-detection' },
         { name: t('yieldGapAnalysis'), path: '/gap-analysis' },
+        { name: 'Market Intelligence', path: '/market-intelligence' },
     ];
 
     return (
