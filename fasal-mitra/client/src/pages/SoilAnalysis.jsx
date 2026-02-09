@@ -13,7 +13,9 @@ import locationIcon from '../assets/location-icon-pictogram_764382-14294-removeb
 const SoilAnalysis = () => {
     const { t } = useTranslation(['pages', 'common']);
     const [formData, setFormData] = useState({
+        country: '',
         state: '',
+        district: '',
         crop: '',
         fieldSize: '',
         irrigationType: '',
@@ -24,7 +26,49 @@ const SoilAnalysis = () => {
 
 
     const [states, setStates] = useState([]);
+    const [countries, setCountries] = useState([]);
+    const [districts, setDistricts] = useState([]);
+    const [allDistricts] = useState({
+        // India State-wise Districts Mapping (700+ districts)
+        'Andhra Pradesh': ['Anantapur', 'Chittoor', 'East Godavari', 'Guntur', 'Krishna', 'Kurnool', 'Nellore', 'Prakasam', 'Srikakulam', 'Visakhapatnam', 'Vizianagaram', 'West Godavari', 'YSR Kadapa'],
+        'Arunachal Pradesh': ['Anjaw', 'Changlang', 'Dibang Valley', 'East Kameng', 'East Siang', 'Kamle', 'Kra Daadi', 'Kurung Kumey', 'Lepa Rada', 'Lohit', 'Longding', 'Lower Dibang Valley', 'Lower Siang', 'Lower Subansiri', 'Namsai', 'Pakke Kessang', 'Papum Pare', 'Shi Yomi', 'Siang', 'Tawang', 'Tirap', 'Upper Siang', 'Upper Subansiri', 'West Kameng', 'West Siang'],
+        'Assam': ['Baksa', 'Barpeta', 'Biswanath', 'Bongaigaon', 'Cachar', 'Charaideo', 'Chirang', 'Darrang', 'Dhemaji', 'Dhubri', 'Dibrugarh', 'Dima Hasao', 'Goalpara', 'Golaghat', 'Hailakandi', 'Hojai', 'Jorhat', 'Kamrup', 'Kamrup Metropolitan', 'Karbi Anglong', 'Karimganj', 'Kokrajhar', 'Lakhimpur', 'Majuli', 'Morigaon', 'Nagaon', 'Nalbari', 'Sivasagar', 'Sonitpur', 'South Salmara-Mankachar', 'Tinsukia', 'Udalguri', 'West Karbi Anglong'],
+        'Bihar': ['Araria', 'Arwal', 'Aurangabad', 'Banka', 'Begusarai', 'Bhagalpur', 'Bhojpur', 'Buxar', 'Darbhanga', 'East Champaran', 'Gaya', 'Gopalganj', 'Jamui', 'Jehanabad', 'Kaimur', 'Katihar', 'Khagaria', 'Kishanganj', 'Lakhisarai', 'Madhepura', 'Madhubani', 'Munger', 'Muzaffarpur', 'Nalanda', 'Nawada', 'Patna', 'Purnia', 'Rohtas', 'Saharsa', 'Samastipur', 'Saran', 'Sheikhpura', 'Sheohar', 'Sitamarhi', 'Siwan', 'Supaul', 'Vaishali', 'West Champaran'],
+        'Chhattisgarh': ['Balod', 'Baloda Bazar', 'Balrampur', 'Bastar', 'Bemetara', 'Bijapur', 'Bilaspur', 'Dantewada', 'Dhamtari', 'Durg', 'Gariaband', 'Gaurela Pendra Marwahi', 'Janjgir Champa', 'Jashpur', 'Kabirdham', 'Kanker', 'Kondagaon', 'Korba', 'Koriya', 'Mahasamund', 'Mungeli', 'Narayanpur', 'Raigarh', 'Raipur', 'Rajnandgaon', 'Sukma', 'Surajpur', 'Surguja'],
+        'Goa': ['North Goa', 'South Goa'],
+        'Gujarat': ['Ahmedabad', 'Amreli', 'Anand', 'Aravalli', 'Banaskantha', 'Bharuch', 'Bhavnagar', 'Botad', 'Chhota Udaipur', 'Dahod', 'Dang', 'Devbhoomi Dwarka', 'Gandhinagar', 'Gir Somnath', 'Jamnagar', 'Junagadh', 'Kheda', 'Kutch', 'Mahisagar', 'Mehsana', 'Morbi', 'Narmada', 'Navsari', 'Panchmahal', 'Patan', 'Porbandar', 'Rajkot', 'Sabarkantha', 'Surat', 'Surendranagar', 'Tapi', 'Vadodara', 'Valsad'],
+        'Haryana': ['Ambala', 'Bhiwani', 'Charkhi Dadri', 'Faridabad', 'Fatehabad', 'Gurugram', 'Hisar', 'Jhajjar', 'Jind', 'Kaithal', 'Karnal', 'Kurukshetra', 'Mahendragarh', 'Nuh', 'Palwal', 'Panchkula', 'Panipat', 'Rewari', 'Rohtak', 'Sirsa', 'Sonipat', 'Yamunanagar'],
+        'Himachal Pradesh': ['Bilaspur', 'Chamba', 'Hamirpur', 'Kangra', 'Kinnaur', 'Kullu', 'Lahaul and Spiti', 'Mandi', 'Shimla', 'Sirmaur', 'Solan', 'Una'],
+        'Jharkhand': ['Bokaro', 'Chatra', 'Deoghar', 'Dhanbad', 'Dumka', 'East Singhbhum', 'Garhwa', 'Giridih', 'Godda', 'Gumla', 'Hazaribagh', 'Jamtara', 'Khunti', 'Koderma', 'Latehar', 'Lohardaga', 'Pakur', 'Palamu', 'Ramgarh', 'Ranchi', 'Sahebganj', 'Seraikela Kharsawan', 'Simdega', 'West Singhbhum'],
+        'Karnataka': ['Bagalkot', 'Ballari', 'Belagavi', 'Bengaluru Rural', 'Bengaluru Urban', 'Bidar', 'Chamarajanagar', 'Chikballapur', 'Chikkamagaluru', 'Chitradurga', 'Dakshina Kannada', 'Davanagere', 'Dharwad', 'Gadag', 'Hassan', 'Haveri', 'Kalaburagi', 'Kodagu', 'Kolar', 'Koppal', 'Mandya', 'Mysuru', 'Raichur', 'Ramanagara', 'Shivamogga', 'Tumakuru', 'Udupi', 'Uttara Kannada', 'Vijayapura', 'Yadgir'],
+        'Kerala': ['Alappuzha', 'Ernakulam', 'Idukki', 'Kannur', 'Kasaragod', 'Kollam', 'Kottayam', 'Kozhikode', 'Malappuram', 'Palakkad', 'Pathanamthitta', 'Thiruvananthapuram', 'Thrissur', 'Wayanad'],
+        'Madhya Pradesh': ['Agar Malwa', 'Alirajpur', 'Anuppur', 'Ashoknagar', 'Balaghat', 'Barwani', 'Betul', 'Bhind', 'Bhopal', 'Burhanpur', 'Chhatarpur', 'Chhindwara', 'Damoh', 'Datia', 'Dewas', 'Dhar', 'Dindori', 'Guna', 'Gwalior', 'Harda', 'Hoshangabad', 'Indore', 'Jabalpur', 'Jhabua', 'Katni', 'Khandwa', 'Khargone', 'Maihar', 'Mandla', 'Mandsaur', 'Morena', 'Narsinghpur', 'Neemuch', 'Niwari', 'Panna', 'Raisen', 'Rajgarh', 'Ratlam', 'Rewa', 'Sagar', 'Satna', 'Sehore', 'Seoni', 'Shahdol', 'Shajapur', 'Sheopur', 'Shivpuri', 'Sidhi', 'Singrauli', 'Tikamgarh', 'Ujjain', 'Umaria', 'Vidisha'],
+        'Maharashtra': ['Ahmednagar', 'Akola', 'Amravati', 'Aurangabad', 'Beed', 'Bhandara', 'Buldhana', 'Chandrapur', 'Dhule', 'Gadchiroli', 'Gondia', 'Hingoli', 'Jalgaon', 'Jalna', 'Kolhapur', 'Latur', 'Mumbai City', 'Mumbai Suburban', 'Nagpur', 'Nanded', 'Nandurbar', 'Nashik', 'Osmanabad', 'Palghar', 'Parbhani', 'Pune', 'Raigad', 'Ratnagiri', 'Sangli', 'Satara', 'Sindhudurg', 'Solapur', 'Thane', 'Wardha', 'Washim', 'Yavatmal'],
+        'Manipur': ['Bishnupur', 'Chandel', 'Churachandpur', 'Imphal East', 'Imphal West', 'Jiribam', 'Kakching', 'Kamjong', 'Kangpokpi', 'Noney', 'Pherzawl', 'Senapati', 'Tamenglong', 'Tengnoupal', 'Thoubal', 'Ukhrul'],
+        'Meghalaya': ['East Garo Hills', 'East Jaintia Hills', 'East Khasi Hills', 'North Garo Hills', 'Ri Bhoi', 'South Garo Hills', 'South West Garo Hills', 'South West Khasi Hills', 'West Garo Hills', 'West Jaintia Hills', 'West Khasi Hills'],
+        'Mizoram': ['Aizawl', 'Champhai', 'Hnahthial', 'Khawzawl', 'Kolasib', 'Lawngtlai', 'Lunglei', 'Mamit', 'Saiha', 'Saitual', 'Serchhip'],
+        'Nagaland': ['Chumukedima', 'Dimapur', 'Kiphire', 'Kohima', 'Longleng', 'Mokokchung', 'Mon', 'Niuland', 'Noklak', 'Peren', 'Phek', 'Shamator', 'Tseminyu', 'Tuensang', 'Wokha', 'Zunheboto'],
+        'Odisha': ['Angul', 'Balangir', 'Balasore', 'Bargarh', 'Bhadrak', 'Boudh', 'Cuttack', 'Deogarh', 'Dhenkanal', 'Gajapati', 'Ganjam', 'Jagatsinghpur', 'Jajpur', 'Jharsuguda', 'Kalahandi', 'Kandhamal', 'Kendrapara', 'Kendujhar', 'Khordha', 'Koraput', 'Malkangiri', 'Mayurbhanj', 'Nabarangpur', 'Nayagarh', 'Nuapada', 'Puri', 'Rayagada', 'Sambalpur', 'Subarnapur', 'Sundargarh'],
+        'Punjab': ['Amritsar', 'Barnala', 'Bathinda', 'Faridkot', 'Fatehgarh Sahib', 'Fazilka', 'Ferozepur', 'Gurdaspur', 'Hoshiarpur', 'Jalandhar', 'Kapurthala', 'Ludhiana', 'Malerkotla', 'Mansa', 'Moga', 'Mohali', 'Muktsar', 'Pathankot', 'Patiala', 'Rupnagar', 'Sangrur', 'Shaheed Bhagat Singh Nagar', 'Tarn Taran'],
+        'Rajasthan': ['Ajmer', 'Alwar', 'Banswara', 'Baran', 'Barmer', 'Bharatpur', 'Bhilwara', 'Bikaner', 'Bundi', 'Chittorgarh', 'Churu', 'Dausa', 'Dholpur', 'Dungarpur', 'Ganganagar', 'Hanumangarh', 'Jaipur', 'Jaisalmer', 'Jalore', 'Jhalawar', 'Jhunjhunu', 'Jodhpur', 'Karauli', 'Kota', 'Nagaur', 'Pali', 'Pratapgarh', 'Rajsamand', 'Sawai Madhopur', 'Sikar', 'Sirohi', 'Tonk', 'Udaipur'],
+        'Sikkim': ['East Sikkim', 'North Sikkim', 'South Sikkim', 'West Sikkim'],
+        'Tamil Nadu': ['Ariyalur', 'Chengalpattu', 'Chennai', 'Coimbatore', 'Cuddalore', 'Dharmapuri', 'Dindigul', 'Erode', 'Kallakurichi', 'Kanchipuram', 'Kanyakumari', 'Karur', 'Krishnagiri', 'Madurai', 'Mayiladuthurai', 'Nagapattinam', 'Namakkal', 'Nilgiris', 'Perambalur', 'Pudukkottai', 'Ramanathapuram', 'Ranipet', 'Salem', 'Sivaganga', 'Tenkasi', 'Thanjavur', 'Theni', 'Thoothukudi', 'Tiruchirappalli', 'Tirunelveli', 'Tirupathur', 'Tiruppur', 'Tiruvallur', 'Tiruvannamalai', 'Tiruvarur', 'Vellore', 'Viluppuram', 'Virudhunagar'],
+        'Telangana': ['Adilabad', 'Bhadradri Kothagudem', 'Hyderabad', 'Jagtial', 'Jangaon', 'Jayashankar Bhupalpally', 'Jogulamba Gadwal', 'Kamareddy', 'Karimnagar', 'Khammam', 'Komaram Bheem', 'Mahabubabad', 'Mahbubnagar', 'Mancherial', 'Medak', 'Medchal Malkajgiri', 'Mulugu', 'Nagarkurnool', 'Nalgonda', 'Narayanpet', 'Nirmal', 'Nizamabad', 'Peddapalli', 'Rajanna Sircilla', 'Rangareddy', 'Sangareddy', 'Siddipet', 'Suryapet', 'Vikarabad', 'Wanaparthy', 'Warangal Rural', 'Warangal Urban', 'Yadadri Bhuvanagiri'],
+        'Tripura': ['Dhalai', 'Gomati', 'Khowai', 'North Tripura', 'Sepahijala', 'South Tripura', 'Unakoti', 'West Tripura'],
+        'Uttar Pradesh': ['Agra', 'Aligarh', 'Ambedkar Nagar', 'Amethi', 'Amroha', 'Auraiya', 'Ayodhya', 'Azamgarh', 'Baghpat', 'Bahraich', 'Ballia', 'Balrampur', 'Banda', 'Barabanki', 'Bareilly', 'Basti', 'Bhadohi', 'Bijnor', 'Budaun', 'Bulandshahr', 'Chandauli', 'Chitrakoot', 'Deoria', 'Etah', 'Etawah', 'Farrukhabad', 'Fatehpur', 'Firozabad', 'Gautam Buddha Nagar', 'Ghaziabad', 'Ghazipur', 'Gonda', 'Gorakhpur', 'Hamirpur', 'Hapur', 'Hardoi', 'Hathras', 'Jalaun', 'Jaunpur', 'Jhansi', 'Kannauj', 'Kanpur Dehat', 'Kanpur Nagar', 'Kasganj', 'Kaushambi', 'Kheri', 'Kushinagar', 'Lalitpur', 'Lucknow', 'Maharajganj', 'Mahoba', 'Mainpuri', 'Mathura', 'Mau', 'Meerut', 'Mirzapur', 'Moradabad', 'Muzaffarnagar', 'Pilibhit', 'Pratapgarh', 'Prayagraj', 'Raebareli', 'Rampur', 'Saharanpur', 'Sambhal', 'Sant Kabir Nagar', 'Shahjahanpur', 'Shamli', 'Shravasti', 'Siddharthnagar', 'Sitapur', 'Sonbhadra', 'Sultanpur', 'Unnao', 'Varanasi'],
+        'Uttarakhand': ['Almora', 'Bageshwar', 'Chamoli', 'Champawat', 'Dehradun', 'Haridwar', 'Nainital', 'Pauri Garhwal', 'Pithoragarh', 'Rudraprayag', 'Tehri Garhwal', 'Udham Singh Nagar', 'Uttarkashi'],
+        'West Bengal': ['Alipurduar', 'Bankura', 'Birbhum', 'Cooch Behar', 'Dakshin Dinajpur', 'Darjeeling', 'Hooghly', 'Howrah', 'Jalpaiguri', 'Jhargram', 'Kalimpong', 'Kolkata', 'Malda', 'Murshidabad', 'Nadia', 'North 24 Parganas', 'Paschim Bardhaman', 'Paschim Medinipur', 'Purba Bardhaman', 'Purba Medinipur', 'Purulia', 'South 24 Parganas', 'Uttar Dinajpur'],
+        'Andaman and Nicobar Islands': ['Nicobar', 'North and Middle Andaman', 'South Andaman'],
+        'Chandigarh': ['Chandigarh'],
+        'Dadra and Nagar Haveli and Daman and Diu': ['Dadra and Nagar Haveli', 'Daman', 'Diu'],
+        'Delhi': ['Central Delhi', 'East Delhi', 'New Delhi', 'North Delhi', 'North East Delhi', 'North West Delhi', 'Shahdara', 'South Delhi', 'South East Delhi', 'South West Delhi', 'West Delhi'],
+        'Jammu and Kashmir': ['Anantnag', 'Bandipora', 'Baramulla', 'Budgam', 'Doda', 'Ganderbal', 'Jammu', 'Kathua', 'Kishtwar', 'Kulgam', 'Kupwara', 'Poonch', 'Pulwama', 'Rajouri', 'Ramban', 'Reasi', 'Samba', 'Shopian', 'Srinagar', 'Udhampur'],
+        'Ladakh': ['Kargil', 'Leh'],
+        'Lakshadweep': ['Lakshadweep'],
+        'Puducherry': ['Karaikal', 'Mahe', 'Puducherry', 'Yanam']
+    });
     const [crops, setCrops] = useState([]);
+ 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [serverStatus, setServerStatus] = useState(null);
@@ -34,7 +78,7 @@ const SoilAnalysis = () => {
     const [location, setLocation] = useState({ latitude: null, longitude: null });
     const [locationLoading, setLocationLoading] = useState(false);
     const [locationError, setLocationError] = useState(null);
-    const [stateAutoDetected, setStateAutoDetected] = useState(false);
+    const [locationAutoDetected, setLocationAutoDetected] = useState(false);
     const [detectedStateName, setDetectedStateName] = useState(null);
 
     // Field help modal state
@@ -61,6 +105,16 @@ const SoilAnalysis = () => {
                 setStates(statesData);
                 setCrops(cropsData);
                 setServerStatus(serverHealth);
+                
+                // Set comprehensive list of countries (top 60 countries)
+                setCountries([
+                    'India', 'United States', 'China', 'Japan', 'Germany', 'United Kingdom', 'France', 'Brazil', 'Italy', 'Canada',
+                    'Russia', 'South Korea', 'Australia', 'Spain', 'Mexico', 'Indonesia', 'Netherlands', 'Saudi Arabia', 'Turkey', 'Switzerland',
+                    'Poland', 'Belgium', 'Sweden', 'Ireland', 'Austria', 'Norway', 'United Arab Emirates', 'Israel', 'Singapore', 'Malaysia',
+                    'Denmark', 'South Africa', 'Philippines', 'Colombia', 'Pakistan', 'Chile', 'Finland', 'Bangladesh', 'Egypt', 'Vietnam',
+                    'Czech Republic', 'Romania', 'Portugal', 'Peru', 'New Zealand', 'Greece', 'Qatar', 'Algeria', 'Hungary', 'Kazakhstan',
+                    'Kuwait', 'Morocco', 'Slovakia', 'Ecuador', 'Ethiopia', 'Kenya', 'Angola', 'Oman', 'Guatemala', 'Bulgaria'
+                ]);
             } catch (err) {
                 console.error('Failed to load initial data:', err);
                 setStates([]);
@@ -72,12 +126,25 @@ const SoilAnalysis = () => {
         loadData();
     }, []);
 
+    // Update districts when state changes
+    useEffect(() => {
+        if (formData.state && allDistricts[formData.state]) {
+            setDistricts(allDistricts[formData.state]);
+        } else {
+            setDistricts([]);
+        }
+    }, [formData.state, allDistricts]);
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
+        setFormData(prev => {
+            const updates = { [name]: value };
+            // Clear district when state changes (they'll need to pick a new district)
+            if (name === 'state' && value !== prev.state) {
+                updates.district = '';
+            }
+            return { ...prev, ...updates };
+        });
     };
 
     const handleSubmit = async (e) => {
@@ -118,7 +185,9 @@ const SoilAnalysis = () => {
 
     const resetForm = () => {
         setFormData({
+            country: '',
             state: '',
+            district: '',
             crop: '',
             fieldSize: '',
             irrigationType: '',
@@ -129,7 +198,7 @@ const SoilAnalysis = () => {
         setError(null);
         setLocation({ latitude: null, longitude: null });
         setLocationError(null);
-        setStateAutoDetected(false);
+        setLocationAutoDetected(false);
     };
 
     // Handle help icon click
@@ -203,6 +272,42 @@ const SoilAnalysis = () => {
                 availableCrop.toLowerCase().includes(crop.toLowerCase())
             )
         ).slice(0, 5);
+    };
+
+    // Get location details using reverse geocoding
+    const getLocationDetails = async (latitude, longitude) => {
+        try {
+            // Use OpenStreetMap Nominatim reverse geocoding (free, no API key needed)
+            const response = await fetch(
+                `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10&addressdetails=1`,
+                {
+                    headers: {
+                        'Accept-Language': 'en'
+                    }
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error('Geocoding failed');
+            }
+
+            const data = await response.json();
+            const address = data.address || {};
+
+            return {
+                country: address.country || 'India',
+                state: address.state || '',
+                district: address.state_district || address.county || address.district || ''
+            };
+        } catch (error) {
+            console.error('Error fetching location details:', error);
+            // Fallback to coordinate-based detection
+            return {
+                country: 'India', // Default for Indian coordinates
+                state: '',
+                district: ''
+            };
+        }
     };
 
     // Map coordinates to Indian states
@@ -322,41 +427,77 @@ const SoilAnalysis = () => {
         };
 
         navigator.geolocation.getCurrentPosition(
-            (position) => {
+            async (position) => {
                 const newLocation = {
                     latitude: position.coords.latitude,
                     longitude: position.coords.longitude
                 };
 
                 setLocation(newLocation);
-                setLocationLoading(false);
 
-                // Auto-select state based on coordinates
-                const { detectedName, matchedState } = getStateFromCoordinates(
-                    newLocation.latitude,
-                    newLocation.longitude
-                );
+                try {
+                    // Get detailed location information
+                    const locationDetails = await getLocationDetails(
+                        newLocation.latitude,
+                        newLocation.longitude
+                    );
 
-                setDetectedStateName(detectedName);
+                    // Auto-select state based on coordinates
+                    const { detectedName, matchedState } = getStateFromCoordinates(
+                        newLocation.latitude,
+                        newLocation.longitude
+                    );
 
-                if (matchedState) {
-                    setFormData(prev => ({ ...prev, state: matchedState }));
-                    setStateAutoDetected(true);
-                    setLocationError(null);
+                    setDetectedStateName(detectedName);
 
-                    // Clear auto-detection indicator after 5 seconds
-                    setTimeout(() => {
-                        setStateAutoDetected(false);
-                    }, 5000);
+                    // Update form data with all detected information
+                    const updates = {};
+                    let hasDetectedLocation = false;
+                    
+                    // Country
+                    if (locationDetails.country) {
+                        updates.country = locationDetails.country;
+                        hasDetectedLocation = true;
+                    }
 
-                    console.log(`✅ Location detected! Auto-selected state: ${matchedState}`);
-                } else if (detectedName) {
-                    console.log(`⚠️ Location detected (${detectedName}) but not available in the system. Please select your state manually.`);
-                    setLocationError(`Location detected: ${detectedName}. Please select your state manually.`);
-                } else {
-                    console.log('❌ Could not determine state from your location.');
-                    setLocationError('Could not determine state from your location. Please select manually.');
+                    // District
+                    if (locationDetails.district) {
+                        updates.district = locationDetails.district;
+                        hasDetectedLocation = true;
+                    }
+
+                    // State
+                    if (matchedState) {
+                        updates.state = matchedState;
+                        hasDetectedLocation = true;
+                        setLocationError(null);
+                        console.log(`✅ Location detected! Auto-selected state: ${matchedState}`);
+                    } else if (detectedName) {
+                        console.log(`⚠️ Location detected (${detectedName}) but not available in the system. Please select your state manually.`);
+                        setLocationError(`Location detected: ${detectedName}. Please select your state manually.`);
+                    } else {
+                        console.log('❌ Could not determine state from your location.');
+                        setLocationError('Could not determine state from your location. Please select manually.');
+                    }
+
+                    // Show single success message if any location field was detected
+                    if (hasDetectedLocation) {
+                        setLocationAutoDetected(true);
+                        setTimeout(() => setLocationAutoDetected(false), 5000);
+                    }
+
+                    // Apply all updates at once
+                    if (Object.keys(updates).length > 0) {
+                        setFormData(prev => ({ ...prev, ...updates }));
+                        console.log('📍 Location details detected:', updates);
+                    }
+
+                } catch (error) {
+                    console.error('Error processing location:', error);
+                    setLocationError('Error detecting location details. Please enter manually.');
                 }
+
+                setLocationLoading(false);
             },
             (error) => {
                 setLocationLoading(false);
@@ -474,10 +615,10 @@ const SoilAnalysis = () => {
                                 </div>
                             )}
 
-                            {stateAutoDetected && (
+                            {locationAutoDetected && (
                                 <div className="state-detected-msg">
                                     <CheckCircle className="success-icon" />
-                                    <span>{t('pages:soilAnalysis.location.stateDetected')}</span>
+                                    <span>Location detected successfully!</span>
                                 </div>
                             )}
 
@@ -495,10 +636,32 @@ const SoilAnalysis = () => {
                             <div className="form-columns">
                                 {/* Left Column */}
                                 <div className="form-column">
-                                    {/* Expected State */}
+                                    {/* Country */}
                                     <div className="form-field-wrapper">
                                         <div className="form-field">
-                                            <label className="field-label">{t('pages:soilAnalysis.expectedState')}</label>
+                                            <label className="field-label">
+                                                Country
+                                            </label>
+                                            <select
+                                                name="country"
+                                                value={formData.country}
+                                                onChange={handleInputChange}
+                                                className="field-input"
+                                            >
+                                                <option value="">Select Country</option>
+                                                {countries.map(country => (
+                                                    <option key={country} value={country}>{country}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    {/* State */}
+                                    <div className="form-field-wrapper">
+                                        <div className="form-field">
+                                            <label className="field-label">
+                                                State
+                                            </label>
                                             <select
                                                 name="state"
                                                 value={formData.state}
@@ -506,9 +669,35 @@ const SoilAnalysis = () => {
                                                 required
                                                 className="field-input"
                                             >
-                                                <option value="">{t('pages:soilAnalysis.selectState')}</option>
+                                                <option value="">Select State</option>
                                                 {states.map(state => (
                                                     <option key={state} value={state}>{t(`common:states.${state}`)}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    {/* District */}
+                                    <div className="form-field-wrapper">
+                                        <div className="form-field">
+                                            <label className="field-label">
+                                                District
+                                            </label>
+                                            <select
+                                                name="district"
+                                                value={formData.district}
+                                                onChange={handleInputChange}
+                                                className="field-input"
+                                                disabled={!formData.state || districts.length === 0}
+                                            >
+                                                <option value="">
+                                                    {!formData.state 
+                                                        ? 'Select State First'
+                                                        : 'Select District'
+                                                    }
+                                                </option>
+                                                {districts.map(district => (
+                                                    <option key={district} value={district}>{district}</option>
                                                 ))}
                                             </select>
                                         </div>

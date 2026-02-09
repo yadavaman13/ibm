@@ -1,0 +1,52 @@
+crop_name,state,district,price_date,modal_price,market_trend
+Rice,Punjab,Amritsar,2026-01-15,2450,stable
+Rice,Punjab,Ludhiana,2026-01-15,2500,up
+Rice,Haryana,Karnal,2026-01-15,2400,up
+Rice,Uttar Pradesh,Meerut,2026-01-15,2300,stable
+Rice,Maharashtra,Pune,2026-01-15,2550,up
+Wheat,Punjab,Amritsar,2026-01-15,2100,up
+Wheat,Haryana,Karnal,2026-01-15,2050,up
+Wheat,Uttar Pradesh,Meerut,2026-01-15,2000,stable
+Wheat,Madhya Pradesh,Indore,2026-01-15,2080,up
+Cotton,Gujarat,Surat,2026-01-15,6500,up
+Cotton,Maharashtra,Nagpur,2026-01-15,6400,stable
+Cotton,Karnataka,Belgaum,2026-01-15,6550,up
+Cotton,Andhra Pradesh,Guntur,2026-01-15,6450,up
+Maize,Karnataka,Bangalore,2026-01-15,1850,stable
+Maize,Madhya Pradesh,Bhopal,2026-01-15,1800,down
+Maize,Bihar,Patna,2026-01-15,1900,stable
+Soybean,Madhya Pradesh,Indore,2026-01-15,4200,up
+Soybean,Maharashtra,Nagpur,2026-01-15,4150,up
+Soybean,Rajasthan,Kota,2026-01-15,4100,stable
+Groundnut,Gujarat,Rajkot,2026-01-15,5500,up
+Groundnut,Andhra Pradesh,Guntur,2026-01-15,5400,stable
+Groundnut,Karnataka,Bangalore,2026-01-15,5450,up
+Bajra,Rajasthan,Jodhpur,2026-01-15,1950,stable
+Bajra,Gujarat,Ahmedabad,2026-01-15,2000,up
+Tur,Karnataka,Gulbarga,2026-01-15,6800,up
+Tur,Maharashtra,Latur,2026-01-15,6750,up
+Jowar,Maharashtra,Solapur,2026-01-15,2400,stable
+Jowar,Karnataka,Bijapur,2026-01-15,2450,up
+Mustard,Rajasthan,Jaipur,2026-01-15,5200,up
+Mustard,Haryana,Hisar,2026-01-15,5150,up
+Mustard,Uttar Pradesh,Aligarh,2026-01-15,5100,stable
+Chickpea,Madhya Pradesh,Indore,2026-01-15,5500,up
+Chickpea,Maharashtra,Aurangabad,2026-01-15,5450,up
+Chickpea,Rajasthan,Ajmer,2026-01-15,5400,stable
+Tomato,Karnataka,Bangalore,2026-01-15,2500,up
+Tomato,Maharashtra,Pune,2026-01-15,2800,up
+Tomato,Andhra Pradesh,Hyderabad,2026-01-15,2400,stable
+Potato,Uttar Pradesh,Agra,2026-01-15,1200,stable
+Potato,Punjab,Jalandhar,2026-01-15,1250,up
+Potato,West Bengal,Kolkata,2026-01-15,1150,stable
+Sugarcane,Uttar Pradesh,Meerut,2026-01-15,3200,stable
+Sugarcane,Maharashtra,Kolhapur,2026-01-15,3300,up
+Sugarcane,Karnataka,Belgaum,2026-01-15,3250,stable
+Watermelon,Gujarat,Ahmedabad,2026-01-15,1500,up
+Watermelon,Karnataka,Bangalore,2026-01-15,1400,stable
+Cucumber,Maharashtra,Pune,2026-01-15,2200,up
+Cucumber,Karnataka,Bangalore,2026-01-15,2000,stable
+Banana,Tamil Nadu,Trichy,2026-01-15,3500,stable
+Banana,Maharashtra,Jalgaon,2026-01-15,3600,up
+Papaya,Maharashtra,Pune,2026-01-15,2800,stable
+Papaya,Karnataka,Bangalore,2026-01-15,2900,up
