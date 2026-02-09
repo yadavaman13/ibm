@@ -45,16 +45,6 @@ async def detect_disease(
     
     **Supported Crops**: Apple, Blueberry, Cherry, Corn, Grape, Orange, Peach,
     Pepper (Bell), Potato, Raspberry, Soybean, Squash, Strawberry, Tomato
-    service: DiseaseDetectionService = Depends(get_disease_service)
-):
-    """
-    Detect crop disease from uploaded image
-    
-    - **file**: Image file (JPG, PNG, WEBP)
-    - **crop_type**: Type of crop (e.g., Rice, Wheat, Cotton)
-    - **location**: Optional location for better recommendations
-    
-    Returns detected disease with treatment plan
     """
     try:
         # Validate file type
@@ -82,13 +72,6 @@ async def detect_disease(
         
         # Detect disease using ML model
         result = await ml_service.detect_disease(
-            raise HTTPException(status_code=400, detail="File must be an image")
-        
-        # Read image
-        image_data = await file.read()
-        
-        # Detect disease
-        result = await service.detect_disease(
             image_data=image_data,
             crop_type=crop_type,
             location=location
@@ -108,13 +91,6 @@ async def detect_disease(
             status_code=500,
             detail=f"Disease detection failed: {str(e)}"
         )
-            message="Disease detected successfully",
-            data=result
-        )
-    
-    except Exception as e:
-        logger.error(f"Error in disease detection: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/diseases", response_model=ResponseModel)
@@ -134,20 +110,6 @@ async def list_diseases(
     return ResponseModel(
         success=True,
         message=f"Found {len(diseases)} diseases" + (f" for {crop_type}" if crop_type else ""),
-    service: DiseaseDetectionService = Depends(get_disease_service)
-):
-    """
-    List all known diseases
-    
-    - **crop_type**: Optional filter by crop type
-    
-    Returns list of known diseases
-    """
-    diseases = service.get_all_diseases(crop_type=crop_type)
-    
-    return ResponseModel(
-        success=True,
-        message=f"Found {len(diseases)} diseases",
         data=diseases
     )
 
