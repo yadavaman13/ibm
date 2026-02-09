@@ -52,7 +52,6 @@ const DiseaseDetection = () => {
             const response = await fetch(url, { signal: controller.signal });
             clearTimeout(timeoutId);
             
-            const response = await fetch(url);
             const data = await response.json();
             
             if (data.success) {
@@ -102,12 +101,6 @@ const DiseaseDetection = () => {
 
             clearTimeout(timeoutId);
 
-            const baseUrl = (import.meta.env.VITE_API_URL || 'http://localhost:8000').replace(/\/$/, '');
-            const response = await fetch(`${baseUrl}/api/v1/disease/detect`, {
-                method: 'POST',
-                body: formData
-            });
-
             const data = await response.json();
 
             if (data.success) {
@@ -123,7 +116,6 @@ const DiseaseDetection = () => {
             } else {
                 setError('Failed to detect disease. Please try again.');
             }
-            setError('Failed to detect disease. Please try again.');
             console.error('Detection error:', err);
         } finally {
             setIsDetecting(false);
@@ -232,10 +224,6 @@ const DiseaseDetection = () => {
                     </div>
                 ) : activeTab === 'detect' ? (
                     <div className="disease-detection-content">
-                        <div className="detection-layout" style={{ display: 'block' }}>
-                            {/* Full Width - Image Upload */}
-                            <div className="detection-image-section" style={{ width: '100%' }}>
-                                <div className="input-card" style={{ width: '100%', maxWidth: 'none' }}>
                         <div className="detection-layout">
                             {/* Left Column - Image Upload (50%) */}
                             <div className="detection-image-section">
@@ -245,44 +233,6 @@ const DiseaseDetection = () => {
                                         onImageSelect={handleImageSelect}
                                         selectedImage={selectedImage}
                                     />
-
-                                    {/* Action Buttons */}
-                                    <div className="mt-6 space-y-4">
-                                        <div className="action-buttons">
-                                            <button
-                                                onClick={handleDetectDisease}
-                                                disabled={!selectedImage || isDetecting}
-                                                className="detect-button"
-                                            >
-                                                {isDetecting ? (
-                                                    <>
-                                                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                                        Analyzing...
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <Bug className="w-4 h-4 mr-2" />
-                                                        Detect Disease
-                                                    </>
-                                                )}
-                                            </button>
-
-                                            <button
-                                                onClick={handleReset}
-                                                className="reset-button"
-                                            >
-                                                Reset
-                                            </button>
-                                        </div>
-
-                                        {/* Error Display */}
-                                        {error && (
-                                            <div className="error-message">
-                                                <AlertCircle className="w-4 h-4 mr-2" />
-                                                {error}
-                                            </div>
-                                        )}
-                                    </div>
                                 </div>
                             </div>
 
@@ -360,11 +310,8 @@ const DiseaseDetection = () => {
                             </div>
                         </div>
 
-                        {/* Full Width - Results Section */}
-                        <div className="detection-results-section" style={{ width: '100%', margin: '2rem 0 0' }}>
-                            {detectionResult ? (
-                            {/* Right Column - Results Section */}
-                            <div className="detection-results-section">
+                        {/* Right Column - Results Section */}
+                        <div className="detection-results-section">
                                 {detectionResult ? (
                                     <div className="space-y-6">
                                         <DetectionResults result={detectionResult} />
@@ -399,7 +346,6 @@ const DiseaseDetection = () => {
                                     </div>
                                 )}
                             </div>
-                    </div>
                         </div>
                 ) : (
                     <DiseaseList 

@@ -1,6 +1,5 @@
 import React from 'react';
 import { AlertTriangle, CheckCircle, Clock, Bug, Search, AlertCircle as VirusIcon, Sprout, Shield, Sparkles, Eye, Lightbulb, BookOpen } from 'lucide-react';
-import { AlertTriangle, CheckCircle, Clock, Bug, Search, AlertCircle as VirusIcon, Sprout, Shield } from 'lucide-react';
 
 const DetectionResults = ({ result }) => {
     if (!result) return null;
@@ -29,7 +28,6 @@ const DetectionResults = ({ result }) => {
     const simpleExplanation = result.simple_explanation; // Farmer-friendly explanation
     const howToSpot = result.how_to_spot; // Visual identification guide
     const preventionTips = result.prevention_tips; // Prevention measures
-    const { detected_disease, estimated_severity, crop_type, location, timestamp } = result;
     
     const getSeverityIcon = (severity) => {
         switch (severity) {
@@ -81,16 +79,6 @@ const DetectionResults = ({ result }) => {
                         )}
                         <span className="confidence-badge">
                             {Math.round(diseaseData.confidence * 100)}% Confidence
-            <div className="disease-header">
-                <div>
-                    <h2 className="disease-name">{detected_disease.name}</h2>
-                    <div className="flex flex-wrap gap-2 mt-2">
-                        <span className={`severity-badge severity-${estimated_severity}`}>
-                            {getSeverityIcon(estimated_severity)}
-                            <span className="ml-1 capitalize">{estimated_severity}</span>
-                        </span>
-                        <span className="confidence-badge">
-                            {Math.round(detected_disease.confidence * 100)}% Confidence
                         </span>
                     </div>
                 </div>
@@ -101,7 +89,6 @@ const DetectionResults = ({ result }) => {
                 <div>
                     <span className="font-medium text-gray-600">Crop:</span>
                     <span className="ml-2 text-gray-800">{cropType}</span>
-                    <span className="ml-2 text-gray-800">{crop_type}</span>
                 </div>
                 {location && (
                     <div>
@@ -189,15 +176,6 @@ const DetectionResults = ({ result }) => {
                     </h3>
                     <ul className="info-list">
                         {diseaseData.symptoms.map((symptom, index) => (
-            {/* Symptoms */}
-            {detected_disease.symptoms && detected_disease.symptoms.length > 0 && (
-                <div className="info-section">
-                    <h3 className="info-title">
-                        <Search className="info-icon" />
-                        Symptoms
-                    </h3>
-                    <ul className="info-list">
-                        {detected_disease.symptoms.map((symptom, index) => (
                             <li key={index}>{symptom}</li>
                         ))}
                     </ul>
@@ -236,8 +214,6 @@ const DetectionResults = ({ result }) => {
 
             {/* Causes (Old Format - keep for backward compatibility) */}
             {diseaseData.causes && diseaseData.causes.length > 0 && diseaseData.causes !== diseaseData.symptoms && (
-            {/* Causes */}
-            {detected_disease.causes && detected_disease.causes.length > 0 && (
                 <div className="info-section">
                     <h3 className="info-title">
                         <VirusIcon className="info-icon" />
@@ -245,7 +221,6 @@ const DetectionResults = ({ result }) => {
                     </h3>
                     <ul className="info-list">
                         {diseaseData.causes.map((cause, index) => (
-                        {detected_disease.causes.map((cause, index) => (
                             <li key={index}>{cause}</li>
                         ))}
                     </ul>
@@ -254,7 +229,6 @@ const DetectionResults = ({ result }) => {
 
             {/* Affected Crops */}
             {diseaseData.crops_affected && diseaseData.crops_affected.length > 0 && (
-            {detected_disease.crops_affected && detected_disease.crops_affected.length > 0 && (
                 <div className="info-section">
                     <h3 className="info-title">
                         <Sprout className="info-icon" />
@@ -262,7 +236,6 @@ const DetectionResults = ({ result }) => {
                     </h3>
                     <div className="flex flex-wrap gap-1">
                         {diseaseData.crops_affected.map((crop, index) => (
-                        {detected_disease.crops_affected.map((crop, index) => (
                             <span key={index} className="crop-tag">{crop}</span>
                         ))}
                     </div>
@@ -271,7 +244,6 @@ const DetectionResults = ({ result }) => {
 
             {/* Prevention */}
             {diseaseData.prevention && diseaseData.prevention.length > 0 && (
-            {detected_disease.prevention && detected_disease.prevention.length > 0 && (
                 <div className="info-section">
                     <h3 className="info-title">
                         <Shield className="info-icon" />
@@ -279,7 +251,6 @@ const DetectionResults = ({ result }) => {
                     </h3>
                     <ul className="info-list">
                         {diseaseData.prevention.map((prevention, index) => (
-                        {detected_disease.prevention.map((prevention, index) => (
                             <li key={index}>{prevention}</li>
                         ))}
                     </ul>

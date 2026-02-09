@@ -15,11 +15,19 @@ const FieldHelpIcon = ({ fieldName, onClick }) => {
         return null;
     }
 
+    const handleClick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (onClick) {
+            onClick(e);
+        }
+    };
+
     return (
         <button
             type="button"
             className="field-help-btn"
-            onClick={onClick}
+            onClick={handleClick}
             aria-label="Ask AI for help about this field"
             title="Click to ask AI for help"
         >

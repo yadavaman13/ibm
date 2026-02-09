@@ -481,20 +481,6 @@ const SoilAnalysis = () => {
 
         console.log('❌ No state found for coordinates');
         return { detectedName: null, matchedState: null };
-                // Check if this state is available in our states list with better matching
-                const normalizedStateName = state.name.toLowerCase().replace(/[^a-z]/g, '');
-                const availableState = states.find(s => {
-                    const normalizedAvailable = s.toLowerCase().replace(/[^a-z]/g, '');
-                    return normalizedAvailable.includes(normalizedStateName) ||
-                        normalizedStateName.includes(normalizedAvailable) ||
-                        s.toLowerCase() === state.name.toLowerCase();
-                });
-
-                return availableState || null;
-            }
-        }
-
-        return null;
     };
 
     // Handle crop suggestion click
@@ -536,7 +522,6 @@ const SoilAnalysis = () => {
 
                 // Auto-select state based on coordinates
                 const { detectedName, matchedState } = getStateFromCoordinates(
-                const detectedState = getStateFromCoordinates(
                     newLocation.latitude,
                     newLocation.longitude
                 );
@@ -546,6 +531,7 @@ const SoilAnalysis = () => {
                 if (matchedState) {
                     setFormData(prev => ({ ...prev, state: matchedState }));
                     setStateAutoDetected(true);
+                    setLocationError(null);
 
                     // Clear auto-detection indicator after 5 seconds
                     setTimeout(() => {
@@ -560,25 +546,6 @@ const SoilAnalysis = () => {
                     console.log('❌ Could not determine state from your location.');
                     setLocationError('Could not determine state from your location. Please select manually.');
                 }
-
-                if (matchedState) {
-                    setLocationError(null);
-                }
-                if (detectedState) {
-                    setFormData(prev => ({ ...prev, state: detectedState }));
-                    setStateAutoDetected(true);
-
-                    // Clear auto-detection indicator after 3 seconds
-                    setTimeout(() => {
-                        setStateAutoDetected(false);
-                    }, 3000);
-
-                    console.log(`Location detected! Auto-selected state: ${detectedState}`);
-                } else {
-                    console.log('Location detected but state could not be determined automatically');
-                }
-
-                setLocationError(null);
             },
             (error) => {
                 setLocationLoading(false);
