@@ -1,5 +1,5 @@
 import React from 'react';
-import { Zap } from 'lucide-react';
+import geminiLogo from '../assets/gemini-ai--v2-removebg-preview.png';
 import { shouldShowHelp } from '../utils/fieldHelpers';
 import '../styles/field-help-icon.css';
 
@@ -31,7 +31,7 @@ const FieldHelpIcon = ({ fieldName, onClick }) => {
             aria-label="Ask AI for help about this field"
             title="Click to ask AI for help"
         >
-            <Zap className="lightning-icon" />
+            <img src={geminiLogo} alt="Gemini AI Logo" className="gemini-ai-logo" />
             <span className="ask-sigma-text">Ask AI</span>
         </button>
     );

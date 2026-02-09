@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { Bug, AlertCircle, CheckCircle, Loader2, MessageCircle, ExternalLink } from 'lucide-react';
 import ImageUpload from '../components/disease/ImageUpload';
 import DetectionResults from '../components/disease/DetectionResults';
-import DiseaseList from '../components/disease/DiseaseList';
 import TreatmentPlan from '../components/disease/TreatmentPlan';
 import FieldHelpIcon from '../components/FieldHelpIcon';
 import FieldHelpModal from '../components/FieldHelpModal';
@@ -20,7 +19,6 @@ const DiseaseDetection = () => {
     const [isDetecting, setIsDetecting] = useState(false);
     const [detectionResult, setDetectionResult] = useState(null);
     const [error, setError] = useState(null);
-    const [diseases, setDiseases] = useState([]);
     
     // Field help modal state
     const [helpModalOpen, setHelpModalOpen] = useState(false);
@@ -31,39 +29,6 @@ const DiseaseDetection = () => {
         'Rice', 'Wheat', 'Cotton', 'Tomato', 'Potato', 'Maize', 'Sugarcane',
         'Soybean', 'Barley', 'Mustard', 'Groundnut', 'Sunflower'
     ];
-
-    // Fetch diseases on component mount
-    useEffect(() => {
-        fetchDiseases();
-    }, []);
-
-    const fetchDiseases = async (filterCrop = null) => {
-        try {
-            const baseUrl = (import.meta.env.VITE_API_URL || 'http://localhost:8000').replace(/\/$/, '');
-            console.log('🦠 Disease Detection - Using API URL:', baseUrl);
-            const url = filterCrop 
-                ? `${baseUrl}/api/v1/disease/diseases?crop_type=${encodeURIComponent(filterCrop)}`
-                : `${baseUrl}/api/v1/disease/diseases`;
-            
-            // Add timeout
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
-            
-            const response = await fetch(url, { signal: controller.signal });
-            clearTimeout(timeoutId);
-            
-            const data = await response.json();
-            
-            if (data.success) {
-                setDiseases(data.data);
-            }
-        } catch (err) {
-            console.error('Failed to fetch diseases:', err);
-            if (err.name === 'AbortError' || err.message.includes('Failed to fetch')) {
-                console.warn('Backend server may not be running. Start it with: cd fasal-mitra/server && python run.py');
-            }
-        }
-    };
 
     const handleImageSelect = (file) => {
         setSelectedImage(file);
@@ -157,13 +122,7 @@ const DiseaseDetection = () => {
                         <Bug className="tab-icon" />
                         Disease Detection
                     </button>
-                    <button
-                        className={`tab-button ${activeTab === 'database' ? 'tab-active' : ''}`}
-                        onClick={() => setActiveTab('database')}
-                    >
-                        <AlertCircle className="tab-icon" />
-                        Disease Database
-                    </button>
+
                     <button
                         className={`tab-button ${activeTab === 'aiagent' ? 'tab-active' : ''}`}
                         onClick={() => setActiveTab('aiagent')}
@@ -222,7 +181,7 @@ const DiseaseDetection = () => {
                             </div>
                         </div>
                     </div>
-                ) : activeTab === 'detect' ? (
+                ) : (
                     <div className="disease-detection-content">
                         <div className="detection-layout">
                             {/* Left Column - Image Upload (50%) */}
@@ -347,12 +306,6 @@ const DiseaseDetection = () => {
                                 )}
                             </div>
                         </div>
-                ) : (
-                    <DiseaseList 
-                        diseases={diseases} 
-                        onFilterChange={fetchDiseases}
-                        cropOptions={cropOptions}
-                    />
                 )}
             </div>
             
