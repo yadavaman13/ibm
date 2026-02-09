@@ -8,6 +8,7 @@ import FieldHelpIcon from '../components/FieldHelpIcon';
 import FieldHelpModal from '../components/FieldHelpModal';
 import { VoiceSummary } from '../components/voice';
 import worldIcon from '../assets/744483-removebg-preview.png';
+import locationIcon from '../assets/location-icon-pictogram_764382-14294-removebg-preview.png';
 
 const SoilAnalysis = () => {
     const { t } = useTranslation(['pages', 'common']);
@@ -601,6 +602,7 @@ const SoilAnalysis = () => {
                                 disabled={locationLoading}
                                 className="get-location-btn"
                             >
+                                <img src={locationIcon} alt="Location Icon" className="location-btn-icon" />
                                 {locationLoading ? (
                                     <>
                                         <Loader className="btn-icon spin" />
