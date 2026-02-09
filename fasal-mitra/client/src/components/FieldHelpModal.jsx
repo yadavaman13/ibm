@@ -1,14 +1,11 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Send, Loader2, AlertCircle, HelpCircle } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import fasalMitraLogo from '../assets/Fasal Mitra logo.png';
 import useVoiceRecognition from '../hooks/useVoiceRecognition';
 import useTextToSpeech from '../hooks/useTextToSpeech';
 import VoiceInputButton from './VoiceInputButton';
-import React, { useState, useEffect, useRef } from 'react';
-import { X, Send, Loader2, AlertCircle, HelpCircle } from 'lucide-react';
-import ReactMarkdown from 'react-markdown';
-import fasalMitraLogo from '../assets/Fasal Mitra logo.png';
 import '../styles/field-help-modal.css';
 
 /**
@@ -31,6 +28,56 @@ const FieldHelpModal = ({ isOpen, onClose, fieldLabel, fieldName }) => {
     const modalRef = useRef(null);
     const lastBotMessageRef = useRef(null);
     const lastTranscriptRef = useRef('');
+    const sendMessageToAPIRef = useRef(null);
+
+    // Separate API function to avoid circular dependencies in callbacks
+    const sendMessageToAPI = useCallback(async (messageText) => {
+        if (!messageText.trim()) return;
+
+        setIsTyping(true);
+        setError(null);
+
+        try {
+            const baseUrl = (import.meta.env.VITE_API_URL || 'http://localhost:8000').replace(/\/$/, '');
+            const response = await fetch(`${baseUrl}/api/v1/chatbot/query`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    question: messageText,
+                    language: 'en',
+                    session_id: sessionId,
+                    context: `Related to field: ${fieldLabel}`
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                const botMessage = {
+                    id: `bot-${Date.now()}`,
+                    text: data.data.answer,
+                    sender: 'bot',
+                    timestamp: new Date()
+                };
+                setMessages(prev => [...prev, botMessage]);
+                lastBotMessageRef.current = botMessage.text;
+            } else {
+                throw new Error(data.message || 'Failed to get response');
+            }
+        } catch (err) {
+            setError('Failed to get response. Please try again.');
+            console.error('Chatbot error:', err);
+        } finally {
+            setIsTyping(false);
+        }
+    }, [sessionId, fieldLabel]);
+
+    // Store API function in ref for stable access
+    useEffect(() => {
+        sendMessageToAPIRef.current = sendMessageToAPI;
+    }, [sendMessageToAPI]);
 
     // Stable callbacks for voice recognition
     const handleVoiceResult = useCallback((transcript) => {
@@ -45,7 +92,7 @@ const FieldHelpModal = ({ isOpen, onClose, fieldLabel, fieldName }) => {
                 timestamp: new Date()
             };
             setMessages(prev => [...prev, userMessage]);
-            sendMessageToAPI(transcript);
+            sendMessageToAPIRef.current?.(transcript);
         }
     }, []);
 
@@ -214,66 +261,6 @@ However, you can ask me anything about "${cleanLabel}" - just type your question
         }
     };
 
-    // Separate API function to avoid circular dependencies in callbacks
-    const sendMessageToAPI = useCallback(async (messageText) => {
-        if (!messageText.trim()) return;
-
-        const userMessage = {
-            id: `user-${Date.now()}`,
-            text: messageText,
-    const handleSendMessage = async () => {
-        if (!inputMessage.trim()) return;
-
-        const userMessage = {
-            id: `user-${Date.now()}`,
-            text: inputMessage,
-            sender: 'user',
-            timestamp: new Date()
-        };
-
-        setMessages(prev => [...prev, userMessage]);
-        setInputMessage('');
-        setIsTyping(true);
-        setError(null);
-
-        try {
-            const baseUrl = (import.meta.env.VITE_API_URL || 'http://localhost:8000').replace(/\/$/, '');
-            const response = await fetch(`${baseUrl}/api/v1/chatbot/query`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    question: messageText,
-                    question: inputMessage,
-                    language: 'en',
-                    session_id: sessionId,
-                    context: `Related to field: ${fieldLabel}`
-                })
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                const botMessage = {
-                    id: `bot-${Date.now()}`,
-                    text: data.data.answer,
-                    sender: 'bot',
-                    timestamp: new Date()
-                };
-                setMessages(prev => [...prev, botMessage]);
-                lastBotMessageRef.current = botMessage.text;
-            } else {
-                throw new Error(data.message || 'Failed to get response');
-            }
-        } catch (err) {
-            setError('Failed to get response. Please try again.');
-            console.error('Chatbot error:', err);
-        } finally {
-            setIsTyping(false);
-        }
-    }, [sessionId, fieldLabel]);
-
     const handleSendMessage = async (textToSend = null) => {
         const messageText = textToSend || inputMessage;
         if (!messageText.trim()) return;
@@ -311,7 +298,7 @@ However, you can ask me anything about "${cleanLabel}" - just type your question
 
     if (!isOpen) return null;
 
-    return (
+    return createPortal(
         <div className="field-help-backdrop" onClick={handleBackdropClick}>
             <div className="field-help-modal" ref={modalRef}>
                 {/* Header */}
@@ -434,31 +421,10 @@ However, you can ask me anything about "${cleanLabel}" - just type your question
                             )}
                         </button>
                     </div>
-                    <input
-                        ref={inputRef}
-                        type="text"
-                        value={inputMessage}
-                        onChange={(e) => setInputMessage(e.target.value)}
-                        onKeyPress={handleKeyPress}
-                        placeholder="Ask a follow-up question..."
-                        className="field-help-input"
-                        disabled={isTyping}
-                    />
-                    <button
-                        onClick={handleSendMessage}
-                        disabled={!inputMessage.trim() || isTyping}
-                        className="field-help-send-btn"
-                        aria-label="Send message"
-                    >
-                        {isTyping ? (
-                            <Loader2 className="w-5 h-5 animate-spin" />
-                        ) : (
-                            <Send className="w-5 h-5" />
-                        )}
-                    </button>
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 };
 

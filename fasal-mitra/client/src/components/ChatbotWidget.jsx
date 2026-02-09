@@ -5,10 +5,6 @@ import fasalMitraLogo from '../assets/FasalMitraLogoCircle.png';
 import useVoiceRecognition from '../hooks/useVoiceRecognition';
 import useTextToSpeech from '../hooks/useTextToSpeech';
 import VoiceInputButton from './VoiceInputButton';
-import React, { useState, useEffect, useRef } from 'react';
-import { MessageCircle, X, Send, Loader2, AlertCircle } from 'lucide-react';
-import ReactMarkdown from 'react-markdown';
-import fasalMitraLogo from '../assets/FasalMitraLogoCircle.png';
 import '../styles/chatbot-widget.css';
 
 const ChatbotWidget = () => {
@@ -19,12 +15,82 @@ const ChatbotWidget = () => {
     const [error, setError] = useState(null);
     const [sessionId] = useState(() => `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
     const [voiceLanguage, setVoiceLanguage] = useState('en-IN');
+    const [isRecording, setIsRecording] = useState(false);
     
     const messagesEndRef = useRef(null);
     const inputRef = useRef(null);
     const lastBotMessageRef = useRef(null);
     const lastTranscriptRef = useRef('');
-    const [isRecording, setIsRecording] = useState(false);
+    const sendToAPIRef = useRef(null);
+
+    const detectLanguage = (text) => {
+        // Simple language detection based on character sets
+        const hindiPattern = /[ऀ-ॿ]/; // Devanagari script
+        const tamilPattern = /[஀-௿]/; // Tamil script
+        const teluguPattern = /[ఀ-౿]/; // Telugu script
+        
+        if (hindiPattern.test(text)) return 'hi';
+        if (tamilPattern.test(text)) return 'ta';
+        if (teluguPattern.test(text)) return 'te';
+        return 'en';
+    };
+
+    // Separate API call function
+    const sendToAPI = useCallback(async (messageText) => {
+        if (!messageText.trim()) return;
+
+        const detectedLanguage = detectLanguage(messageText);
+        setIsTyping(true);
+        setError(null);
+
+        try {
+            const baseUrl = (import.meta.env.VITE_API_URL || 'http://localhost:8000').replace(/\/$/, '');
+            console.log('🤖 Chatbot - Using API URL:', baseUrl);
+            const response = await fetch(`${baseUrl}/api/v1/chatbot/query`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    question: messageText,
+                    language: detectedLanguage,
+                    session_id: sessionId
+                })
+            });
+
+            const data = await response.json();
+            
+            if (!response.ok) {
+                console.error('Chatbot API error:', response.status, data);
+                throw new Error(`Server error: ${response.status} - ${data.detail || data.message || 'Unknown error'}`);
+            }
+
+            if (data.success) {
+                const botMessage = {
+                    id: `bot-${Date.now()}`,
+                    text: data.data.answer,
+                    sender: 'bot',
+                    timestamp: new Date(),
+                    confidence: data.data.confidence,
+                    relatedTopics: data.data.related_topics
+                };
+                setMessages(prev => [...prev, botMessage]);
+                lastBotMessageRef.current = botMessage.text;
+            } else {
+                throw new Error(data.message || 'Failed to get response');
+            }
+        } catch (err) {
+            setError('Failed to get response. Please try again.');
+            console.error('Chatbot error:', err);
+        } finally {
+            setIsTyping(false);
+        }
+    }, [sessionId]);
+
+    // Store API function in ref for stable access
+    useEffect(() => {
+        sendToAPIRef.current = sendToAPI;
+    }, [sendToAPI]);
 
     // Stable callbacks for voice recognition
     const handleVoiceResult = useCallback((transcript) => {
@@ -39,7 +105,7 @@ const ChatbotWidget = () => {
                 timestamp: new Date()
             };
             setMessages(prev => [...prev, userMessage]);
-            sendToAPI(transcript);
+            sendToAPIRef.current?.(transcript);
         }
     }, []);
 
@@ -83,10 +149,6 @@ const ChatbotWidget = () => {
         pitch: 1.0,
         volume: 1.0
     });
-    
-    const messagesEndRef = useRef(null);
-    const inputRef = useRef(null);
-
     // Welcome message on first open
     useEffect(() => {
         if (isOpen && messages.length === 0) {
@@ -121,84 +183,6 @@ const ChatbotWidget = () => {
         setIsOpen(!isOpen);
         setError(null);
     };
-
-    const detectLanguage = (text) => {
-        // Simple language detection based on character sets
-        const hindiPattern = /[\u0900-\u097F]/; // Devanagari script
-        const tamilPattern = /[\u0B80-\u0BFF]/; // Tamil script
-        const teluguPattern = /[\u0C00-\u0C7F]/; // Telugu script
-        
-        if (hindiPattern.test(text)) return 'hi';
-        if (tamilPattern.test(text)) return 'ta';
-        if (teluguPattern.test(text)) return 'te';
-        return 'en';
-    };
-
-    // Separate API call function
-    const sendToAPI = useCallback(async (messageText) => {
-        if (!messageText.trim()) return;
-
-        const detectedLanguage = detectLanguage(messageText);
-    const handleSendMessage = async () => {
-        if (!inputMessage.trim()) return;
-
-        const userMessage = {
-            id: `user-${Date.now()}`,
-            text: inputMessage,
-            sender: 'user',
-            timestamp: new Date()
-        };
-
-        setMessages(prev => [...prev, userMessage]);
-        const detectedLanguage = detectLanguage(inputMessage);
-        setInputMessage('');
-        setIsTyping(true);
-        setError(null);
-
-        try {
-            const baseUrl = (import.meta.env.VITE_API_URL || 'http://localhost:8000').replace(/\/$/, '');
-            console.log('🤖 Chatbot - Using API URL:', baseUrl);
-            const response = await fetch(`${baseUrl}/api/v1/chatbot/query`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    question: messageText,
-                    question: inputMessage,
-                    language: detectedLanguage,
-                    session_id: sessionId
-                })
-            });
-
-            const data = await response.json();
-            
-            if (!response.ok) {
-                console.error('Chatbot API error:', response.status, data);
-                throw new Error(`Server error: ${response.status} - ${data.detail || data.message || 'Unknown error'}`);
-            }
-
-            if (data.success) {
-                const botMessage = {
-                    id: `bot-${Date.now()}`,
-                    text: data.data.answer,
-                    sender: 'bot',
-                    timestamp: new Date(),
-                    confidence: data.data.confidence,
-                    relatedTopics: data.data.related_topics
-                };
-                setMessages(prev => [...prev, botMessage]);
-                lastBotMessageRef.current = botMessage.text;
-            } else {
-                throw new Error(data.message || 'Failed to get response');
-            }
-        } catch (err) {
-            setError('Failed to get response. Please try again.');
-            console.error('Chatbot error:', err);
-        } finally {
-            setIsTyping(false);
-        }
-    }, [sessionId]);
 
     const handleSendMessage = async (textToSend = null) => {
         const messageText = textToSend || inputMessage;
@@ -372,28 +356,6 @@ const ChatbotWidget = () => {
                                 )}
                             </button>
                         </div>
-                        <input
-                            ref={inputRef}
-                            type="text"
-                            value={inputMessage}
-                            onChange={(e) => setInputMessage(e.target.value)}
-                            onKeyPress={handleKeyPress}
-                            placeholder="Ask about crops, diseases, weather..."
-                            className="chatbot-input"
-                            disabled={isTyping}
-                        />
-                        <button
-                            onClick={handleSendMessage}
-                            disabled={!inputMessage.trim() || isTyping}
-                            className="chatbot-send-btn"
-                            aria-label="Send message"
-                        >
-                            {isTyping ? (
-                                <Loader2 className="w-5 h-5 animate-spin" />
-                            ) : (
-                                <Send className="w-5 h-5" />
-                            )}
-                        </button>
                     </div>
                 </div>
             )}
