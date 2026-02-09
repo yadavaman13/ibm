@@ -64,6 +64,8 @@
 .detection-input-section, 
 .detection-results-section {
     height: fit-content;
+    overflow-x: auto;
+    max-width: 100%;
 }
 
 .input-card {
@@ -859,24 +861,54 @@
 
 /* Voice Summary Integration Styles for Disease Detection */
 .disease-voice-summary {
-    margin-top: 1.5rem;
-    border: 2px solid #fee2e2;
-    background: linear-gradient(135deg, #fef2f2 0%, #fef7f7 100%);
-    border-radius: 1rem;
-    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.1);
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-radius: 0.75rem;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.5rem;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
 }
 
 .disease-voice-summary .voice-summary-header {
-    background: rgba(220, 38, 38, 0.05);
-    margin: -20px -20px 16px -20px;
-    padding: 20px;
-    border-radius: 1rem 1rem 0 0;
-    border-bottom: 1px solid rgba(220, 38, 38, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.disease-voice-summary .header-content {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .disease-voice-summary .header-title {
-    color: #dc2626;
+    font-size: 1rem;
     font-weight: 600;
+    color: #1e293b;
+    margin: 0;
+}
+
+.disease-voice-summary .voice-summary-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 100%;
+    overflow-wrap: break-word;
+}
+
+/* Ensure results section containers don't overflow */
+.detection-results-section .space-y-6 {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.detection-results-section .space-y-6 > * {
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-wrap: break-word;
 }
 
 /* Responsive adjustments for disease voice summary */
@@ -884,11 +916,12 @@
     .disease-voice-summary {
         margin-top: 1rem;
         border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
     }
     
     .disease-voice-summary .voice-summary-header {
-        margin: -16px -16px 12px -16px;
-        padding: 16px;
-        border-radius: 8px 8px 0 0;
+        margin-bottom: 0.5rem;
+        gap: 0.5rem;
     }
 }

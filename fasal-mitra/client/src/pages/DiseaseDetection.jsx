@@ -9,6 +9,7 @@ import FieldHelpModal from '../components/FieldHelpModal';
 import { VoiceSummary } from '../components/voice';
 import '../styles/disease-detection.css';
 import '../styles/pages.css';
+import '../styles/soil-analysis-clean.css';
 
 const DiseaseDetection = () => {
     const { t } = useTranslation(['pages', 'common']);
@@ -210,7 +211,7 @@ const DiseaseDetection = () => {
                                         <select
                                             value={cropType}
                                             onChange={(e) => setCropType(e.target.value)}
-                                            className="form-select"
+                                            className="field-input"
                                         >
                                             {cropOptions.map(crop => (
                                                 <option key={crop} value={crop}>{crop}</option>
@@ -226,7 +227,7 @@ const DiseaseDetection = () => {
                                             value={location}
                                             onChange={(e) => setLocation(e.target.value)}
                                             placeholder={t('pages:diseaseDetection.locationPlaceholder')}
-                                            className="form-input"
+                                            className="field-input"
                                         />
                                     </div>
 
@@ -235,16 +236,16 @@ const DiseaseDetection = () => {
                                         <button
                                             onClick={handleDetectDisease}
                                             disabled={!selectedImage || isDetecting}
-                                            className="detect-button"
+                                            className="analyze-btn"
                                         >
                                             {isDetecting ? (
                                                 <>
-                                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                                    <Loader2 className="btn-icon spin" />
                                                     Analyzing...
                                                 </>
                                             ) : (
                                                 <>
-                                                    <Bug className="w-4 h-4 mr-2" />
+                                                    <Bug className="btn-icon" />
                                                     Detect Disease
                                                 </>
                                             )}
@@ -252,7 +253,7 @@ const DiseaseDetection = () => {
 
                                         <button
                                             onClick={handleReset}
-                                            className="reset-button"
+                                            className="reset-btn"
                                         >
                                             Reset
                                         </button>
@@ -272,25 +273,35 @@ const DiseaseDetection = () => {
                         {/* Right Column - Results Section */}
                         <div className="detection-results-section">
                                 {detectionResult ? (
-                                    <div className="space-y-6">
-                                        <DetectionResults result={detectionResult} />
-                                        <TreatmentPlan 
-                                            treatmentPlan={detectionResult.treatment_plan}
-                                            severity={detectionResult.estimated_severity}
-                                            recommendations={detectionResult.recommendations}
-                                        />
-                                        
-                                        {/* Voice Summary for Disease Detection Results */}
-                                        <VoiceSummary
-                                            result={detectionResult}
-                                            resultType="diseaseDetection"
-                                            title="🎧 Disease Analysis Summary"
-                                            className="disease-voice-summary"
-                                            onSpeechStart={() => console.log('Started reading disease detection summary')}
-                                            onSpeechEnd={() => console.log('Finished reading disease detection summary')}
-                                            onSpeechError={(error) => console.error('Disease speech error:', error)}
-                                        />
-                                    </div>
+                                    <>
+                                        {/* Results Divider */}
+                                        <div className="results-divider">
+                                            <div className="divider-line"></div>
+                                            <span className="divider-text">Analysis Results</span>
+                                            <div className="divider-line"></div>
+                                        </div>
+
+                                        {/* Voice Summary - Listen to Results */}
+                                        <div className="voice-summary-section">
+                                            <VoiceSummary
+                                                result={detectionResult}
+                                                resultType="diseaseDetection"
+                                                title="Listen to Summary"
+                                                showTitle={true}
+                                                compact={false}
+                                                className="disease-voice-summary"
+                                            />
+                                        </div>
+
+                                        <div className="space-y-6">
+                                            <DetectionResults result={detectionResult} />
+                                            <TreatmentPlan 
+                                                treatmentPlan={detectionResult.treatment_plan}
+                                                severity={detectionResult.estimated_severity}
+                                                recommendations={detectionResult.recommendations}
+                                            />
+                                        </div>
+                                    </>
                                 ) : (
                                     <div className="results-placeholder">
                                         <div className="placeholder-icon">

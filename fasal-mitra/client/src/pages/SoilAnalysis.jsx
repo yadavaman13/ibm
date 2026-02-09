@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Sprout, Droplets, TestTube, CheckCircle, AlertCircle, Loader, TrendingUp, MapPin, Navigation, Volume2, VolumeX, Play, Pause, Square, Camera, Upload, X, Eye, Lightbulb, ThumbsUp, Star, BarChart3, RotateCcw, Wheat, Calendar, IndianRupee, Package, Earth, RefreshCw } from 'lucide-react';
+import { Sprout, Droplets, TestTube, CheckCircle, AlertCircle, Loader, TrendingUp, MapPin, Navigation, Volume2, VolumeX, Play, Pause, Square, Eye, Lightbulb, ThumbsUp, Star, BarChart3, RotateCcw, Wheat, Calendar, IndianRupee, Package, Earth } from 'lucide-react';
 import '../styles/pages.css';
 import '../styles/soil-analysis-clean.css';
 import * as soilService from '../services/soilService';
@@ -21,19 +21,7 @@ const SoilAnalysis = () => {
         waterQuality: ''
     });
 
-    // Image upload state
-    const [soilImage, setSoilImage] = useState(null);
-    const [imagePreview, setImagePreview] = useState(null);
-    const [_imageAnalyzing, setImageAnalyzing] = useState(false); // eslint-disable-line no-unused-vars
-    const fileInputRef = useRef(null);
-    
-    // Camera capture state
-    const [cameraActive, setCameraActive] = useState(false);
-    const [cameraStream, setCameraStream] = useState(null);
-    const [facingMode, setFacingMode] = useState('environment'); // 'environment' = back, 'user' = front
-    const [cameraError, setCameraError] = useState(null);
-    const videoRef = useRef(null);
-    const canvasRef = useRef(null);
+
 
     const [states, setStates] = useState([]);
     const [crops, setCrops] = useState([]);
@@ -92,207 +80,37 @@ const SoilAnalysis = () => {
         }));
     };
 
-    // Image handling functions
-    const handleImageUpload = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            // Validate file type
-            if (!file.type.startsWith('image/')) {
-                setError('Please select a valid image file');
-                return;
-            }
-
-            // Validate file size (max 10MB)
-            if (file.size > 10 * 1024 * 1024) {
-                setError('Image size should be less than 10MB');
-                return;
-            }
-
-            setSoilImage(file);
-
-            // Create preview
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                setImagePreview(e.target.result);
-            };
-            reader.readAsDataURL(file);
-
-            setError(null);
-        }
-    };
-
-    const removeImage = () => {
-        setSoilImage(null);
-        setImagePreview(null);
-        if (fileInputRef.current) {
-            fileInputRef.current.value = '';
-        }
-    };
-
-    const captureFromCamera = async () => {
-        setCameraError(null);
-        try {
-            // Request camera permission and start stream
-            const stream = await navigator.mediaDevices.getUserMedia({
-                video: {
-                    facingMode: facingMode,
-                    width: { ideal: 1280 },
-                    height: { ideal: 720 }
-                }
-            });
-            setCameraStream(stream);
-            setCameraActive(true);
-            
-            // Set video source after state update
-            setTimeout(() => {
-                if (videoRef.current) {
-                    videoRef.current.srcObject = stream;
-                }
-            }, 100);
-        } catch (err) {
-            console.error('Camera access error:', err);
-            if (err.name === 'NotAllowedError') {
-                setCameraError(t('pages:soilAnalysis.cameraPermissionDenied'));
-            } else if (err.name === 'NotFoundError') {
-                setCameraError(t('pages:soilAnalysis.cameraNotFound'));
-            } else {
-                setCameraError(t('pages:soilAnalysis.cameraError'));
-            }
-        }
-    };
-
-    const stopCamera = () => {
-        if (cameraStream) {
-            cameraStream.getTracks().forEach(track => track.stop());
-            setCameraStream(null);
-        }
-        setCameraActive(false);
-        setCameraError(null);
-    };
-
-    const switchCamera = async () => {
-        // Stop current stream
-        if (cameraStream) {
-            cameraStream.getTracks().forEach(track => track.stop());
-        }
-        
-        // Toggle facing mode
-        const newFacingMode = facingMode === 'environment' ? 'user' : 'environment';
-        setFacingMode(newFacingMode);
-        
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({
-                video: {
-                    facingMode: newFacingMode,
-                    width: { ideal: 1280 },
-                    height: { ideal: 720 }
-                }
-            });
-            setCameraStream(stream);
-            if (videoRef.current) {
-                videoRef.current.srcObject = stream;
-            }
-        } catch (err) {
-            console.error('Camera switch error:', err);
-            setCameraError(t('pages:soilAnalysis.cameraSwitchError'));
-        }
-    };
-
-    const capturePhoto = () => {
-        if (videoRef.current && canvasRef.current) {
-            const video = videoRef.current;
-            const canvas = canvasRef.current;
-            
-            // Set canvas dimensions to match video
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            
-            // Draw video frame to canvas
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            
-            // Convert to blob
-            canvas.toBlob((blob) => {
-                if (blob) {
-                    // Create a File object from blob
-                    const file = new File([blob], 'soil-capture.jpg', { type: 'image/jpeg' });
-                    setSoilImage(file);
-                    
-                    // Create preview URL
-                    const previewUrl = URL.createObjectURL(blob);
-                    setImagePreview(previewUrl);
-                    
-                    // Stop camera after capture
-                    stopCamera();
-                }
-            }, 'image/jpeg', 0.9);
-        }
-    };
-
-    // Cleanup camera on unmount
-    useEffect(() => {
-        return () => {
-            if (cameraStream) {
-                cameraStream.getTracks().forEach(track => track.stop());
-            }
-        };
-    }, [cameraStream]);
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
 
         try {
-            // Prepare enhanced form data
+            // Prepare form data for traditional analysis
             const analysisData = {
                 state: formData.state,
                 crop: formData.crop,
                 ...(formData.fieldSize && { fieldSize: parseFloat(formData.fieldSize) }),
                 ...(formData.irrigationType && { irrigationType: formData.irrigationType }),
                 ...(formData.previousCrop && { previousCrop: formData.previousCrop }),
-                ...(formData.waterQuality && { waterQuality: formData.waterQuality }),
-
-                ...(soilImage && { soilImage: soilImage })
+                ...(formData.waterQuality && { waterQuality: formData.waterQuality })
             };
 
-            // Choose analysis method based on whether image is provided
-            if (soilImage) {
-                // Image-enhanced analysis
-                setImageAnalyzing(true);
+            // Traditional analysis
+            const [traditionalAnalysis, recommendations] = await Promise.all([
+                soilService.analyzeSoil(analysisData),
+                soilService.getRecommendedCrops(formData.state)
+            ]);
 
-                const imageAnalysisResult = await soilService.analyzeSoilWithImage(analysisData);
+            const result = {
+                ...traditionalAnalysis,
+                recommendations,
+                analysisType: 'traditional'
+            };
 
-                // Also get traditional recommendations for comparison
-                const recommendations = await soilService.getRecommendedCrops(formData.state);
-
-                setResults({
-                    analysisType: 'image_enhanced',
-                    imageAnalysis: imageAnalysisResult.image_analysis,
-                    traditionalAnalysis: imageAnalysisResult.traditional_analysis,
-                    combinedAnalysis: imageAnalysisResult.combined_analysis,
-                    recommendations: recommendations
-                });
-
-                setImageAnalyzing(false);
-            } else {
-                // Traditional analysis only
-                const [soilData, suitabilityData, recommendations] = await Promise.all([
-                    soilService.getSoilData(formData.state),
-                    soilService.checkSoilSuitability(analysisData),
-                    soilService.getRecommendedCrops(formData.state)
-                ]);
-
-                setResults({
-                    analysisType: 'traditional',
-                    soil: soilData,
-                    suitability: suitabilityData,
-                    recommendations: recommendations
-                });
-            }
+            setResults(result);
         } catch (err) {
             setError(err.message || 'Failed to analyze soil. Please try again.');
-            setImageAnalyzing(false);
         } finally {
             setLoading(false);
         }
@@ -305,15 +123,8 @@ const SoilAnalysis = () => {
             fieldSize: '',
             irrigationType: '',
             previousCrop: '',
-            waterQuality: '',
-
+            waterQuality: ''
         });
-        setSoilImage(null);
-        setImagePreview(null);
-        setImageAnalyzing(false);
-        if (fileInputRef.current) {
-            fileInputRef.current.value = '';
-        }
         setResults(null);
         setError(null);
         setLocation({ latitude: null, longitude: null });
@@ -897,128 +708,6 @@ const SoilAnalysis = () => {
                                 </div>
                             </div>
 
-                            {/* Soil Image Upload - Full Width */}
-                            <div className="form-field-wrapper form-field-full-width">
-                                <div className="form-field">
-                                    <label className="field-label">{t('pages:soilAnalysis.soilImage')}</label>
-                                    <div className="image-upload-container">
-                                        <input
-                                            type="file"
-                                            ref={fileInputRef}
-                                            onChange={handleImageUpload}
-                                            accept="image/*"
-                                            className="image-input-hidden"
-                                        />
-                                        
-                                        {/* Hidden canvas for photo capture */}
-                                        <canvas ref={canvasRef} style={{ display: 'none' }} />
-                                        
-                                        {cameraActive ? (
-                                            <div className="camera-preview-container">
-                                                <video
-                                                    ref={videoRef}
-                                                    autoPlay
-                                                    playsInline
-                                                    muted
-                                                    className="camera-video"
-                                                />
-                                                <div className="camera-controls">
-                                                    <button
-                                                        type="button"
-                                                        onClick={stopCamera}
-                                                        className="camera-control-btn cancel-btn"
-                                                        title={t('pages:soilAnalysis.cancelCapture')}
-                                                    >
-                                                        <X className="btn-icon" />
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        onClick={capturePhoto}
-                                                        className="camera-control-btn capture-btn"
-                                                        title={t('pages:soilAnalysis.takePhoto')}
-                                                    >
-                                                        <Camera className="btn-icon" />
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        onClick={switchCamera}
-                                                        className="camera-control-btn switch-btn"
-                                                        title={t('pages:soilAnalysis.switchCamera')}
-                                                    >
-                                                        <RefreshCw className="btn-icon" />
-                                                    </button>
-                                                </div>
-                                                <p className="camera-hint">
-                                                    {facingMode === 'environment' 
-                                                        ? t('pages:soilAnalysis.usingBackCamera')
-                                                        : t('pages:soilAnalysis.usingFrontCamera')}
-                                                </p>
-                                            </div>
-                                        ) : !imagePreview ? (
-                                            <div className="image-upload-area">
-                                                {cameraError && (
-                                                    <div className="camera-error">
-                                                        <AlertCircle className="error-icon" />
-                                                        {cameraError}
-                                                    </div>
-                                                )}
-                                                <div className="upload-actions">
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => fileInputRef.current?.click()}
-                                                        className="upload-btn"
-                                                    >
-                                                        <Upload className="btn-icon" />
-                                                        {t('pages:soilAnalysis.uploadImage')}
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        onClick={captureFromCamera}
-                                                        className="camera-btn"
-                                                    >
-                                                        <Camera className="btn-icon" />
-                                                        {t('pages:soilAnalysis.captureImage')}
-                                                    </button>
-                                                </div>
-                                                <p className="upload-hint">
-                                                    {t('pages:soilAnalysis.imageHint')}
-                                                </p>
-                                            </div>
-                                        ) : (
-                                            <div className="image-preview-container">
-                                                <div className="image-preview">
-                                                    <img
-                                                        src={imagePreview}
-                                                        alt="Soil sample"
-                                                        className="preview-image"
-                                                    />
-                                                    <button
-                                                        type="button"
-                                                        onClick={removeImage}
-                                                        className="remove-image-btn"
-                                                    >
-                                                        <X className="btn-icon" />
-                                                    </button>
-                                                </div>
-                                                <div className="image-actions">
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => fileInputRef.current?.click()}
-                                                        className="change-image-btn"
-                                                    >
-                                                        <Upload className="btn-icon" />
-                                                        {t('pages:soilAnalysis.changeImage')}
-                                                    </button>
-                                                    <span className="image-status">
-                                                        <Eye className="btn-icon" />
-                                                        {t('pages:soilAnalysis.imageReady')}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
                         </div>
 
                         {/* Action Buttons */}

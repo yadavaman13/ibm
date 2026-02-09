@@ -89,6 +89,9 @@
     align-items: center;
     justify-content: center;
     gap: 2rem;
+    max-width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
 }
 
 .voice-controls-group {
@@ -109,6 +112,9 @@
 .summary-preview {
     max-width: 280px;
     flex-shrink: 0;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    overflow: hidden;
 }
 
 .preview-header {
