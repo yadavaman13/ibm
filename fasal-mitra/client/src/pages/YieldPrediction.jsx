@@ -7,6 +7,7 @@ import FieldHelpModal from '../components/FieldHelpModal';
 import { VoiceSummary } from '../components/voice';
 import '../styles/pages.css';
 import '../styles/yield-prediction.css';
+import '../styles/soil-analysis-clean.css';
 
 const YieldPrediction = () => {
     const { t } = useTranslation(['pages', 'common']);
@@ -183,149 +184,143 @@ const YieldPrediction = () => {
                     </div>
 
                     <form onSubmit={handleSubmit} className="yield-form">
-                        {/* Two-column input grid */}
+                        {/* Row 1: Crop Type + Area */}
                         <div className="form-inputs-grid">
-                            {/* Left Column */}
-                            <div className="form-column-left">
-                                {/* Crop Selection */}
-                                <div className="form-group">
-                                    <label htmlFor="crop" className="form-label">
-                                        {t('pages:yieldPrediction.cropType')} <span className="required">*</span>
-                                        <FieldHelpIcon
-                                            fieldName="crop"
-                                            onClick={() => handleHelpClick('crop', t('pages:yieldPrediction.cropType'))}
-                                        />
-                                    </label>
-                                    <select
-                                        id="crop"
-                                        name="crop"
-                                        value={formData.crop}
-                                        onChange={handleInputChange}
-                                        required
-                                        className="form-select"
-                                    >
-                                        <option value="">{t('pages:yieldPrediction.selectCrop')}</option>
-                                        {crops.map(crop => (
-                                            <option key={crop} value={crop}>{t(`common:crops.${crop}`)}</option>
-                                        ))}
-                                    </select>
-                                </div>
-
-                                {/* State Selection */}
-                                <div className="form-group">
-                                    <label htmlFor="state" className="form-label">
-                                        {t('pages:yieldPrediction.state')} <span className="required">*</span>
-                                    </label>
-                                    <select
-                                        id="state"
-                                        name="state"
-                                        value={formData.state}
-                                        onChange={handleInputChange}
-                                        required
-                                        className="form-select"
-                                    >
-                                        <option value="">{t('pages:yieldPrediction.selectState')}</option>
-                                        {states.map(state => (
-                                            <option key={state} value={state}>{t(`common:states.${state}`)}</option>
-                                        ))}
-                                    </select>
-                                </div>
-
-                                {/* Season Selection */}
-                                <div className="form-group">
-                                    <label htmlFor="season" className="form-label">
-                                        {t('pages:yieldPrediction.seasonLabel')} <span className="required">*</span>
-                                        <FieldHelpIcon
-                                            fieldName="season"
-                                            onClick={() => handleHelpClick('season', t('pages:yieldPrediction.seasonLabel'))}
-                                        />
-                                    </label>
-                                    <select
-                                        id="season"
-                                        name="season"
-                                        value={formData.season}
-                                        onChange={handleInputChange}
-                                        required
-                                        className="form-select"
-                                    >
-                                        <option value="">{t('pages:yieldPrediction.selectSeason')}</option>
-                                        {seasons.map(season => (
-                                            <option key={season} value={season}>{t(`common:seasons.${season}`)}</option>
-                                        ))}
-                                    </select>
-                                </div>
+                            <div className="form-group">
+                                <label htmlFor="crop" className="form-label">
+                                    {t('pages:yieldPrediction.cropType')} <span className="required">*</span>
+                                    <FieldHelpIcon
+                                        fieldName="crop"
+                                        onClick={() => handleHelpClick('crop', t('pages:yieldPrediction.cropType'))}
+                                    />
+                                </label>
+                                <select
+                                    id="crop"
+                                    name="crop"
+                                    value={formData.crop}
+                                    onChange={handleInputChange}
+                                    required
+                                    className="field-input"
+                                >
+                                    <option value="">{t('pages:yieldPrediction.selectCrop')}</option>
+                                    {crops.map(crop => (
+                                        <option key={crop} value={crop}>{t(`common:crops.${crop}`)}</option>
+                                    ))}
+                                </select>
                             </div>
 
-                            {/* Right Column */}
-                            <div className="form-column-right">
-                                {/* Area Input */}
-                                <div className="form-group">
-                                    <label htmlFor="area" className="form-label">
-                                        {t('pages:yieldPrediction.cultivatedArea')} <span className="required">*</span>
-                                        <FieldHelpIcon
-                                            fieldName="area"
-                                            onClick={() => handleHelpClick('area', t('pages:yieldPrediction.cultivatedArea'))}
-                                        />
-                                    </label>
-                                    <input
-                                        type="number"
-                                        id="area"
-                                        name="area"
-                                        value={formData.area}
-                                        onChange={handleInputChange}
-                                        required
-                                        min="0.01"
-                                        step="0.01"
-                                        placeholder={t('pages:yieldPrediction.cultivatedAreaPlaceholder')}
-                                        className="form-input"
+                            <div className="form-group">
+                                <label htmlFor="area" className="form-label">
+                                    {t('pages:yieldPrediction.cultivatedArea')} <span className="required">*</span>
+                                    <FieldHelpIcon
+                                        fieldName="area"
+                                        onClick={() => handleHelpClick('area', t('pages:yieldPrediction.cultivatedArea'))}
                                     />
-                                </div>
+                                </label>
+                                <input
+                                    type="number"
+                                    id="area"
+                                    name="area"
+                                    value={formData.area}
+                                    onChange={handleInputChange}
+                                    required
+                                    min="0.01"
+                                    step="0.01"
+                                    placeholder={t('pages:yieldPrediction.cultivatedAreaPlaceholder')}
+                                    className="field-input"
+                                />
+                            </div>
+                        </div>
 
-                                {/* Fertilizer Input */}
-                                <div className="form-group">
-                                    <label htmlFor="fertilizer" className="form-label">
-                                        {t('pages:yieldPrediction.fertilizerLabel')} <span className="required">*</span>
-                                        <FieldHelpIcon
-                                            fieldName="fertilizer"
-                                            onClick={() => handleHelpClick('fertilizer', t('pages:yieldPrediction.fertilizerLabel'))}
-                                        />
-                                    </label>
-                                    <input
-                                        type="number"
-                                        id="fertilizer"
-                                        name="fertilizer"
-                                        value={formData.fertilizer}
-                                        onChange={handleInputChange}
-                                        required
-                                        min="0"
-                                        step="0.1"
-                                        placeholder={t('pages:yieldPrediction.fertilizerPlaceholder')}
-                                        className="form-input"
-                                    />
-                                </div>
+                        {/* Row 2: State + Fertilizer */}
+                        <div className="form-inputs-grid">
+                            <div className="form-group">
+                                <label htmlFor="state" className="form-label">
+                                    {t('pages:yieldPrediction.state')} <span className="required">*</span>
+                                </label>
+                                <select
+                                    id="state"
+                                    name="state"
+                                    value={formData.state}
+                                    onChange={handleInputChange}
+                                    required
+                                    className="field-input"
+                                >
+                                    <option value="">{t('pages:yieldPrediction.selectState')}</option>
+                                    {states.map(state => (
+                                        <option key={state} value={state}>{t(`common:states.${state}`)}</option>
+                                    ))}
+                                </select>
+                            </div>
 
-                                {/* Pesticide Input */}
-                                <div className="form-group">
-                                    <label htmlFor="pesticide" className="form-label">
-                                        {t('pages:yieldPrediction.pesticideLabel')} <span className="required">*</span>
-                                        <FieldHelpIcon
-                                            fieldName="pesticide"
-                                            onClick={() => handleHelpClick('pesticide', t('pages:yieldPrediction.pesticideLabel'))}
-                                        />
-                                    </label>
-                                    <input
-                                        type="number"
-                                        id="pesticide"
-                                        name="pesticide"
-                                        value={formData.pesticide}
-                                        onChange={handleInputChange}
-                                        required
-                                        min="0"
-                                        step="0.1"
-                                        placeholder={t('pages:yieldPrediction.pesticidePlaceholder')}
-                                        className="form-input"
+                            <div className="form-group">
+                                <label htmlFor="fertilizer" className="form-label">
+                                    {t('pages:yieldPrediction.fertilizerLabel')} <span className="required">*</span>
+                                    <FieldHelpIcon
+                                        fieldName="fertilizer"
+                                        onClick={() => handleHelpClick('fertilizer', t('pages:yieldPrediction.fertilizerLabel'))}
                                     />
-                                </div>
+                                </label>
+                                <input
+                                    type="number"
+                                    id="fertilizer"
+                                    name="fertilizer"
+                                    value={formData.fertilizer}
+                                    onChange={handleInputChange}
+                                    required
+                                    min="0"
+                                    step="0.1"
+                                    placeholder={t('pages:yieldPrediction.fertilizerPlaceholder')}
+                                    className="field-input"
+                                />
+                            </div>
+                        </div>
+
+                        {/* Row 3: Season + Pesticide */}
+                        <div className="form-inputs-grid">
+                            <div className="form-group">
+                                <label htmlFor="season" className="form-label">
+                                    {t('pages:yieldPrediction.seasonLabel')} <span className="required">*</span>
+                                    <FieldHelpIcon
+                                        fieldName="season"
+                                        onClick={() => handleHelpClick('season', t('pages:yieldPrediction.seasonLabel'))}
+                                    />
+                                </label>
+                                <select
+                                    id="season"
+                                    name="season"
+                                    value={formData.season}
+                                    onChange={handleInputChange}
+                                    required
+                                    className="field-input"
+                                >
+                                    <option value="">{t('pages:yieldPrediction.selectSeason')}</option>
+                                    {seasons.map(season => (
+                                        <option key={season} value={season}>{t(`common:seasons.${season}`)}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="form-group">
+                                <label htmlFor="pesticide" className="form-label">
+                                    {t('pages:yieldPrediction.pesticideLabel')} <span className="required">*</span>
+                                    <FieldHelpIcon
+                                        fieldName="pesticide"
+                                        onClick={() => handleHelpClick('pesticide', t('pages:yieldPrediction.pesticideLabel'))}
+                                    />
+                                </label>
+                                <input
+                                    type="number"
+                                    id="pesticide"
+                                    name="pesticide"
+                                    value={formData.pesticide}
+                                    onChange={handleInputChange}
+                                    required
+                                    min="0"
+                                    step="0.1"
+                                    placeholder={t('pages:yieldPrediction.pesticidePlaceholder')}
+                                    className="field-input"
+                                />
                             </div>
                         </div>
 
@@ -334,7 +329,7 @@ const YieldPrediction = () => {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="btn-primary"
+                                className="analyze-btn"
                             >
                                 {loading ? (
                                     <>
@@ -351,7 +346,7 @@ const YieldPrediction = () => {
                             <button
                                 type="button"
                                 onClick={resetForm}
-                                className="btn-secondary"
+                                className="reset-btn"
                                 disabled={loading}
                             >
                                 {t('common.reset')}
@@ -366,8 +361,20 @@ const YieldPrediction = () => {
                         {/* Results Divider */}
                         <div className="results-divider">
                             <div className="divider-line"></div>
-                            <span className="divider-text">{t('pages:yieldPrediction.results.title', 'Prediction Results')}</span>
+                            <span className="divider-text">{t('pages:yieldPrediction.results.title', 'Analysis Results')}</span>
                             <div className="divider-line"></div>
+                        </div>
+
+                        {/* Voice Summary - Listen to Results */}
+                        <div className="voice-summary-section">
+                            <VoiceSummary
+                                result={result}
+                                resultType="yieldPrediction"
+                                title={t('pages:yieldPrediction.listenToSummary', 'Listen to Summary')}
+                                showTitle={true}
+                                compact={false}
+                                className="yield-voice-summary"
+                            />
                         </div>
 
                         {/* Top Section: 2-Column Layout */}
@@ -479,19 +486,6 @@ const YieldPrediction = () => {
                             )}
                         </div>
                     </>
-                )}
-
-                {/* Voice Summary Section */}
-                {result && (
-                    <VoiceSummary
-                        result={result}
-                        resultType="yieldPrediction"
-                        title="🎧 Yield Prediction Summary"
-                        className="yield-voice-summary"
-                        onSpeechStart={() => console.log('Started reading yield prediction summary')}
-                        onSpeechEnd={() => console.log('Finished reading yield prediction summary')}
-                        onSpeechError={(error) => console.error('Speech error:', error)}
-                    />
                 )}
 
                 {/* Error Display */}

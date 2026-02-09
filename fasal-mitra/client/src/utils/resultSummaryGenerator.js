@@ -236,42 +236,92 @@ class ResultSummaryGenerator {
         
         const parts = [];
         
+        // Handle both new ML format and old format
+        const isNewMLFormat = result.disease_name && !result.detected_disease;
+        
+        // Extract data from appropriate format
+        const diseaseName = isNewMLFormat ? 
+            result.disease_name : 
+            (result.detected_disease?.name || 'a disease');
+        
+        const cropType = result.crop_type || result.detected_crop || 'your crop';
+        
+        const confidence = isNewMLFormat ? 
+            result.confidence : // Already in percentage
+            Math.round((result.detected_disease?.confidence || 0) * 100);
+        
+        const severity = isNewMLFormat ? 
+            result.severity : 
+            result.estimated_severity;
+        
+        const symptoms = isNewMLFormat ? 
+            (result.cause ? [result.cause] : []) : 
+            (result.detected_disease?.symptoms || []);
+        
+        const causes = isNewMLFormat ? 
+            (result.cause ? [result.cause] : []) : 
+            (result.detected_disease?.causes || []);
+        
+        const treatments = isNewMLFormat ? 
+            (result.treatment ? [result.treatment] : []) : 
+            (result.treatment_plan?.steps || 
+             result.treatment_plan?.treatments ||
+             (result.detected_disease?.treatments?.[severity]?.treatments || []));
+        
         // Intro
         parts.push(template.intro);
         
         // Detection result
         const detectionText = template.detection
-            .replace('{disease}', result.detected_disease?.name || 'a disease')
-            .replace('{crop}', result.crop_type || 'your crop')
-            .replace('{confidence}', Math.round((result.detected_disease?.confidence || 0) * 100));
+            .replace('{disease}', diseaseName)
+            .replace('{crop}', cropType)
+            .replace('{confidence}', confidence);
         
         parts.push(detectionText);
         
         // Severity
-        if (result.estimated_severity) {
-            const severityText = template.severity.replace('{severity}', result.estimated_severity);
+        if (severity) {
+            const severityText = template.severity.replace('{severity}', severity);
             parts.push(severityText);
         }
         
         // Symptoms
-        if (result.detected_disease?.symptoms && result.detected_disease.symptoms.length > 0) {
-            const symptoms = result.detected_disease.symptoms.slice(0, 3).join(', ');
-            const symptomsText = template.symptoms.replace('{symptoms}', symptoms);
+        if (symptoms && symptoms.length > 0) {
+            const symptomsStr = Array.isArray(symptoms) ? 
+                symptoms.slice(0, 3).join(', ') : 
+                symptoms;
+            const symptomsText = template.symptoms.replace('{symptoms}', symptomsStr);
             parts.push(symptomsText);
         }
         
         // Causes
-        if (result.detected_disease?.causes && result.detected_disease.causes.length > 0) {
-            const causes = result.detected_disease.causes.slice(0, 2).join(' and ');
-            const causesText = template.causes.replace('{causes}', causes);
+        if (causes && causes.length > 0) {
+            const causesStr = Array.isArray(causes) ? 
+                causes.slice(0, 2).join(' and ') : 
+                causes;
+            const causesText = template.causes.replace('{causes}', causesStr);
             parts.push(causesText);
         }
         
         // Treatment
-        if (result.treatment_plan?.steps && result.treatment_plan.steps.length > 0) {
-            const treatments = result.treatment_plan.steps.slice(0, 3).join(', ');
-            const treatmentText = template.treatment.replace('{treatments}', treatments);
+        if (treatments && treatments.length > 0) {
+            const treatmentsStr = Array.isArray(treatments) ? 
+                treatments.slice(0, 3).join(', ') : 
+                treatments;
+            const treatmentText = template.treatment.replace('{treatments}', treatmentsStr);
             parts.push(treatmentText);
+        }
+        
+        // Add additional ML format specific information
+        if (isNewMLFormat) {
+            if (result.simple_explanation) {
+                parts.push(result.simple_explanation);
+            }
+            
+            if (result.prevention_tips) {
+                const preventionText = `Prevention tips: ${result.prevention_tips}`;
+                parts.push(preventionText);
+            }
         }
         
         // Conclusion
