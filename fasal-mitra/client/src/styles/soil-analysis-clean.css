@@ -71,10 +71,10 @@
 }
 
 .get-location-btn {
-    background: #fafbfc;
+    background: rgba(0,0,0,0.05);
     border: none;
-    border-radius: 0.5rem;
-    padding: 0.75rem 2rem;
+    border-radius: 0.75rem;
+    padding: 0.50rem 1.25rem;
     font-size: 1rem;
     font-weight: 500;
     color: #374151;
@@ -85,9 +85,16 @@
     gap: 0.5rem;
 }
 
+.location-btn-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-right: 0.5rem;
+    display: inline-block;
+    vertical-align: middle;
+}
+
 .get-location-btn:hover:not(:disabled) {
-    background: #fafbfc;
-    transform: translateY(-1px);
+    background: rgba(0,0,0,0.10);
 }
 
 .get-location-btn:disabled {
