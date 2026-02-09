@@ -1,0 +1,186 @@
+{
+  "Rice": {
+    "temperature": {"min": 21, "max": 37, "optimal": 25},
+    "rainfall": {"min": 100, "max": 300, "optimal": 200},
+    "humidity": {"min": 50, "max": 85, "optimal": 70},
+    "soil_types": ["Clay", "Loamy Clay"],
+    "water_requirement": "High",
+    "avg_yield_per_hectare": 4.5,
+    "growing_period_days": 120,
+    "market_demand": "High"
+  },
+  "Wheat": {
+    "temperature": {"min": 10, "max": 25, "optimal": 20},
+    "rainfall": {"min": 50, "max": 100, "optimal": 75},
+    "humidity": {"min": 40, "max": 70, "optimal": 55},
+    "soil_types": ["Loamy", "Clay Loam"],
+    "water_requirement": "Medium",
+    "avg_yield_per_hectare": 3.5,
+    "growing_period_days": 120,
+    "market_demand": "Very High"
+  },
+  "Cotton": {
+    "temperature": {"min": 21, "max": 35, "optimal": 27},
+    "rainfall": {"min": 50, "max": 150, "optimal": 100},
+    "humidity": {"min": 50, "max": 75, "optimal": 60},
+    "soil_types": ["Black Soil", "Alluvial"],
+    "water_requirement": "Medium",
+    "avg_yield_per_hectare": 2.0,
+    "growing_period_days": 150,
+    "market_demand": "High"
+  },
+  "Maize": {
+    "temperature": {"min": 18, "max": 32, "optimal": 25},
+    "rainfall": {"min": 60, "max": 120, "optimal": 90},
+    "humidity": {"min": 45, "max": 75, "optimal": 60},
+    "soil_types": ["Loamy", "Sandy Loam"],
+    "water_requirement": "Medium",
+    "avg_yield_per_hectare": 5.5,
+    "growing_period_days": 90,
+    "market_demand": "High"
+  },
+  "Soybean": {
+    "temperature": {"min": 20, "max": 32, "optimal": 26},
+    "rainfall": {"min": 75, "max": 150, "optimal": 100},
+    "humidity": {"min": 50, "max": 80, "optimal": 65},
+    "soil_types": ["Loamy", "Clay Loam"],
+    "water_requirement": "Medium",
+    "avg_yield_per_hectare": 1.5,
+    "growing_period_days": 100,
+    "market_demand": "High"
+  },
+  "Groundnut": {
+    "temperature": {"min": 20, "max": 30, "optimal": 25},
+    "rainfall": {"min": 50, "max": 125, "optimal": 75},
+    "humidity": {"min": 50, "max": 80, "optimal": 60},
+    "soil_types": ["Sandy Loam", "Red Soil"],
+    "water_requirement": "Low-Medium",
+    "avg_yield_per_hectare": 2.2,
+    "growing_period_days": 120,
+    "market_demand": "Medium"
+  },
+  "Bajra": {
+    "temperature": {"min": 25, "max": 35, "optimal": 30},
+    "rainfall": {"min": 40, "max": 80, "optimal": 60},
+    "humidity": {"min": 40, "max": 70, "optimal": 55},
+    "soil_types": ["Sandy", "Sandy Loam"],
+    "water_requirement": "Low",
+    "avg_yield_per_hectare": 1.8,
+    "growing_period_days": 75,
+    "market_demand": "Medium"
+  },
+  "Tur": {
+    "temperature": {"min": 18, "max": 30, "optimal": 24},
+    "rainfall": {"min": 60, "max": 120, "optimal": 90},
+    "humidity": {"min": 50, "max": 80, "optimal": 65},
+    "soil_types": ["Black Soil", "Red Soil"],
+    "water_requirement": "Low-Medium",
+    "avg_yield_per_hectare": 1.2,
+    "growing_period_days": 150,
+    "market_demand": "High"
+  },
+  "Jowar": {
+    "temperature": {"min": 20, "max": 32, "optimal": 26},
+    "rainfall": {"min": 40, "max": 100, "optimal": 70},
+    "humidity": {"min": 40, "max": 70, "optimal": 55},
+    "soil_types": ["Black Soil", "Loamy"],
+    "water_requirement": "Low-Medium",
+    "avg_yield_per_hectare": 2.0,
+    "growing_period_days": 110,
+    "market_demand": "Medium"
+  },
+  "Mustard": {
+    "temperature": {"min": 10, "max": 25, "optimal": 18},
+    "rainfall": {"min": 25, "max": 60, "optimal": 40},
+    "humidity": {"min": 40, "max": 65, "optimal": 50},
+    "soil_types": ["Loamy", "Sandy Loam"],
+    "water_requirement": "Low",
+    "avg_yield_per_hectare": 1.5,
+    "growing_period_days": 120,
+    "market_demand": "High"
+  },
+  "Chickpea": {
+    "temperature": {"min": 10, "max": 30, "optimal": 20},
+    "rainfall": {"min": 40, "max": 80, "optimal": 60},
+    "humidity": {"min": 40, "max": 70, "optimal": 55},
+    "soil_types": ["Loamy", "Clay Loam"],
+    "water_requirement": "Low-Medium",
+    "avg_yield_per_hectare": 1.8,
+    "growing_period_days": 120,
+    "market_demand": "High"
+  },
+  "Tomato": {
+    "temperature": {"min": 18, "max": 27, "optimal": 22},
+    "rainfall": {"min": 60, "max": 150, "optimal": 100},
+    "humidity": {"min": 50, "max": 85, "optimal": 65},
+    "soil_types": ["Loamy", "Sandy Loam"],
+    "water_requirement": "High",
+    "avg_yield_per_hectare": 25.0,
+    "growing_period_days": 90,
+    "market_demand": "Very High",
+    "disease_risk": {
+      "high_humidity": "Fungal diseases (Late Blight, Early Blight)",
+      "high_rain": "Bacterial wilt"
+    }
+  },
+  "Potato": {
+    "temperature": {"min": 15, "max": 25, "optimal": 20},
+    "rainfall": {"min": 50, "max": 100, "optimal": 75},
+    "humidity": {"min": 40, "max": 80, "optimal": 60},
+    "soil_types": ["Sandy Loam", "Loamy"],
+    "water_requirement": "Medium-High",
+    "avg_yield_per_hectare": 22.0,
+    "growing_period_days": 90,
+    "market_demand": "Very High"
+  },
+  "Sugarcane": {
+    "temperature": {"min": 21, "max": 35, "optimal": 28},
+    "rainfall": {"min": 150, "max": 250, "optimal": 200},
+    "humidity": {"min": 60, "max": 90, "optimal": 75},
+    "soil_types": ["Loamy", "Clay Loam"],
+    "water_requirement": "Very High",
+    "avg_yield_per_hectare": 70.0,
+    "growing_period_days": 365,
+    "market_demand": "High"
+  },
+  "Watermelon": {
+    "temperature": {"min": 20, "max": 35, "optimal": 27},
+    "rainfall": {"min": 40, "max": 80, "optimal": 60},
+    "humidity": {"min": 40, "max": 70, "optimal": 55},
+    "soil_types": ["Sandy Loam", "Loamy"],
+    "water_requirement": "Medium",
+    "avg_yield_per_hectare": 30.0,
+    "growing_period_days": 80,
+    "market_demand": "High"
+  },
+  "Cucumber": {
+    "temperature": {"min": 18, "max": 30, "optimal": 24},
+    "rainfall": {"min": 50, "max": 100, "optimal": 75},
+    "humidity": {"min": 50, "max": 80, "optimal": 65},
+    "soil_types": ["Loamy", "Sandy Loam"],
+    "water_requirement": "Medium-High",
+    "avg_yield_per_hectare": 15.0,
+    "growing_period_days": 60,
+    "market_demand": "Medium"
+  },
+  "Banana": {
+    "temperature": {"min": 15, "max": 35, "optimal": 27},
+    "rainfall": {"min": 120, "max": 200, "optimal": 150},
+    "humidity": {"min": 60, "max": 90, "optimal": 75},
+    "soil_types": ["Loamy", "Clay Loam"],
+    "water_requirement": "Very High",
+    "avg_yield_per_hectare": 40.0,
+    "growing_period_days": 365,
+    "market_demand": "Very High"
+  },
+  "Papaya": {
+    "temperature": {"min": 20, "max": 35, "optimal": 27},
+    "rainfall": {"min": 100, "max": 200, "optimal": 150},
+    "humidity": {"min": 50, "max": 85, "optimal": 70},
+    "soil_types": ["Loamy", "Sandy Loam"],
+    "water_requirement": "High",
+    "avg_yield_per_hectare": 50.0,
+    "growing_period_days": 365,
+    "market_demand": "High"
+  }
+}

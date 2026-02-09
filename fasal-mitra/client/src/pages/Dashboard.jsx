@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Sprout, Beaker, Bug, TrendingUp } from 'lucide-react';
+import { Sprout, Beaker, Bug, TrendingUp, Leaf } from 'lucide-react';
 import FeatureCard from '../components/FeatureCard';
 import { WeatherDashboard } from '../components/weather';
 // import WeatherDashboard from '../components/WeatherWidget';
@@ -25,6 +25,12 @@ const Dashboard = () => {
     }
 
     const features = [
+        {
+            icon: Leaf,
+            title: '🌱 Crop Planning Engine',
+            description: 'AI-powered crop selection based on market trends, weather, and seasonal factors',
+            path: '/crop-planning',
+        },
         {
             icon: Sprout,
             title: t('dashboard.features.cropYield.title'),

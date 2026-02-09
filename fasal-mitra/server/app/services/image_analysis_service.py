@@ -11,8 +11,15 @@ from functools import lru_cache
 
 from fastapi import UploadFile
 from PIL import Image
-import openai
-from openai import OpenAI
+
+try:
+    import openai
+    from openai import OpenAI
+    OPENAI_AVAILABLE = True
+except ImportError:
+    OPENAI_AVAILABLE = False
+    logger = logging.getLogger(__name__)
+    logger.warning("OpenAI package not properly installed. Image analysis features will be limited.")
 
 from app.config import settings
 
@@ -46,6 +53,10 @@ class ImageAnalysisService:
     def _initialize_client(self):
         """Initialize OpenAI client with API key"""
         try:
+            if not OPENAI_AVAILABLE:
+                logger.warning("OpenAI package not available. Image analysis will be limited.")
+                return
+                
             api_key = settings.OPENAI_API_KEY
             if not api_key:
                 logger.warning("OpenAI API key not found in settings. Image analysis will be limited.")

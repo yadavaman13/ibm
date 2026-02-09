@@ -1,0 +1,53 @@
+{
+  "seasons": {
+    "Kharif": {
+      "months": [6, 7, 8, 9],
+      "description": "Southwest Monsoon Season (June-September)",
+      "crops": [
+        "Rice",
+        "Cotton",
+        "Maize",
+        "Soybean",
+        "Groundnut",
+        "Bajra",
+        "Tur",
+        "Jowar"
+      ]
+    },
+    "Rabi": {
+      "months": [10, 11, 12, 1, 2, 3],
+      "description": "Winter Season (October-March)",
+      "crops": [
+        "Wheat",
+        "Mustard",
+        "Chickpea",
+        "Barley",
+        "Peas",
+        "Lentil",
+        "Tomato",
+        "Potato"
+      ]
+    },
+    "Zaid": {
+      "months": [3, 4, 5, 6],
+      "description": "Summer Season (March-June)",
+      "crops": [
+        "Watermelon",
+        "Cucumber",
+        "Muskmelon",
+        "Pumpkin",
+        "Bitter Gourd",
+        "Bottle Gourd"
+      ]
+    },
+    "Whole Year": {
+      "months": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+      "description": "Year-round Cultivation",
+      "crops": [
+        "Sugarcane",
+        "Banana",
+        "Papaya"
+      ]
+    }
+  }
+}
