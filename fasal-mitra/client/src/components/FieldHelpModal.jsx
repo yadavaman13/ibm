@@ -5,6 +5,10 @@ import fasalMitraLogo from '../assets/Fasal Mitra logo.png';
 import useVoiceRecognition from '../hooks/useVoiceRecognition';
 import useTextToSpeech from '../hooks/useTextToSpeech';
 import VoiceInputButton from './VoiceInputButton';
+import React, { useState, useEffect, useRef } from 'react';
+import { X, Send, Loader2, AlertCircle, HelpCircle } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import fasalMitraLogo from '../assets/Fasal Mitra logo.png';
 import '../styles/field-help-modal.css';
 
 /**
@@ -217,11 +221,18 @@ However, you can ask me anything about "${cleanLabel}" - just type your question
         const userMessage = {
             id: `user-${Date.now()}`,
             text: messageText,
+    const handleSendMessage = async () => {
+        if (!inputMessage.trim()) return;
+
+        const userMessage = {
+            id: `user-${Date.now()}`,
+            text: inputMessage,
             sender: 'user',
             timestamp: new Date()
         };
 
         setMessages(prev => [...prev, userMessage]);
+        setInputMessage('');
         setIsTyping(true);
         setError(null);
 
@@ -234,6 +245,7 @@ However, you can ask me anything about "${cleanLabel}" - just type your question
                 },
                 body: JSON.stringify({
                     question: messageText,
+                    question: inputMessage,
                     language: 'en',
                     session_id: sessionId,
                     context: `Related to field: ${fieldLabel}`
@@ -422,6 +434,28 @@ However, you can ask me anything about "${cleanLabel}" - just type your question
                             )}
                         </button>
                     </div>
+                    <input
+                        ref={inputRef}
+                        type="text"
+                        value={inputMessage}
+                        onChange={(e) => setInputMessage(e.target.value)}
+                        onKeyPress={handleKeyPress}
+                        placeholder="Ask a follow-up question..."
+                        className="field-help-input"
+                        disabled={isTyping}
+                    />
+                    <button
+                        onClick={handleSendMessage}
+                        disabled={!inputMessage.trim() || isTyping}
+                        className="field-help-send-btn"
+                        aria-label="Send message"
+                    >
+                        {isTyping ? (
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                        ) : (
+                            <Send className="w-5 h-5" />
+                        )}
+                    </button>
                 </div>
             </div>
         </div>

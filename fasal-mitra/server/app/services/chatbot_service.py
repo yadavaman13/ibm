@@ -199,6 +199,26 @@ Tomatoes grow best in well-drained soil with plenty of sunlight.
 🎥 Search YouTube: "tomato farming in India" for video tutorials.
 
 Remember: CONCISE, STRUCTURED, PRACTICAL. Always stay helpful and friendly!
+        prompt = f"""You are an expert agricultural advisor helping Indian farmers.
+
+IMPORTANT LANGUAGE INSTRUCTION: 
+- The user asked their question in {language_name}
+- You MUST respond in {language_name} language
+- Use simple, easy-to-understand words suitable for farmers
+
+Question: {request.question}
+
+Context: {request.context or 'General farming inquiry'}
+
+Please provide a helpful, practical answer that:
+1. Is specific to Indian farming conditions
+2. Uses simple language that farmers can understand
+3. Includes actionable advice
+4. Mentions approximate costs in INR if relevant
+5. Considers local climate and soil conditions
+6. Responds in {language_name} language
+
+Format your response clearly with proper structure (use bullet points, numbers, bold text for emphasis).
 """
         return prompt
     
@@ -224,6 +244,19 @@ Add this if helpful:
 Context: {request.context or 'General farming context'}
 
 Language: {request.language}
+        prompt = f"""Explain the agricultural term "{request.term}" in a way that farmers can understand.
+
+Include:
+1. Simple definition
+2. Why it matters for farming
+3. How to measure or identify it
+4. Practical examples
+5. Related terms
+
+Context: {request.context or 'General farming context'}
+
+Explain in {request.language} language if not English.
+Keep it practical and farmer-friendly.
 """
         return prompt
     

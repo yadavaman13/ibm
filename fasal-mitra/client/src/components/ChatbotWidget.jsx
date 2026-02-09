@@ -5,6 +5,10 @@ import fasalMitraLogo from '../assets/FasalMitraLogoCircle.png';
 import useVoiceRecognition from '../hooks/useVoiceRecognition';
 import useTextToSpeech from '../hooks/useTextToSpeech';
 import VoiceInputButton from './VoiceInputButton';
+import React, { useState, useEffect, useRef } from 'react';
+import { MessageCircle, X, Send, Loader2, AlertCircle } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import fasalMitraLogo from '../assets/FasalMitraLogoCircle.png';
 import '../styles/chatbot-widget.css';
 
 const ChatbotWidget = () => {
@@ -79,6 +83,9 @@ const ChatbotWidget = () => {
         pitch: 1.0,
         volume: 1.0
     });
+    
+    const messagesEndRef = useRef(null);
+    const inputRef = useRef(null);
 
     // Welcome message on first open
     useEffect(() => {
@@ -132,6 +139,19 @@ const ChatbotWidget = () => {
         if (!messageText.trim()) return;
 
         const detectedLanguage = detectLanguage(messageText);
+    const handleSendMessage = async () => {
+        if (!inputMessage.trim()) return;
+
+        const userMessage = {
+            id: `user-${Date.now()}`,
+            text: inputMessage,
+            sender: 'user',
+            timestamp: new Date()
+        };
+
+        setMessages(prev => [...prev, userMessage]);
+        const detectedLanguage = detectLanguage(inputMessage);
+        setInputMessage('');
         setIsTyping(true);
         setError(null);
 
@@ -145,6 +165,7 @@ const ChatbotWidget = () => {
                 },
                 body: JSON.stringify({
                     question: messageText,
+                    question: inputMessage,
                     language: detectedLanguage,
                     session_id: sessionId
                 })
@@ -351,6 +372,28 @@ const ChatbotWidget = () => {
                                 )}
                             </button>
                         </div>
+                        <input
+                            ref={inputRef}
+                            type="text"
+                            value={inputMessage}
+                            onChange={(e) => setInputMessage(e.target.value)}
+                            onKeyPress={handleKeyPress}
+                            placeholder="Ask about crops, diseases, weather..."
+                            className="chatbot-input"
+                            disabled={isTyping}
+                        />
+                        <button
+                            onClick={handleSendMessage}
+                            disabled={!inputMessage.trim() || isTyping}
+                            className="chatbot-send-btn"
+                            aria-label="Send message"
+                        >
+                            {isTyping ? (
+                                <Loader2 className="w-5 h-5 animate-spin" />
+                            ) : (
+                                <Send className="w-5 h-5" />
+                            )}
+                        </button>
                     </div>
                 </div>
             )}
