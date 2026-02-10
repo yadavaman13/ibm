@@ -827,7 +827,7 @@ CORS_ORIGINS=http://localhost:5173
 python run.py
 ```
 
-**Or use uvicorn directly:**
+**Or use uvicorn directly:** 
 
 ```bash
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
