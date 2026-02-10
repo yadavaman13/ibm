@@ -191,7 +191,7 @@ const DetectionResults = ({ result }) => {
                     </h3>
                     <ul className="info-list">
                         {recommendations.map((recommendation, index) => (
-                            <li key={index}>{recommendation}</li>
+                            <li key={index}>{recommendation.replace(/^[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]\s*/u, '')}</li>
                         ))}
                     </ul>
                 </div>
@@ -199,16 +199,16 @@ const DetectionResults = ({ result }) => {
 
             {/* Next Steps (New ML Format) */}
             {nextSteps && nextSteps.length > 0 && (
-                <div className="info-section bg-amber-50 border border-amber-200">
-                    <h3 className="info-title text-amber-800">
-                        <Clock className="info-icon text-amber-600" />
+                <div className="info-section">
+                    <h3 className="info-title">
+                        <Clock className="info-icon" />
                         Next Steps
                     </h3>
-                    <ol className="info-list list-decimal pl-5">
+                    <ul className="info-list">
                         {nextSteps.map((step, index) => (
-                            <li key={index} className="text-gray-700">{step}</li>
+                            <li key={index}>{step.replace(/^\d+\.\s*/, '')}</li>
                         ))}
-                    </ol>
+                    </ul>
                 </div>
             )}
 

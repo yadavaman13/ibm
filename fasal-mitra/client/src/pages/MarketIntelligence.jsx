@@ -291,6 +291,9 @@ const MarketIntelligence = () => {
                 <div className="stats-change">
                   average arrival
                 </div>
+                <div style={{ fontSize: '0.7rem', color: '#6b7280', marginTop: '0.25rem' }}>
+                  1 MT = 1000 kg
+                </div>
               </div>
               
               <div className="stats-card">
@@ -313,13 +316,6 @@ const MarketIntelligence = () => {
             >
               <BarChart3 className="w-4 h-4" />
               Price Forecast
-            </button>
-            <button
-              className={`tab-button ${activeTab === 'comparison' ? 'active' : ''}`}
-              onClick={() => setActiveTab('comparison')}
-            >
-              <DollarSign className="w-4 h-4" />
-              Market Comparison
             </button>
             <button
               className={`tab-button ${activeTab === 'recommendation' ? 'active' : ''}`}
@@ -394,136 +390,6 @@ const MarketIntelligence = () => {
                   </div>
                 </div>
               </div>
-            </div>
-          )}
-          
-          {/* Market Comparison Tab */}
-          {activeTab === 'comparison' && (
-            <div className="market-card">
-              <h3 className="text-xl font-semibold mb-4 flex items-center">
-                <DollarSign className="w-5 h-5 mr-2" />
-                Market Price Comparison
-              </h3>
-              
-              {/* Filters */}
-              <div className="market-filter-grid">
-                <div>
-                  <label className="form-label">Filter by District</label>
-                  <select
-                    className="form-select"
-                    value={comparisonFilters.district}
-                    onChange={(e) => setComparisonFilters({
-                      ...comparisonFilters,
-                      district: e.target.value
-                    })}
-                  >
-                    <option value="">All Districts</option>
-                    {availableDistricts.map((district) => (
-                      <option key={district} value={district}>
-                        {district}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="form-label">Filter by Variety</label>
-                  <select
-                    className="form-select"
-                    value={comparisonFilters.variety}
-                    onChange={(e) => setComparisonFilters({
-                      ...comparisonFilters,
-                      variety: e.target.value
-                    })}
-                  >
-                    <option value="">All Varieties</option>
-                    {availableVarieties.map((variety) => (
-                      <option key={variety} value={variety}>
-                        {variety}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-              
-              <button
-                onClick={loadMarkets}
-                className="btn-primary mb-4"
-                disabled={loading}
-              >
-                {loading ? (
-                  <>
-                    <Loader className="w-5 h-5 animate-spin mr-2" />
-                    Loading...
-                  </>
-                ) : (
-                  'Apply Filters'
-                )}
-              </button>
-              
-              {/* Markets Table */}
-              {markets.length > 0 ? (
-                <div className="market-table-container">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Rank
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          District
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Market
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Modal Price
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Arrival
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Variety
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      {markets.slice(0, 10).map((market, idx) => (
-                        <tr key={idx} className={idx === 0 ? 'bg-green-50' : ''}>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full ${
-                              idx === 0 ? 'bg-green-600 text-white' : 
-                              idx === 1 ? 'bg-green-500 text-white' : 
-                              idx === 2 ? 'bg-green-400 text-white' : 
-                              'bg-gray-200 text-gray-700'
-                            } font-bold text-sm`}>
-                              {idx + 1}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                            {market.district}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                            {market.market}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-green-600">
-                            {formatPrice(market.modal_price)}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {market.arrival_quantity.toFixed(1)} MT
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {market.variety}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              ) : (
-                <div className="text-center py-8 text-gray-500">
-                  No markets found. Try adjusting filters.
-                </div>
-              )}
             </div>
           )}
           

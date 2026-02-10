@@ -30,12 +30,12 @@ const Navbar = () => {
 
     const navItems = [
         { name: t('home'), path: '/' },
-        { name: 'Crop Planning', path: '/crop-planning' },
+        { name: t('cropPlanning'), path: '/crop-planning' },
         { name: t('yieldPrediction'), path: '/yield-prediction' },
         { name: t('soilAnalysis'), path: '/soil-analysis' },
         { name: t('diseaseDetection'), path: '/disease-detection' },
         { name: t('yieldGapAnalysis'), path: '/gap-analysis' },
-        { name: 'Market Intelligence', path: '/market-intelligence' },
+        { name: t('marketIntelligence'), path: '/market-intelligence' },
     ];
 
     return (
