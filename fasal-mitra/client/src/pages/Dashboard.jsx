@@ -27,8 +27,8 @@ const Dashboard = () => {
     const features = [
         {
             icon: Leaf,
-            title: 'Crop Planning Engine',
-            description: 'AI-powered crop selection based on market trends, weather, and seasonal factors',
+            title: t('dashboard.features.cropPlanning.title'),
+            description: t('dashboard.features.cropPlanning.description'),
             path: '/crop-planning',
         },
         {

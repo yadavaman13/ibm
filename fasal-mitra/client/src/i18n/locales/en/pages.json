@@ -18,6 +18,10 @@
     },
     "features": {
       "title": "Features",
+      "cropPlanning": {
+        "title": "Crop Planning Engine",
+        "description": "AI-powered crop selection based on market trends, weather, and seasonal factors"
+      },
       "cropYield": {
         "title": "Crop Yield",
         "description": "Predict how much your crops will produce this season using smart technology."

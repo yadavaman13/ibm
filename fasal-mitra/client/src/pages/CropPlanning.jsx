@@ -89,11 +89,11 @@ const CropPlanning = () => {
         let currentContent = [];
         
         const sectionConfig = {
-            'suitability': { icon: '🎯', color: '#0ea5e9', bg: '#f0f9ff', border: '#7dd3fc', title: 'Suitability Analysis' },
-            'benefits': { icon: '✅', color: '#10b981', bg: '#ecfdf5', border: '#6ee7b7', title: 'Key Benefits' },
-            'risks': { icon: '⚠️', color: '#f59e0b', bg: '#fffbeb', border: '#fcd34d', title: 'Risks & Challenges' },
-            'recommendations': { icon: '💡', color: '#8b5cf6', bg: '#f5f3ff', border: '#c4b5fd', title: 'Recommendations' },
-            'timeline': { icon: '📅', color: '#6366f1', bg: '#eef2ff', border: '#a5b4fc', title: 'Expected Timeline' }
+            'suitability': { icon: '🎯', color: '#0284c7', title: 'Suitability Analysis' },
+            'benefits': { icon: '✅', color: '#059669', title: 'Key Benefits' },
+            'risks': { icon: '⚠️', color: '#d97706', title: 'Risks & Challenges' },
+            'recommendations': { icon: '💡', color: '#7c3aed', title: 'Recommendations' },
+            'timeline': { icon: '📅', color: '#4f46e5', title: 'Expected Timeline' }
         };
         
         const detectSection = (line) => {
@@ -147,37 +147,36 @@ const CropPlanning = () => {
                     const config = sectionConfig[section.type] || sectionConfig['recommendations'];
                     return (
                         <div key={idx} style={{
-                            backgroundColor: config.bg,
-                            border: `1px solid ${config.border}`,
+                            backgroundColor: 'white',
+                            border: '1px solid #e5e7eb',
                             borderRadius: '0.5rem',
-                            padding: '0.75rem',
-                            borderLeft: `3px solid ${config.color}`
+                            padding: '1rem',
+                            borderLeft: `4px solid ${config.color}`,
+                            boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)'
                         }}>
                             <div style={{
                                 fontWeight: '600',
-                                fontSize: '0.8rem',
+                                fontSize: '0.85rem',
                                 color: config.color,
-                                marginBottom: '0.4rem',
+                                marginBottom: '0.5rem',
                                 display: 'flex',
                                 alignItems: 'center',
-                                gap: '0.4rem'
+                                gap: '0.5rem'
                             }}>
                                 <span>{config.icon}</span>
                                 <span>{config.title}</span>
                             </div>
-                            <ul style={{
-                                margin: 0,
-                                paddingLeft: '1rem',
-                                fontSize: '0.78rem',
-                                lineHeight: '1.5',
+                            <div style={{
+                                fontSize: '0.85rem',
+                                lineHeight: '1.7',
                                 color: '#374151'
                             }}>
                                 {section.content.map((item, i) => (
-                                    <li key={i} style={{ marginBottom: '0.2rem' }}>
+                                    <p key={i} style={{ margin: '0.4rem 0', paddingLeft: '0.5rem' }}>
                                         {item.replace(/^•\s*/, '')}
-                                    </li>
+                                    </p>
                                 ))}
-                            </ul>
+                            </div>
                         </div>
                     );
                 })}
