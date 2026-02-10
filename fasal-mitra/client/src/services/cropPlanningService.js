@@ -105,3 +105,37 @@ export const checkCropPlanningHealth = async () => {
         return false;
     }
 };
+
+/**
+ * Generate AI-powered crop analysis using backend Gemini integration
+ */
+export const generateCropAnalysis = async (analysisData) => {
+    try {
+        const response = await fetch(`${API_URL}/api/v1/ai/crop-analysis`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                crop: analysisData.crop,
+                country: analysisData.country,
+                state: analysisData.state,
+                district: analysisData.district,
+                month_name: analysisData.monthName,
+                season: analysisData.season,
+                land_size: analysisData.land_size
+            }),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({ detail: 'Unknown error' }));
+            throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error generating AI crop analysis:', error);
+        throw error;
+    }
+};

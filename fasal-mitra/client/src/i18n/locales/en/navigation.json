@@ -4,10 +4,12 @@
     "tagline": "Smart Farming Assistant"
   },
   "home": "Home",
+  "cropPlanning": "Crop Planning",
   "yieldPrediction": "Yield Prediction",
   "soilAnalysis": "Soil Analysis",
   "diseaseDetection": "Disease Detection",
   "yieldGapAnalysis": "Yield Gap Analysis",
+  "marketIntelligence": "Market Intelligence",
   "menu": {
     "dashboard": "Dashboard",
     "yieldPrediction": "Yield Prediction",

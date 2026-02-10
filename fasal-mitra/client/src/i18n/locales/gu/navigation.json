@@ -4,10 +4,12 @@
     "tagline": "સ્માર્ટ ખેતી સહાયક"
   },
   "home": "હોમ",
+  "cropPlanning": "પાક આયોજન",
   "yieldPrediction": "ઉત્પાદન અનુમાન",
   "soilAnalysis": "માટી વિશ્લેષણ",
   "diseaseDetection": "રોગ ઓળખ",
   "yieldGapAnalysis": "ઉત્પાદન ગેપ વિશ્લેષણ",
+  "marketIntelligence": "બજાર બુદ્ધિ",
   "auth": {
     "login": "લોગિન",
     "signup": "સાઇન અપ"

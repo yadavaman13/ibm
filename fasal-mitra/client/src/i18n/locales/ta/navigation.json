@@ -4,10 +4,12 @@
     "tagline": "ஸ்மார்ட் வேளாண் துணைவர்"
   },
   "home": "வீடு",
+  "cropPlanning": "பயிர் திட்டமிடல்",
   "yieldPrediction": "விளைச்சல் முன்னறிவிப்பு",
   "soilAnalysis": "மண் பகுப்பாய்வு",
   "diseaseDetection": "நோய் கண்டறிவு",
   "yieldGapAnalysis": "விளைச்சல் இடைவெளி பகுப்பாய்வு",
+  "marketIntelligence": "சந்தை நுண்ணறிவு",
   "auth": {
     "login": "உள்நுழைவு",
     "signup": "அங்கத்தவமாகவும்"

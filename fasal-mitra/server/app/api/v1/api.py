@@ -5,7 +5,7 @@ Aggregates all endpoint routers
 """
 
 from fastapi import APIRouter
-from app.api.v1.endpoints import health, disease_detection, yield_prediction, weather, soil_analysis, chatbot, market_intelligence, crop_planning
+from app.api.v1.endpoints import health, disease_detection, yield_prediction, weather, soil_analysis, chatbot, market_intelligence, crop_planning, ai_analysis
 
 api_router = APIRouter()
 
@@ -18,3 +18,4 @@ api_router.include_router(soil_analysis.router, prefix="/soil", tags=["Soil Anal
 api_router.include_router(chatbot.router, prefix="/chatbot", tags=["Chatbot"])
 api_router.include_router(market_intelligence.router, prefix="/market", tags=["Market Intelligence"])
 api_router.include_router(crop_planning.router, prefix="/crop-planning", tags=["Crop Planning"])
+api_router.include_router(ai_analysis.router, prefix="/ai", tags=["AI Analysis"])

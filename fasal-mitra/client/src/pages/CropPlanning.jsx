@@ -4,20 +4,25 @@ import {
     Leaf, TrendingUp, TrendingDown, Minus, AlertCircle, CheckCircle,
     Loader, MapPin, Calendar, Maximize2, CloudRain, Thermometer,
     DollarSign, AlertTriangle, Info, Sparkles, Target, ShoppingCart, BarChart3,
-    Droplets, Sprout, Database
+    Droplets, Sprout, Database, Navigation
 } from 'lucide-react';
-import { planCrops, checkCropPlanningHealth, getCropDetails } from '../services/cropPlanningService';
+import { planCrops, checkCropPlanningHealth, getCropDetails, generateCropAnalysis } from '../services/cropPlanningService';
 import * as soilService from '../services/soilService';
 import { compareMarkets, getCommodityInsights } from '../services/marketService';
 import FieldHelpIcon from '../components/FieldHelpIcon';
 import FieldHelpModal from '../components/FieldHelpModal';
+import worldIcon from '../assets/744483-removebg-preview.png';
+import locationIcon from '../assets/location-icon-pictogram_764382-14294-removebg-preview.png';
 import '../styles/crop-planning.css';
+import '../styles/soil-analysis-clean.css';
 
 const CropPlanning = () => {
     const { t } = useTranslation(['pages', 'common']);
 
     const [formData, setFormData] = useState({
+        country: '',
         state: '',
+        district: '',
         month: new Date().getMonth() + 1,
         land_size: '',
         latitude: '',
@@ -44,17 +49,141 @@ const CropPlanning = () => {
     // states & crops list
     const [states, setStates] = useState([]);
     const [crops, setCrops] = useState([]);
+    const [countries, setCountries] = useState([]);
+    const [districts, setDistricts] = useState([]);
+    const [allDistricts] = useState({
+        'Andhra Pradesh': ['Anantapur', 'Chittoor', 'East Godavari', 'Guntur', 'Krishna', 'Kurnool', 'Nellore', 'Prakasam', 'Srikakulam', 'Visakhapatnam', 'Vizianagaram', 'West Godavari', 'YSR Kadapa'],
+        'Arunachal Pradesh': ['Anjaw', 'Changlang', 'Dibang Valley', 'East Kameng', 'East Siang', 'Kamle', 'Kra Daadi', 'Kurung Kumey', 'Lepa Rada', 'Lohit', 'Longding', 'Lower Dibang Valley', 'Lower Siang', 'Lower Subansiri', 'Namsai', 'Pakke Kessang', 'Papum Pare', 'Shi Yomi', 'Siang', 'Tawang', 'Tirap', 'Upper Siang', 'Upper Subansiri', 'West Kameng', 'West Siang'],
+        'Gujarat': ['Ahmedabad', 'Amreli', 'Anand', 'Aravalli', 'Banaskantha', 'Bharuch', 'Bhavnagar', 'Botad', 'Chhota Udaipur', 'Dahod', 'Dang', 'Devbhoomi Dwarka', 'Gandhinagar', 'Gir Somnath', 'Jamnagar', 'Junagadh', 'Kheda', 'Kutch', 'Mahisagar', 'Mehsana', 'Morbi', 'Narmada', 'Navsari', 'Panchmahal', 'Patan', 'Porbandar', 'Rajkot', 'Sabarkantha', 'Surat', 'Surendranagar', 'Tapi', 'Vadodara', 'Valsad'],
+        'Maharashtra': ['Ahmednagar', 'Akola', 'Amravati', 'Aurangabad', 'Beed', 'Bhandara', 'Buldhana', 'Chandrapur', 'Dhule', 'Gadchiroli', 'Gondia', 'Hingoli', 'Jalgaon', 'Jalna', 'Kolhapur', 'Latur', 'Mumbai City', 'Mumbai Suburban', 'Nagpur', 'Nanded', 'Nandurbar', 'Nashik', 'Osmanabad', 'Palghar', 'Parbhani', 'Pune', 'Raigad', 'Ratnagiri', 'Sangli', 'Satara', 'Sindhudurg', 'Solapur', 'Thane', 'Wardha', 'Washim', 'Yavatmal'],
+        'Karnataka': ['Bagalkot', 'Ballari', 'Belagavi', 'Bengaluru Rural', 'Bengaluru Urban', 'Bidar', 'Chamarajanagar', 'Chikballapur', 'Chikkamagaluru', 'Chitradurga', 'Dakshina Kannada', 'Davanagere', 'Dharwad', 'Gadag', 'Hassan', 'Haveri', 'Kalaburagi', 'Kodagu', 'Kolar', 'Koppal', 'Mandya', 'Mysuru', 'Raichur', 'Ramanagara', 'Shivamogga', 'Tumakuru', 'Udupi', 'Uttara Kannada', 'Vijayapura', 'Yadgir'],
+        'Punjab': ['Amritsar', 'Barnala', 'Bathinda', 'Faridkot', 'Fatehgarh Sahib', 'Fazilka', 'Ferozepur', 'Gurdaspur', 'Hoshiarpur', 'Jalandhar', 'Kapurthala', 'Ludhiana', 'Malerkotla', 'Mansa', 'Moga', 'Mohali', 'Muktsar', 'Pathankot', 'Patiala', 'Rupnagar', 'Sangrur', 'Shaheed Bhagat Singh Nagar', 'Tarn Taran'],
+        'Rajasthan': ['Ajmer', 'Alwar', 'Banswara', 'Baran', 'Barmer', 'Bharatpur', 'Bhilwara', 'Bikaner', 'Bundi', 'Chittorgarh', 'Churu', 'Dausa', 'Dholpur', 'Dungarpur', 'Ganganagar', 'Hanumangarh', 'Jaipur', 'Jaisalmer', 'Jalore', 'Jhalawar', 'Jhunjhunu', 'Jodhpur', 'Karauli', 'Kota', 'Nagaur', 'Pali', 'Pratapgarh', 'Rajsamand', 'Sawai Madhopur', 'Sikar', 'Sirohi', 'Tonk', 'Udaipur'],
+        'Tamil Nadu': ['Ariyalur', 'Chengalpattu', 'Chennai', 'Coimbatore', 'Cuddalore', 'Dharmapuri', 'Dindigul', 'Erode', 'Kallakurichi', 'Kanchipuram', 'Kanyakumari', 'Karur', 'Krishnagiri', 'Madurai', 'Mayiladuthurai', 'Nagapattinam', 'Namakkal', 'Nilgiris', 'Perambalur', 'Pudukkottai', 'Ramanathapuram', 'Ranipet', 'Salem', 'Sivaganga', 'Tenkasi', 'Thanjavur', 'Theni', 'Thoothukudi', 'Tiruchirappalli', 'Tirunelveli', 'Tirupathur', 'Tiruppur', 'Tiruvallur', 'Tiruvannamalai', 'Tiruvarur', 'Vellore', 'Viluppuram', 'Virudhunagar'],
+        'Uttar Pradesh': ['Agra', 'Aligarh', 'Prayagraj', 'Ambedkar Nagar', 'Amethi', 'Amroha', 'Auraiya', 'Ayodhya', 'Azamgarh', 'Baghpat', 'Bahraich', 'Ballia', 'Balrampur', 'Banda', 'Barabanki', 'Bareilly', 'Basti', 'Bhadohi', 'Bijnor', 'Budaun', 'Bulandshahr', 'Chandauli', 'Chitrakoot', 'Deoria', 'Etah', 'Etawah', 'Farrukhabad', 'Fatehpur', 'Firozabad', 'Gautam Buddha Nagar', 'Ghaziabad', 'Ghazipur', 'Gonda', 'Gorakhpur', 'Hamirpur', 'Hapur', 'Hardoi', 'Hathras', 'Jalaun', 'Jaunpur', 'Jhansi', 'Kannauj', 'Kanpur Dehat', 'Kanpur Nagar', 'Kasganj', 'Kaushambi', 'Kheri', 'Kushinagar', 'Lalitpur', 'Lucknow', 'Maharajganj', 'Mahoba', 'Mainpuri', 'Mathura', 'Mau', 'Meerut', 'Mirzapur', 'Moradabad', 'Muzaffarnagar', 'Pilibhit', 'Pratapgarh', 'Raebareli', 'Rampur', 'Saharanpur', 'Sambhal', 'Sant Kabir Nagar', 'Shahjahanpur', 'Shamli', 'Shravasti', 'Siddharthnagar', 'Sitapur', 'Sonbhadra', 'Sultanpur', 'Unnao', 'Varanasi'],
+        'West Bengal': ['Alipurduar', 'Bankura', 'Birbhum', 'Cooch Behar', 'Dakshin Dinajpur', 'Darjeeling', 'Hooghly', 'Howrah', 'Jalpaiguri', 'Jhargram', 'Kalimpong', 'Kolkata', 'Malda', 'Murshidabad', 'Nadia', 'North 24 Parganas', 'Paschim Bardhaman', 'Paschim Medinipur', 'Purba Bardhaman', 'Purba Medinipur', 'Purulia', 'South 24 Parganas', 'Uttar Dinajpur'],
+        'Delhi': ['Central Delhi', 'East Delhi', 'New Delhi', 'North Delhi', 'North East Delhi', 'North West Delhi', 'Shahdara', 'South Delhi', 'South East Delhi', 'South West Delhi', 'West Delhi']
+    });
 
     // crop review and AI suggestions
     const [cropReview, setCropReview] = useState(null);
     const [detailedReview, setDetailedReview] = useState(null);
     const [aiSuggestions, setAiSuggestions] = useState([]);
     const [aiLoading, setAiLoading] = useState(false);
+    const [aiAnalysis, setAiAnalysis] = useState(null);
+    const [analysisLoading, setAnalysisLoading] = useState(false);
+    const [analysisError, setAnalysisError] = useState(null);
 
     // location detection helpers
     const [locationAutoDetected, setLocationAutoDetected] = useState(false);
     const [detectedStateName, setDetectedStateName] = useState(null);
     const [locationError, setLocationError] = useState(null);
+
+    // Helper function to format AI analysis into styled sections
+    const formatAIAnalysis = (text) => {
+        if (!text) return null;
+        
+        const sections = [];
+        const lines = text.split('\n');
+        let currentSection = null;
+        let currentContent = [];
+        
+        const sectionConfig = {
+            'suitability': { icon: '🎯', color: '#0ea5e9', bg: '#f0f9ff', border: '#7dd3fc', title: 'Suitability Analysis' },
+            'benefits': { icon: '✅', color: '#10b981', bg: '#ecfdf5', border: '#6ee7b7', title: 'Key Benefits' },
+            'risks': { icon: '⚠️', color: '#f59e0b', bg: '#fffbeb', border: '#fcd34d', title: 'Risks & Challenges' },
+            'recommendations': { icon: '💡', color: '#8b5cf6', bg: '#f5f3ff', border: '#c4b5fd', title: 'Recommendations' },
+            'timeline': { icon: '📅', color: '#6366f1', bg: '#eef2ff', border: '#a5b4fc', title: 'Expected Timeline' }
+        };
+        
+        const detectSection = (line) => {
+            const lower = line.toLowerCase();
+            if (lower.includes('suitability')) return 'suitability';
+            if (lower.includes('benefit')) return 'benefits';
+            if (lower.includes('risk') || lower.includes('challenge')) return 'risks';
+            if (lower.includes('recommend')) return 'recommendations';
+            if (lower.includes('timeline') || lower.includes('schedule')) return 'timeline';
+            return null;
+        };
+        
+        lines.forEach((line) => {
+            const trimmed = line.trim();
+            if (!trimmed) return;
+            
+            // Check if this is a section header (starts with # or number)
+            if (trimmed.match(/^(#{1,3}|\d+\.)\s/) || trimmed.match(/^\*\*\d+\./)) {
+                // Save previous section
+                if (currentSection && currentContent.length > 0) {
+                    sections.push({ type: currentSection, content: [...currentContent] });
+                }
+                currentSection = detectSection(trimmed);
+                currentContent = [];
+            } else if (currentSection) {
+                // Clean the line - remove markdown bold markers
+                const cleanLine = trimmed.replace(/\*\*/g, '').replace(/^\*\s*/, '• ').replace(/^-\s*/, '• ');
+                if (cleanLine) currentContent.push(cleanLine);
+            }
+        });
+        
+        // Don't forget last section
+        if (currentSection && currentContent.length > 0) {
+            sections.push({ type: currentSection, content: [...currentContent] });
+        }
+        
+        // If no sections detected, show as simple formatted text
+        if (sections.length === 0) {
+            return (
+                <div style={{ fontSize: '0.85rem', lineHeight: '1.6', color: '#374151' }}>
+                    {text.split('\n').map((line, i) => (
+                        <p key={i} style={{ margin: '0.3rem 0' }}>{line.replace(/\*\*/g, '')}</p>
+                    ))}
+                </div>
+            );
+        }
+        
+        return (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                {sections.map((section, idx) => {
+                    const config = sectionConfig[section.type] || sectionConfig['recommendations'];
+                    return (
+                        <div key={idx} style={{
+                            backgroundColor: config.bg,
+                            border: `1px solid ${config.border}`,
+                            borderRadius: '0.5rem',
+                            padding: '0.75rem',
+                            borderLeft: `3px solid ${config.color}`
+                        }}>
+                            <div style={{
+                                fontWeight: '600',
+                                fontSize: '0.8rem',
+                                color: config.color,
+                                marginBottom: '0.4rem',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.4rem'
+                            }}>
+                                <span>{config.icon}</span>
+                                <span>{config.title}</span>
+                            </div>
+                            <ul style={{
+                                margin: 0,
+                                paddingLeft: '1rem',
+                                fontSize: '0.78rem',
+                                lineHeight: '1.5',
+                                color: '#374151'
+                            }}>
+                                {section.content.map((item, i) => (
+                                    <li key={i} style={{ marginBottom: '0.2rem' }}>
+                                        {item.replace(/^•\s*/, '')}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    );
+                })}
+            </div>
+        );
+    };
 
     useEffect(() => {
         const checkHealth = async () => {
@@ -72,12 +201,31 @@ const CropPlanning = () => {
                 ]);
                 if (Array.isArray(statesData)) setStates(statesData);
                 if (Array.isArray(cropsData)) setCrops(cropsData);
+                
+                // Set comprehensive list of countries (top 60 countries)
+                setCountries([
+                    'India', 'United States', 'China', 'Japan', 'Germany', 'United Kingdom', 'France', 'Brazil', 'Italy', 'Canada',
+                    'Russia', 'South Korea', 'Australia', 'Spain', 'Mexico', 'Indonesia', 'Netherlands', 'Saudi Arabia', 'Turkey', 'Switzerland',
+                    'Poland', 'Belgium', 'Sweden', 'Ireland', 'Austria', 'Norway', 'United Arab Emirates', 'Israel', 'Singapore', 'Malaysia',
+                    'Denmark', 'South Africa', 'Philippines', 'Colombia', 'Pakistan', 'Chile', 'Finland', 'Bangladesh', 'Egypt', 'Vietnam',
+                    'Czech Republic', 'Romania', 'Portugal', 'Peru', 'New Zealand', 'Greece', 'Qatar', 'Algeria', 'Hungary', 'Kazakhstan',
+                    'Kuwait', 'Morocco', 'Slovakia', 'Ecuador', 'Ethiopia', 'Kenya', 'Angola', 'Oman', 'Guatemala', 'Bulgaria'
+                ]);
             } catch (err) {
                 console.error('Failed to load states/crops:', err);
             }
         };
         loadInitial();
     }, []);
+
+    // Update districts when state changes
+    useEffect(() => {
+        if (formData.state && allDistricts[formData.state]) {
+            setDistricts(allDistricts[formData.state]);
+        } else {
+            setDistricts([]);
+        }
+    }, [formData.state, allDistricts]);
 
     const months = [
         { value: 1, label: 'January' }, { value: 2, label: 'February' }, { value: 3, label: 'March' },
@@ -88,7 +236,14 @@ const CropPlanning = () => {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        setFormData(prev => {
+            const updates = { [name]: value };
+            // Clear district when state changes
+            if (name === 'state' && value !== prev.state) {
+                updates.district = '';
+            }
+            return { ...prev, ...updates };
+        });
         setError(null);
     };
 
@@ -223,7 +378,10 @@ const CropPlanning = () => {
                         hasDetectedLocation = true;
                         setLocationError(null);
                     } else if (detectedName) {
-                        setLocationError(`Location detected: ${detectedName}. Please select your state manually.`);
+                        // Use detected state name directly (it's a valid state from our stateData)
+                        updates.state = detectedName;
+                        hasDetectedLocation = true;
+                        setLocationError(null);
                     } else {
                         setLocationError('Could not determine state from your location. Please select manually.');
                     }
@@ -249,83 +407,31 @@ const CropPlanning = () => {
         );
     };
 
-    // When crop is selected, load detailed analysis and AI top-3 suggestions
-    useEffect(() => {
-        const loadCropInfo = async () => {
-            if (!formData.crop) {
-                setCropReview(null);
-                setDetailedReview(null);
-                setAiSuggestions([]);
-                return;
+    // Generate Gemini AI Analysis
+    const generateAIAnalysis = async (cropData) => {
+        try {
+            // Use backend API for Gemini integration (Python SDK works reliably)
+            const response = await generateCropAnalysis(cropData);
+            
+            if (response.success && response.data?.analysis) {
+                return response.data.analysis;
+            } else {
+                throw new Error(response.message || 'Failed to generate AI analysis');
             }
-
-            try {
-                const details = await getCropDetails(formData.crop);
-                if (details && details.success) setCropReview(details.data || details);
-                else setCropReview(details || null);
-            } catch (err) {
-                console.error('Failed to fetch crop details:', err);
-                setCropReview(null);
-            }
-
-            // Build detailed review based on location, season, and crop
-            const buildDetailedReview = () => {
-                const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-                const selectedMonth = months[parseInt(formData.month) - 1] || 'Selected month';
-                const selectedState = formData.state || 'your region';
-
-                // Determine season from month
-                const monthNum = parseInt(formData.month);
-                let season = 'Kharif';
-                if (monthNum >= 10 || monthNum <= 3) season = 'Rabi';
-                else if (monthNum >= 4 && monthNum <= 6) season = 'Summer';
-
-                return {
-                    cropName: formData.crop,
-                    month: selectedMonth,
-                    monthNum: monthNum,
-                    state: selectedState,
-                    season: season,
-                    location: { latitude: formData.latitude, longitude: formData.longitude }
-                };
-            };
-
-            setDetailedReview(buildDetailedReview());
-
-            // Ask backend AI for top recommendations for the current location/month
-            setAiLoading(true);
-            try {
-                const req = {
-                    state: formData.state || null,
-                    month: parseInt(formData.month) || null,
-                    land_size: formData.land_size ? parseFloat(formData.land_size) : null,
-                    latitude: formData.latitude ? parseFloat(formData.latitude) : null,
-                    longitude: formData.longitude ? parseFloat(formData.longitude) : null,
-                    crop: formData.crop
-                };
-
-                const resp = await planCrops(req);
-                if (resp && resp.success && resp.data && Array.isArray(resp.data.recommendations)) {
-                    setAiSuggestions(resp.data.recommendations.slice(0, 3));
-                } else {
-                    setAiSuggestions([]);
-                }
-            } catch (err) {
-                console.error('AI suggestions failed:', err);
-                setAiSuggestions([]);
-            } finally {
-                setAiLoading(false);
-            }
-        };
-
-        loadCropInfo();
-    }, [formData.crop, formData.state, formData.month, formData.latitude, formData.longitude, formData.land_size]);
+        } catch (error) {
+            console.error('AI Analysis Error:', error);
+            throw error;
+        }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
         setResult(null);
+        setAiAnalysis(null);
+        setCropReview(null);
+        setDetailedReview(null);
 
         try {
             const requestData = {
@@ -340,6 +446,64 @@ const CropPlanning = () => {
             const data = await planCrops(requestData);
             if (data.success) setResult(data.data);
             else setError(data.message || 'Failed to get crop recommendations');
+
+            // If a specific crop is selected, generate AI analysis
+            if (formData.crop) {
+                setAnalysisLoading(true);
+                setAnalysisError(null);
+                
+                // Build detailed review info
+                const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                const selectedMonth = months[parseInt(formData.month) - 1] || 'Selected month';
+                const monthNum = parseInt(formData.month);
+                let season = 'Kharif';
+                if (monthNum >= 10 || monthNum <= 3) season = 'Rabi';
+                else if (monthNum >= 4 && monthNum <= 6) season = 'Summer';
+
+                setDetailedReview({
+                    cropName: formData.crop,
+                    month: selectedMonth,
+                    monthNum: monthNum,
+                    state: formData.state,
+                    season: season,
+                    country: formData.country,
+                    district: formData.district
+                });
+
+                // Get crop details from backend
+                try {
+                    const details = await getCropDetails(formData.crop);
+                    if (details && details.success) setCropReview(details.data || details);
+                    else setCropReview(details || null);
+                } catch (err) {
+                    console.error('Failed to fetch crop details:', err);
+                }
+
+                // Generate AI analysis using Gemini
+                const analysisData = {
+                    crop: formData.crop,
+                    country: formData.country,
+                    state: formData.state,
+                    district: formData.district,
+                    monthName: selectedMonth,
+                    season: season,
+                    land_size: formData.land_size
+                };
+                
+                try {
+                    const analysis = await generateAIAnalysis(analysisData);
+                    if (analysis) {
+                        setAiAnalysis(analysis);
+                    } else {
+                        setAnalysisError('AI analysis returned no data. Please try again.');
+                    }
+                } catch (aiError) {
+                    console.error('AI Analysis Error:', aiError);
+                    setAnalysisError('Failed to generate AI analysis. ' + (aiError.message || 'Please check your API key and try again.'));
+                } finally {
+                    setAnalysisLoading(false);
+                }
+            }
         } catch (err) {
             console.error('Error:', err);
             setError(err.message || 'Network error. Please ensure the backend server is running.');
@@ -349,11 +513,16 @@ const CropPlanning = () => {
     };
 
     const resetForm = () => {
-        setFormData({ state: '', month: new Date().getMonth() + 1, land_size: '', latitude: '', longitude: '', crop: '' });
+        setFormData({ country: '', state: '', district: '', month: new Date().getMonth() + 1, land_size: '', latitude: '', longitude: '', crop: '' });
         setResult(null);
         setError(null);
         setCropReview(null);
         setAiSuggestions([]);
+        setDetailedReview(null);
+        setLocationAutoDetected(false);
+        setLocationError(null);
+        setAiAnalysis(null);
+        setAnalysisError(null);
     };
 
     const handleHelpClick = (fieldName, fieldLabel) => {
@@ -409,30 +578,144 @@ const CropPlanning = () => {
     return (
         <div className="page-container">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                {/* Header */}
-                <div className="page-header">
-                    <Leaf className="page-header-icon" />
-                    <div>
-                        <h1 className="page-header-title">🌱 Crop Planning Engine</h1>
-                        <p className="page-header-subtitle">AI-powered crop selection based on market, weather, and seasonal factors</p>
-                    </div>
-                </div>
-
                 {serverStatus === false && (
                     <div className="server-alert"><AlertCircle className="alert-icon" /><span>Server not running. Please start the backend service.</span></div>
                 )}
 
                 <div className="crop-planning-card">
-                    <div className="form-header">
-                        <Target className="form-header-icon" />
-                        <div>
-                            <h2 className="card-title">Plan Your Crop</h2>
-                            <p className="card-subtitle">Tell us about your location and farmland to get personalized recommendations</p>
+                    {/* Location Detection Section - At the start */}
+                    <div className="location-detection-section">
+                        <div className="location-icon-wrapper">
+                            <img src={worldIcon} alt="World Globe" className="world-icon" />
                         </div>
+                        <h3 className="location-heading">Allow location access</h3>
+                        <p className="location-privacy-text">
+                            We use your location only to analyze soil and climate for your region.
+                        </p>
+
+                        <button
+                            type="button"
+                            onClick={detectLocation}
+                            disabled={locationLoading}
+                            className="get-location-btn"
+                        >
+                            <img src={locationIcon} alt="Location Icon" className="location-btn-icon" />
+                            {locationLoading ? (
+                                <>
+                                    <Loader className="btn-icon spin" />
+                                    Detecting...
+                                </>
+                            ) : (
+                                'Get Location'
+                            )}
+                        </button>
+
+                        {formData.latitude && formData.longitude && (
+                            <div className="coordinates-display-plain">
+                                <span className="coordinate">
+                                    <strong>Latitude:</strong> {parseFloat(formData.latitude).toFixed(6)}
+                                </span>
+                                <span className="coordinate-separator">|</span>
+                                <span className="coordinate">
+                                    <strong>Longitude:</strong> {parseFloat(formData.longitude).toFixed(6)}
+                                </span>
+                            </div>
+                        )}
+
+                        {locationAutoDetected && (
+                            <div className="state-detected-msg">
+                                <CheckCircle className="success-icon" />
+                                Location detected successfully!
+                            </div>
+                        )}
+                        {locationError && (
+                            <div className="location-error-msg">
+                                <AlertCircle className="error-icon" />
+                                <span>{locationError}</span>
+                            </div>
+                        )}
                     </div>
 
                     {/* Detailed Crop Review Card (Location & Season Based) */}
-                    {detailedReview && cropReview && (
+
+                    {/* AI suggestions intentionally hidden per request */}
+
+                    <form onSubmit={handleSubmit} className="planning-form">
+                        <div className="form-grid">
+                            {/* Left Column */}
+                            <div className="form-column">
+                                {/* Country */}
+                                <div className="form-group">
+                                    <label htmlFor="country" className="form-label">
+                                        <MapPin className="label-icon" /> Country
+                                    </label>
+                                    <select id="country" name="country" value={formData.country} onChange={handleInputChange} className="form-select">
+                                        <option value="">Select your country</option>
+                                        {countries.map(c => <option key={c} value={c}>{c}</option>)}
+                                    </select>
+                                </div>
+
+                                {/* State */}
+                                <div className="form-group">
+                                    <label htmlFor="state" className="form-label">
+                                        <MapPin className="label-icon" /> State <span className="required">*</span>
+                                        <FieldHelpIcon fieldName="state" onClick={() => handleHelpClick('state', 'State')} />
+                                    </label>
+                                    <select id="state" name="state" value={formData.state} onChange={handleInputChange} required className="form-select">
+                                        <option value="">Select your state</option>
+                                        {states.map(s => <option key={s} value={s}>{s}</option>)}
+                                    </select>
+                                </div>
+
+                                {/* District */}
+                                <div className="form-group">
+                                    <label htmlFor="district" className="form-label">
+                                        <MapPin className="label-icon" /> District
+                                    </label>
+                                    <select id="district" name="district" value={formData.district} onChange={handleInputChange} className="form-select" disabled={!formData.state}>
+                                        <option value="">Select your district</option>
+                                        {districts.map(d => <option key={d} value={d}>{d}</option>)}
+                                    </select>
+                                    {!formData.state && <p className="input-hint">Please select a state first</p>}
+                                </div>
+
+                                {/* Month */}
+                                <div className="form-group">
+                                    <label htmlFor="month" className="form-label"><Calendar className="label-icon" /> Planning Month <span className="required">*</span></label>
+                                    <select id="month" name="month" value={formData.month} onChange={handleInputChange} required className="form-select">
+                                        {months.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
+                                    </select>
+                                </div>
+                            </div>
+
+                            {/* Right Column */}
+                            <div className="form-column">
+                                {/* Crop selection */}
+                                <div className="form-group">
+                                    <label htmlFor="crop" className="form-label"><Sprout className="label-icon" /> Select Crop</label>
+                                    <select id="crop" name="crop" value={formData.crop} onChange={handleInputChange} className="form-select">
+                                        <option value="">Choose a crop</option>
+                                        {crops.map(c => <option key={c} value={c}>{c}</option>)}
+                                    </select>
+                                </div>
+
+                                {/* Land size */}
+                                <div className="form-group">
+                                    <label htmlFor="land_size" className="form-label"><Maximize2 className="label-icon" /> Land Size (hectares)</label>
+                                    <input type="number" id="land_size" name="land_size" value={formData.land_size} onChange={handleInputChange} min="0.1" step="0.1" placeholder="e.g., 5.0" className="form-input" />
+                                    <p className="input-hint">Optional: For quantity recommendations</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="form-actions">
+                            <button type="submit" disabled={loading} className="btn-primary">{loading ? (<><Loader className="btn-icon spin" /> Analyzing...</>) : (<><Sparkles className="btn-icon" /> Get Crop Recommendations</>)}</button>
+                            <button type="button" onClick={resetForm} className="btn-secondary" disabled={loading}>Reset</button>
+                        </div>
+                    </form>
+
+                    {/* Detailed Crop Review Card (Location & Season Based) - Show only after submission */}
+                    {detailedReview && formData.crop && result && (
                         <div className="detailed-review-card">
                             <div className="review-header">
                                 <h3 className="review-title">{detailedReview.cropName} — Detailed Viability Report</h3>
@@ -454,108 +737,70 @@ const CropPlanning = () => {
                                 </div>
                             </div>
 
-                            {/* Performance Metrics */}
-                            <div className="review-section">
-                                <h4 className="section-heading">📊 Performance Metrics</h4>
-                                <div className="metrics-grid">
-                                    {cropReview.avg_yield && (
-                                        <div className="metric-card">
-                                            <span className="metric-label">Average Yield</span>
-                                            <span className="metric-value">{cropReview.avg_yield}</span>
-                                            <span className="metric-unit">t/ha</span>
-                                        </div>
-                                    )}
-                                    {cropReview.avg_price && (
-                                        <div className="metric-card">
-                                            <span className="metric-label">Market Price</span>
-                                            <span className="metric-value">₹{cropReview.avg_price}</span>
-                                        </div>
-                                    )}
-                                    {cropReview.statistics?.historical_records && (
-                                        <div className="metric-card">
-                                            <span className="metric-label">Data Points</span>
-                                            <span className="metric-value">{cropReview.statistics.historical_records.toLocaleString()}</span>
-                                        </div>
-                                    )}
-                                    {cropReview.statistics?.states_grown && (
-                                        <div className="metric-card">
-                                            <span className="metric-label">Grown in States</span>
-                                            <span className="metric-value">{cropReview.statistics.states_grown}</span>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-
-                            {/* Environmental Requirements */}
-                            <div className="review-section">
-                                <h4 className="section-heading">🌡️ Environmental Requirements</h4>
-                                <div className="requirements-grid">
-                                    {cropReview.crop_details?.temperature && (
-                                        <div className="requirement-item">
-                                            <span className="req-icon">🌡️</span>
-                                            <div className="req-details">
-                                                <span className="req-name">Temperature</span>
-                                                <span className="req-value">{cropReview.crop_details.temperature.min}°C - {cropReview.crop_details.temperature.max}°C</span>
-                                            </div>
-                                        </div>
-                                    )}
-                                    {cropReview.crop_details?.rainfall && (
-                                        <div className="requirement-item">
-                                            <span className="req-icon">🌧️</span>
-                                            <div className="req-details">
-                                                <span className="req-name">Rainfall</span>
-                                                <span className="req-value">{cropReview.crop_details.rainfall.min} - {cropReview.crop_details.rainfall.max} mm</span>
-                                            </div>
-                                        </div>
-                                    )}
-                                    {cropReview.crop_details?.humidity && (
-                                        <div className="requirement-item">
-                                            <span className="req-icon">💧</span>
-                                            <div className="req-details">
-                                                <span className="req-name">Humidity</span>
-                                                <span className="req-value">{cropReview.crop_details.humidity.min} - {cropReview.crop_details.humidity.max}%</span>
-                                            </div>
-                                        </div>
-                                    )}
-                                    {cropReview.calendar_info?.growing_period_days && (
-                                        <div className="requirement-item">
-                                            <span className="req-icon">📅</span>
-                                            <div className="req-details">
-                                                <span className="req-name">Growing Period</span>
-                                                <span className="req-value">{cropReview.calendar_info.growing_period_days} days</span>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-
-                            {/* Soil Requirements */}
-                            {cropReview.soil_info && Object.keys(cropReview.soil_info).length > 0 && (
+                            {/* AI-Generated Analysis Section */}
+                            {analysisLoading ? (
                                 <div className="review-section">
-                                    <h4 className="section-heading">🌱 Soil Requirements</h4>
-                                    <div className="soil-requirements">
-                                        {cropReview.soil_info.ph && <div className="soil-item"><strong>pH Level:</strong> {cropReview.soil_info.ph}</div>}
-                                        {cropReview.soil_info.nitrogen_n && <div className="soil-item"><strong>Nitrogen (N):</strong> {cropReview.soil_info.nitrogen_n} kg/ha</div>}
-                                        {cropReview.soil_info.phosphorus_p && <div className="soil-item"><strong>Phosphorus (P):</strong> {cropReview.soil_info.phosphorus_p} kg/ha</div>}
-                                        {cropReview.soil_info.potassium_k && <div className="soil-item"><strong>Potassium (K):</strong> {cropReview.soil_info.potassium_k} kg/ha</div>}
+                                    <div style={{ textAlign: 'center', padding: '1.5rem' }}>
+                                        <Loader className="spin" style={{ width: '1.5rem', height: '1.5rem', margin: '0 auto 0.75rem', color: '#10b981' }} />
+                                        <p style={{ color: '#6b7280', fontSize: '0.85rem' }}>Generating AI analysis...</p>
+                                    </div>
+                                </div>
+                            ) : aiAnalysis ? (
+                                <div className="review-section">
+                                    <h4 className="section-heading" style={{ fontSize: '0.9rem', marginBottom: '0.75rem' }}>🤖 AI-Powered Analysis</h4>
+                                    {formatAIAnalysis(aiAnalysis)}
+                                </div>
+                            ) : analysisError ? (
+                                <div className="review-section">
+                                    <h4 className="section-heading" style={{ fontSize: '0.9rem' }}>🤖 AI-Powered Analysis</h4>
+                                    <div style={{ 
+                                        backgroundColor: '#fef2f2', 
+                                        padding: '0.75rem', 
+                                        borderRadius: '0.5rem',
+                                        border: '1px solid #fca5a5',
+                                        color: '#991b1b',
+                                        fontSize: '0.8rem'
+                                    }}>
+                                        <p style={{ margin: 0 }}>⚠️ {analysisError}</p>
+                                    </div>
+                                </div>
+                            ) : null}
+
+                            {/* Performance Metrics (Optional) */}
+                            {cropReview && (
+                                <div className="review-section">
+                                    <h4 className="section-heading">📊 Performance Metrics</h4>
+                                    <div className="metrics-grid">
+                                        {cropReview.avg_yield && (
+                                            <div className="metric-card">
+                                                <span className="metric-label">Average Yield</span>
+                                                <span className="metric-value">{cropReview.avg_yield}</span>
+                                                <span className="metric-unit">t/ha</span>
+                                            </div>
+                                        )}
+                                        {cropReview.avg_price && (
+                                            <div className="metric-card">
+                                                <span className="metric-label">Market Price</span>
+                                                <span className="metric-value">₹{cropReview.avg_price}</span>
+                                            </div>
+                                        )}
+                                        {cropReview.statistics?.historical_records && (
+                                            <div className="metric-card">
+                                                <span className="metric-label">Data Points</span>
+                                                <span className="metric-value">{cropReview.statistics.historical_records.toLocaleString()}</span>
+                                            </div>
+                                        )}
+                                        {cropReview.statistics?.states_grown && (
+                                            <div className="metric-card">
+                                                <span className="metric-label">Grown in States</span>
+                                                <span className="metric-value">{cropReview.statistics.states_grown}</span>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             )}
 
-                            {/* Sowing & Harvesting Calendar */}
-                            {cropReview.calendar_info && (
-                                <div className="review-section">
-                                    <h4 className="section-heading">📆 Sowing & Harvesting</h4>
-                                    <div className="calendar-info">
-                                        {cropReview.calendar_info.sowing_period && <div className="calendar-item"><strong>🌱 Sowing Period:</strong> {cropReview.calendar_info.sowing_period}</div>}
-                                        {cropReview.calendar_info.harvesting_period && <div className="calendar-item"><strong>🌾 Harvesting Period:</strong> {cropReview.calendar_info.harvesting_period}</div>}
-                                        {cropReview.calendar_info.season_name && <div className="calendar-item"><strong>Primary Season:</strong> {cropReview.calendar_info.season_name}</div>}
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Data Quality Badge */}
-                            {cropReview.reliability && (
+                            {cropReview?.reliability && (
                                 <div className="review-footer">
                                     <CheckCircle className="w-5 h-5" style={{ color: '#10b981' }} />
                                     <span>This analysis is based on <strong>{cropReview.reliability}</strong> historical agricultural data</span>
@@ -563,162 +808,6 @@ const CropPlanning = () => {
                             )}
                         </div>
                     )}
-
-                    {/* Detailed Crop Analysis (based on dataset) */}
-                    {cropReview && (
-                        <div className="crop-analysis-card" style={{ display: 'none' }}>
-                            <h3 className="analysis-title">{cropReview.name || formData.crop} — Detailed Analysis</h3>
-                            {cropReview.summary && <p className="analysis-summary">{cropReview.summary}</p>}
-
-                            <div className="analysis-grid">
-                                {/* Key metrics */}
-                                <div className="analysis-metrics">
-                                    {cropReview.avg_yield && <div className="metric"><strong>Avg. Yield:</strong> {cropReview.avg_yield} t/ha</div>}
-                                    {cropReview.avg_price && <div className="metric"><strong>Avg. Price:</strong> ₹{cropReview.avg_price}</div>}
-                                    {cropReview.common_states && <div className="metric"><strong>Common States:</strong> {cropReview.common_states.join(', ')}</div>}
-                                    {cropReview.reliability && <div className="metric"><strong>Data Reliability:</strong> {cropReview.reliability}</div>}
-                                </div>
-
-                                {/* Environmental / calendar */}
-                                <div className="analysis-environment">
-                                    {cropReview.crop_details?.temperature && <div><strong>Temperature:</strong> {cropReview.crop_details.temperature.min}°C - {cropReview.crop_details.temperature.max}°C</div>}
-                                    {cropReview.crop_details?.rainfall && <div><strong>Rainfall:</strong> {cropReview.crop_details.rainfall.min} - {cropReview.crop_details.rainfall.max} mm</div>}
-                                    {cropReview.crop_details?.humidity && <div><strong>Humidity:</strong> {cropReview.crop_details.humidity.min} - {cropReview.crop_details.humidity.max}%</div>}
-                                    {cropReview.calendar_info?.sowing_period && <div><strong>Sowing:</strong> {cropReview.calendar_info.sowing_period}</div>}
-                                    {cropReview.calendar_info?.harvesting_period && <div><strong>Harvesting:</strong> {cropReview.calendar_info.harvesting_period}</div>}
-                                </div>
-
-                                {/* Soil requirements */}
-                                <div className="analysis-soil">
-                                    <h4>Soil Requirements</h4>
-                                    {cropReview.soil_info?.ph && <div><strong>pH:</strong> {cropReview.soil_info.ph}</div>}
-                                    {cropReview.soil_info?.nitrogen_n && <div><strong>N:</strong> {cropReview.soil_info.nitrogen_n} kg/ha</div>}
-                                    {cropReview.soil_info?.phosphorus_p && <div><strong>P:</strong> {cropReview.soil_info.phosphorus_p} kg/ha</div>}
-                                    {cropReview.soil_info?.potassium_k && <div><strong>K:</strong> {cropReview.soil_info.potassium_k} kg/ha</div>}
-                                </div>
-                            </div>
-
-                            {/* Statistical summary if available */}
-                            {cropReview.statistics && (
-                                <div className="analysis-stats">
-                                    <h4>Statistical Summary</h4>
-                                    <div className="stat-row"><strong>Historical Records:</strong> {cropReview.statistics.historical_records?.toLocaleString()}</div>
-                                    <div className="stat-row"><strong>Avg. Yield / ha:</strong> {cropReview.statistics.avg_yield_per_hectare?.toFixed(2)} t/ha</div>
-                                    <div className="stat-row"><strong>States Grown:</strong> {cropReview.statistics.states_grown}</div>
-                                </div>
-                            )}
-
-                            {/* Data-driven notes / insights */}
-                            {cropReview.insights && (
-                                <div className="analysis-insights">
-                                    <h4>Data Insights</h4>
-                                    <ul>
-                                        {cropReview.insights.map((note, i) => (
-                                            <li key={i}>{note}</li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            )}
-                        </div>
-                    )}
-
-                    {/* AI top-3 suggestions (when crop selected) */}
-                    {formData.crop && (
-                        <div className="ai-suggestions-card">
-                            <h4>Top 3 AI Suggestions</h4>
-                            {aiLoading ? (
-                                <div><Loader className="btn-icon spin" /> Thinking...</div>
-                            ) : aiSuggestions.length > 0 ? (
-                                <div className="ai-list">
-                                    {aiSuggestions.map((c, idx) => (
-                                        <div key={c.crop_name || idx} className="ai-item">
-                                            <div className="ai-rank">#{idx + 1}</div>
-                                            <div className="ai-name">{c.crop_name}</div>
-                                            <div className="ai-score">Score: {c.final_score || c.score || '—'}/100</div>
-                                        </div>
-                                    ))}
-                                </div>
-                            ) : (
-                                <div className="muted">No AI suggestions available.</div>
-                            )}
-                        </div>
-                    )}
-
-                    <form onSubmit={handleSubmit} className="planning-form">
-                        <div className="form-grid">
-                            <div className="form-column">
-                                {/* State */}
-                                <div className="form-group">
-                                    <label htmlFor="state" className="form-label">
-                                        <MapPin className="label-icon" /> State <span className="required">*</span>
-                                        <FieldHelpIcon fieldName="state" onClick={() => handleHelpClick('state', 'State')} />
-                                    </label>
-                                    <select id="state" name="state" value={formData.state} onChange={handleInputChange} required className="form-select">
-                                        <option value="">Select your state</option>
-                                        {states.map(s => <option key={s} value={s}>{s}</option>)}
-                                    </select>
-                                </div>
-
-                                {/* Month */}
-                                <div className="form-group">
-                                    <label htmlFor="month" className="form-label"><Calendar className="label-icon" /> Planning Month <span className="required">*</span></label>
-                                    <select id="month" name="month" value={formData.month} onChange={handleInputChange} required className="form-select">
-                                        {months.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
-                                    </select>
-                                </div>
-
-                                {/* Crop selection */}
-                                <div className="form-group">
-                                    <label htmlFor="crop" className="form-label"><Sprout className="label-icon" /> Select Crop</label>
-                                    <select id="crop" name="crop" value={formData.crop} onChange={handleInputChange} className="form-select">
-                                        <option value="">Choose a crop</option>
-                                        {crops.map(c => <option key={c} value={c}>{c}</option>)}
-                                    </select>
-                                </div>
-
-                                {/* Land size */}
-                                <div className="form-group">
-                                    <label htmlFor="land_size" className="form-label"><Maximize2 className="label-icon" /> Land Size (hectares)</label>
-                                    <input type="number" id="land_size" name="land_size" value={formData.land_size} onChange={handleInputChange} min="0.1" step="0.1" placeholder="e.g., 5.0" className="form-input" />
-                                    <p className="input-hint">Optional: For quantity recommendations</p>
-                                </div>
-                            </div>
-
-                            <div className="form-column">
-                                <div className="location-section">
-                                    <h3 className="section-title"><MapPin className="section-icon" /> Weather Forecast (Optional)</h3>
-                                    <p className="section-description">Provide your coordinates for weather-based recommendations</p>
-
-                                    <button type="button" onClick={detectLocation} disabled={locationLoading} className="detect-location-btn">
-                                        {locationLoading ? (<><Loader className="btn-icon spin" /> Detecting...</>) : (<><MapPin className="btn-icon" /> Auto-Detect Location</>)}
-                                    </button>
-
-                                    {locationAutoDetected && (
-                                        <div className="state-detected-msg"><CheckCircle className="success-icon" /> Location detected successfully!</div>
-                                    )}
-                                    {locationError && (
-                                        <div className="location-error-msg"><AlertCircle className="error-icon" /> <span>{locationError}</span></div>
-                                    )}
-
-                                    <div className="coords-grid">
-                                        <div className="form-group">
-                                            <label htmlFor="latitude" className="form-label-small">Latitude</label>
-                                            <input type="number" id="latitude" name="latitude" value={formData.latitude} onChange={handleInputChange} step="0.000001" placeholder="e.g., 30.7333" className="form-input-small" />
-                                        </div>
-                                        <div className="form-group">
-                                            <label htmlFor="longitude" className="form-label-small">Longitude</label>
-                                            <input type="number" id="longitude" name="longitude" value={formData.longitude} onChange={handleInputChange} step="0.000001" placeholder="e.g., 76.7794" className="form-input-small" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="form-actions">
-                            <button type="submit" disabled={loading} className="btn-primary">{loading ? (<><Loader className="btn-icon spin" /> Analyzing...</>) : (<><Sparkles className="btn-icon" /> Get Crop Recommendations</>)}</button>
-                            <button type="button" onClick={resetForm} className="btn-secondary" disabled={loading}>Reset</button>
-                        </div>
-                    </form>
                 </div>
 
                 {/* Results Section (unchanged layout) */}
@@ -749,8 +838,6 @@ const CropPlanning = () => {
 
                                     <div className="market-info-section">
                                         {crop.average_market_price_inr > 0 && (<div className="market-price"><DollarSign className="price-icon" /><div className="price-details"><span className="price-label">Avg. Market Price</span><span className="price-value">₹{crop.average_market_price_inr.toLocaleString()}/quintal</span></div></div>)}
-
-                                        <button className="btn-market-view" onClick={() => loadMarketData(crop.crop_name, index)} disabled={loadingMarket}>{loadingMarket && expandedCrop === index ? (<><Loader className="w-4 h-4 animate-spin" /> Loading...</>) : (<><ShoppingCart className="w-4 h-4" /> View Market Prices</>)}</button>
                                     </div>
 
                                     {expandedCrop === index && marketData[crop.crop_name] && (

@@ -4,10 +4,12 @@
     "tagline": "स्मार्ट शेती सहाय्यक"
   },
   "home": "होम",
+  "cropPlanning": "पीक नियोजन",
   "yieldPrediction": "उत्पादन अंदाज",
   "soilAnalysis": "माती विश्लेषण",
   "diseaseDetection": "रोग ओळख",
   "yieldGapAnalysis": "उत्पादन अंतर विश्लेषण",
+  "marketIntelligence": "बाजार बुद्धिमत्ता",
   "auth": {
     "login": "लॉगिन",
     "signup": "नोंदणी करा"
