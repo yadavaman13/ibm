@@ -419,24 +419,12 @@
     flex-shrink: 0;
 }
 
-.score-icon.market {
-    color: #10b981;
-}
-
-.score-icon.weather {
-    color: #3b82f6;
-}
-
-.score-icon.season {
-    color: #8b5cf6;
-}
-
-.score-icon.soil {
-    color: #ec4899;
-}
-
+.score-icon.market,
+.score-icon.weather,
+.score-icon.season,
+.score-icon.soil,
 .score-icon.risk {
-    color: #f59e0b;
+    color: var(--color-primary, #99BC85);
 }
 
 .score-details {
@@ -472,16 +460,10 @@
     height: 1.125rem;
 }
 
-.trend-icon.up {
-    color: #10b981;
-}
-
-.trend-icon.down {
-    color: #ef4444;
-}
-
+.trend-icon.up,
+.trend-icon.down,
 .trend-icon.stable {
-    color: #6b7280;
+    color: var(--color-text-secondary, #6b7280);
 }
 
 /* Badges */
@@ -493,34 +475,15 @@
     border-radius: 0.375rem;
 }
 
-.badge.good {
-    background: #d1fae5;
-    color: #065f46;
-}
-
-.badge.moderate {
-    background: #fed7aa;
-    color: #92400e;
-}
-
-.badge.poor {
-    background: #fecaca;
-    color: #991b1b;
-}
-
-.badge.risk-low {
-    background: #d1fae5;
-    color: #065f46;
-}
-
-.badge.risk-medium {
-    background: #fef3c7;
-    color: #92400e;
-}
-
+.badge.good,
+.badge.moderate,
+.badge.poor,
+.badge.risk-low,
+.badge.risk-medium,
 .badge.risk-high {
-    background: #fecaca;
-    color: #991b1b;
+    background: var(--color-primary-light, #E4EFE7);
+    color: var(--color-text-primary, #1f2937);
+    border: 1px solid var(--color-border, #e5e7eb);
 }
 
 /* Market Price */
@@ -1452,5 +1415,376 @@
 
     .requirements-grid {
         grid-template-columns: 1fr;
+    }
+}
+/* ===== CLEAN MINIMAL THEME OVERRIDES ===== */
+/* Remove gradients and excessive colors, use consistent theme */
+
+/* Location Section - Clean */
+.location-section {
+    background: #f9fafb;
+    border: 1.5px solid var(--color-border, #e5e7eb);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+}
+
+.section-title {
+    color: var(--color-text-primary, #1f2937);
+}
+
+.section-description {
+    color: var(--color-text-secondary, #6b7280);
+}
+
+.detect-location-btn {
+    background: var(--color-primary, #99BC85);
+    border: none;
+}
+
+.detect-location-btn:hover:not(:disabled) {
+    background: #7da468;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Score badges - Minimal */
+.crop-score {
+    background: white;
+    border: 2px solid var(--color-border, #e5e7eb);
+    color: var(--color-text-primary, #1f2937);
+}
+
+.score-excellent {
+    background: white;
+    border-color: var(--color-primary, #99BC85);
+    color: var(--color-primary, #99BC85);
+}
+
+.score-good {
+    background: white;
+    border-color: #3b82f6;
+    color: #3b82f6;
+}
+
+.score-moderate {
+    background: white;
+    border-color: #f59e0b;
+    color: #f59e0b;
+}
+
+.score-poor {
+    background: white;
+    border-color: #ef4444;
+    color: #ef4444;
+}
+
+/* Rank Badge - Clean */
+.rank-badge {
+    background: var(--color-primary, #99BC85);
+    box-shadow: none;
+}
+
+/* Market Price - Clean */
+.market-price {
+    background: #f9fafb;
+    border: 1.5px solid var(--color-border, #e5e7eb);
+}
+
+.price-icon {
+    color: var(--color-primary, #99BC85);
+}
+
+.price-label {
+    color: var(--color-text-secondary, #6b7280);
+}
+
+.price-value {
+    color: var(--color-text-primary, #1f2937);
+}
+
+/* Button Clean */
+.btn-market-view {
+    background: var(--color-primary, #99BC85);
+}
+
+.btn-market-view:hover:not(:disabled) {
+    background: #7da468;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Market Expansion - Clean */
+.market-expansion {
+    background: #f9fafb;
+    border: 1.5px solid var(--color-border, #e5e7eb);
+}
+
+/* Market Items - Clean */
+.market-item {
+    background: white;
+    border: 1px solid var(--color-border, #e5e7eb);
+}
+
+.market-item:hover {
+    background: #fafafa;
+    border-color: var(--color-primary, #99BC85);
+    transform: none;
+}
+
+.market-rank {
+    background: var(--color-text-secondary, #6b7280);
+}
+
+.market-item:first-child .market-rank {
+    background: var(--color-primary, #99BC85);
+}
+
+.market-item:nth-child(2) .market-rank {
+    background: var(--color-text-secondary, #6b7280);
+}
+
+.market-item:nth-child(3) .market-rank {
+    background: #9ca3af;
+}
+
+/* Quantity Section - Clean */
+.quantity-section {
+    background: #f9fafb;
+    border: 1.5px solid var(--color-border, #e5e7eb);
+}
+
+.quantity-title {
+    color: var(--color-text-primary, #1f2937);
+}
+
+.quantity-label {
+    color: var(--color-text-secondary, #6b7280);
+}
+
+.quantity-value {
+    color: var(--color-text-primary, #1f2937);
+}
+
+.quantity-note {
+    border-top: 1px solid var(--color-border, #e5e7eb);
+    color: var(--color-text-secondary, #6b7280);
+}
+
+.quantity-note strong {
+    color: var(--color-text-primary, #1f2937);
+}
+
+/* Calendar Section - Clean */
+.calendar-section {
+    background: #f9fafb;
+    border: 1.5px solid var(--color-border, #e5e7eb);
+}
+
+.calendar-label {
+    color: var(--color-text-secondary, #6b7280);
+}
+
+.calendar-value {
+    color: var(--color-text-primary, #1f2937);
+}
+
+/* Optimal Conditions - Clean */
+.optimal-section {
+    background: #f9fafb;
+    border: 1.5px solid var(--color-border, #e5e7eb);
+}
+
+.optimal-item {
+    background: white;
+    border: 1px solid var(--color-border, #e5e7eb);
+}
+
+.optimal-icon {
+    color: var(--color-primary, #99BC85);
+}
+
+.optimal-label {
+    color: var(--color-text-secondary, #6b7280);
+}
+
+.optimal-value {
+    color: var(--color-text-primary, #1f2937);
+}
+
+/* Soil Section - Clean */
+.soil-section {
+    background: #f9fafb;
+    border: 1.5px solid var(--color-border, #e5e7eb);
+}
+
+.soil-item {
+    background: white;
+    border-left: 3px solid var(--color-primary, #99BC85);
+}
+
+.soil-label {
+    color: var(--color-text-secondary, #6b7280);
+}
+
+.soil-value {
+    color: var(--color-text-primary, #1f2937);
+}
+
+.soil-item strong {
+    color: var(--color-primary, #99BC85);
+}
+
+/* Statistics Section - Clean */
+.stats-section {
+    background: #f9fafb;
+    border: 1.5px solid var(--color-border, #e5e7eb);
+}
+
+.stat-item {
+    background: white;
+    border: 1px solid var(--color-border, #e5e7eb);
+}
+
+.stat-icon {
+    color: var(--color-primary, #99BC85);
+}
+
+.stat-label {
+    color: var(--color-text-secondary, #6b7280);
+}
+
+.stat-value {
+    color: var(--color-text-primary, #1f2937);
+}
+
+/* Season Badge - Clean */
+.season-badge {
+    background: white;
+    border: 1.5px solid var(--color-border, #e5e7eb);
+    color: var(--color-text-primary, #1f2937);
+}
+
+/* Disclaimer - Clean */
+.disclaimer {
+    background: #fef2f2;
+    border: 1.5px solid #fca5a5;
+}
+
+/* Metric Cards - Clean */
+.metric-card {
+    border: 1.5px solid var(--color-border, #e5e7eb);
+}
+
+.metric-card:hover {
+    border-color: var(--color-primary, #99BC85);
+    box-shadow: 0 2px 8px rgba(153, 188, 133, 0.15);
+    transform: none;
+}
+
+.metric-value {
+    color: var(--color-primary, #99BC85);
+}
+
+/* Requirement Items - Clean */
+.requirement-item {
+    border: 1.5px solid var(--color-border, #e5e7eb);
+}
+
+.requirement-item:hover {
+    border-color: var(--color-primary, #99BC85);
+    box-shadow: 0 2px 6px rgba(153, 188, 133, 0.1);
+}
+
+.req-value {
+    color: var(--color-primary, #99BC85);
+}
+
+/* Soil Requirements - Clean */
+.soil-requirements {
+    border: 1.5px solid var(--color-border, #e5e7eb);
+}
+
+.soil-requirements .soil-item {
+    background: white;
+    border-left: 3px solid var(--color-primary, #99BC85);
+}
+
+.soil-requirements .soil-item strong {
+    color: var(--color-primary, #99BC85);
+}
+
+/* Calendar Info - Clean */
+.calendar-info {
+    border: 1.5px solid var(--color-border, #e5e7eb);
+}
+
+.calendar-info .calendar-item {
+    background: white;
+    border-left: 3px solid var(--color-primary, #99BC85);
+}
+
+.calendar-info .calendar-item strong {
+    color: var(--color-primary, #99BC85);
+}
+
+/* Primary Button Override */
+.btn-primary {
+    background: var(--color-primary, #99BC85);
+}
+
+.btn-primary:hover:not(:disabled) {
+    background: #7da468;
+    transform: none;
+    box-shadow: 0 2px 8px rgba(153, 188, 133, 0.2);
+}
+
+/* Remove all remaining gradients */
+.crop-card {
+    border: 1.5px solid var(--color-border, #e5e7eb);
+}
+
+.crop-card:hover {
+    border-color: var(--color-primary, #99BC85);
+    box-shadow: 0 4px 12px rgba(153, 188, 133, 0.15);
+    transform: translateY(-2px);
+}
+
+/* Responsive adjustments for cards */
+@media (max-width: 768px) {
+    .recommendations-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        padding: 1rem;
+    }
+
+    .crop-card {
+        padding: 1.25rem;
+    }
+
+    .optimal-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .score-breakdown {
+        grid-template-columns: 1fr;
+    }
+
+    .crop-title-section {
+        flex-direction: column;
+        gap: 0.75rem;
+        align-items: flex-start;
+    }
+
+    .crop-score {
+        align-self: stretch;
+        text-align: center;
     }
 }

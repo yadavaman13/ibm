@@ -89,11 +89,11 @@ const CropPlanning = () => {
         let currentContent = [];
         
         const sectionConfig = {
-            'suitability': { icon: '🎯', color: '#0284c7', title: 'Suitability Analysis' },
-            'benefits': { icon: '✅', color: '#059669', title: 'Key Benefits' },
-            'risks': { icon: '⚠️', color: '#d97706', title: 'Risks & Challenges' },
-            'recommendations': { icon: '💡', color: '#7c3aed', title: 'Recommendations' },
-            'timeline': { icon: '📅', color: '#4f46e5', title: 'Expected Timeline' }
+            'suitability': { icon: Target, color: 'var(--color-primary)', title: 'Suitability Analysis' },
+            'benefits': { icon: CheckCircle, color: 'var(--color-primary)', title: 'Key Benefits' },
+            'risks': { icon: AlertCircle, color: 'var(--color-primary)', title: 'Risks & Challenges' },
+            'recommendations': { icon: Sparkles, color: 'var(--color-primary)', title: 'Recommendations' },
+            'timeline': { icon: Calendar, color: 'var(--color-primary)', title: 'Expected Timeline' }
         };
         
         const detectSection = (line) => {
@@ -760,7 +760,7 @@ const CropPlanning = () => {
                                         color: '#991b1b',
                                         fontSize: '0.8rem'
                                     }}>
-                                        <p style={{ margin: 0 }}>⚠️ {analysisError}</p>
+                                        <p style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}><AlertCircle size={16} /> {analysisError}</p>
                                     </div>
                                 </div>
                             ) : null}
@@ -768,7 +768,7 @@ const CropPlanning = () => {
                             {/* Performance Metrics (Optional) */}
                             {/* {cropReview && (
                                 <div className="review-section">
-                                    <h4 className="section-heading">📊 Performance Metrics</h4>
+                                    <h4 className="section-heading" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><BarChart3 size={18} /> Performance Metrics</h4>
                                     <div className="metrics-grid">
                                         {cropReview.avg_yield && (
                                             <div className="metric-card">
@@ -813,7 +813,7 @@ const CropPlanning = () => {
                 {result && (
                     <>
                         <div className="results-header">
-                            <div className="results-divider"><div className="divider-line"></div><span className="divider-text">🎯 Top {result.recommendations?.length || 0} Recommendations</span><div className="divider-line"></div></div>
+                            <div className="results-divider"><div className="divider-line"></div><span className="divider-text" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Target size={20} /> Top {result.recommendations?.length || 0} Recommendations</span><div className="divider-line"></div></div>
                             <div className="season-badge"><Calendar className="season-icon" /><span>Season: <strong>{result.season}</strong></span></div>
                         </div>
 
@@ -859,7 +859,7 @@ const CropPlanning = () => {
                                                             <div key={idx} className="market-item"><div className="market-rank">#{idx + 1}</div><div className="market-details"><div className="market-name">{market.market}</div><div className="market-location">{market.district}</div></div><div className="market-price-info"><div className="market-price-value">₹{market.modal_price.toLocaleString()}</div><div className="market-arrival">{market.arrival_quantity.toFixed(1)} MT</div></div></div>
                                                         ))}
                                                     </div>
-                                                    <p className="market-note">💡 Based on real government mandi data. Consider transport costs when choosing markets.</p>
+                                                    <p className="market-note" style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}><Info size={16} style={{ flexShrink: 0, marginTop: '0.125rem' }} /> Based on real government mandi data. Consider transport costs when choosing markets.</p>
                                                 </div>
                                             )}
                                         </div>
@@ -867,7 +867,7 @@ const CropPlanning = () => {
 
                                     {crop.quantity_recommendation && Object.keys(crop.quantity_recommendation).length > 0 && (
                                         <div className="quantity-section">
-                                            <h4 className="quantity-title">📊 Recommended Allocation</h4>
+                                            <h4 className="quantity-title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><BarChart3 size={18} /> Recommended Allocation</h4>
                                             <div className="quantity-grid">
                                                 <div className="quantity-item"><span className="quantity-label">Area</span><span className="quantity-value">{crop.quantity_recommendation.recommended_area_hectares?.min || crop.quantity_recommendation.recommended_area_hectares} - {crop.quantity_recommendation.recommended_area_hectares?.max || crop.quantity_recommendation.recommended_area_hectares} ha</span></div>
                                                 <div className="quantity-item"><span className="quantity-label">Expected Yield</span><span className="quantity-value">{crop.quantity_recommendation.expected_yield_tons?.min || crop.quantity_recommendation.expected_yield_range?.minimum_tonnes} - {crop.quantity_recommendation.expected_yield_tons?.max || crop.quantity_recommendation.expected_yield_range?.maximum_tonnes} tons</span></div>
@@ -887,11 +887,11 @@ const CropPlanning = () => {
                                     )}
 
                                     {crop.calendar_info && crop.calendar_info.sowing_period && (
-                                        <div className="calendar-section"><h4 className="section-title">📅 Growing Calendar</h4><div className="calendar-grid"><div className="calendar-item"><span className="calendar-label">🌱 Sowing</span><span className="calendar-value">{crop.calendar_info.sowing_period}</span></div><div className="calendar-item"><span className="calendar-label">🌾 Harvesting</span><span className="calendar-value">{crop.calendar_info.harvesting_period}</span></div>{crop.calendar_info.season_name && (<div className="calendar-item"><span className="calendar-label">🍂 Season</span><span className="calendar-value">{crop.calendar_info.season_name}</span></div>)}</div></div>
+                                        <div className="calendar-section"><h4 className="section-title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Calendar size={18} /> Growing Calendar</h4><div className="calendar-grid"><div className="calendar-item"><span className="calendar-label" style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}><Sprout size={14} /> Sowing</span><span className="calendar-value">{crop.calendar_info.sowing_period}</span></div><div className="calendar-item"><span className="calendar-label" style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}><Leaf size={14} /> Harvesting</span><span className="calendar-value">{crop.calendar_info.harvesting_period}</span></div>{crop.calendar_info.season_name && (<div className="calendar-item"><span className="calendar-label" style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}><Calendar size={14} /> Season</span><span className="calendar-value">{crop.calendar_info.season_name}</span></div>)}</div></div>
                                     )}
 
                                     {crop.crop_details?.optimal_conditions && (
-                                        <div className="optimal-section"><h4 className="section-title">🎯 Optimal Conditions</h4><div className="optimal-grid">{crop.crop_details.optimal_conditions.temperature && (<div className="optimal-item"><Thermometer className="optimal-icon" /><div className="optimal-details"><span className="optimal-label">Temperature</span><span className="optimal-value">{crop.crop_details.optimal_conditions.temperature}°C</span></div></div>)}{crop.crop_details.optimal_conditions.rainfall && (<div className="optimal-item"><CloudRain className="optimal-icon" /><div className="optimal-details"><span className="optimal-label">Rainfall</span><span className="optimal-value">{crop.crop_details.optimal_conditions.rainfall} mm</span></div></div>)}{crop.crop_details.optimal_conditions.humidity && (<div className="optimal-item"><Droplets className="optimal-icon" /><div className="optimal-details"><span className="optimal-label">Humidity</span><span className="optimal-value">{crop.crop_details.optimal_conditions.humidity}%</span></div></div>)}</div></div>
+                                        <div className="optimal-section"><h4 className="section-title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Target size={18} /> Optimal Conditions</h4><div className="optimal-grid">{crop.crop_details.optimal_conditions.temperature && (<div className="optimal-item"><Thermometer className="optimal-icon" /><div className="optimal-details"><span className="optimal-label">Temperature</span><span className="optimal-value">{crop.crop_details.optimal_conditions.temperature}°C</span></div></div>)}{crop.crop_details.optimal_conditions.rainfall && (<div className="optimal-item"><CloudRain className="optimal-icon" /><div className="optimal-details"><span className="optimal-label">Rainfall</span><span className="optimal-value">{crop.crop_details.optimal_conditions.rainfall} mm</span></div></div>)}{crop.crop_details.optimal_conditions.humidity && (<div className="optimal-item"><Droplets className="optimal-icon" /><div className="optimal-details"><span className="optimal-label">Humidity</span><span className="optimal-value">{crop.crop_details.optimal_conditions.humidity}%</span></div></div>)}</div></div>
                                     )}
 
                                     {crop.soil_info && Object.keys(crop.soil_info).length > 0 && (
@@ -899,7 +899,7 @@ const CropPlanning = () => {
                                     )}
 
                                     {crop.crop_details?.statistics && crop.crop_details.statistics.historical_records > 0 && (
-                                        <div className="stats-section"><h4 className="section-title">📊 Historical Data</h4><div className="stats-grid"><div className="stat-item"><Database className="stat-icon" /><div className="stat-details"><span className="stat-label">Records</span><span className="stat-value">{crop.crop_details.statistics.historical_records.toLocaleString()}</span></div></div><div className="stat-item"><MapPin className="stat-icon" /><div className="stat-details"><span className="stat-label">States</span><span className="stat-value">{crop.crop_details.statistics.states_grown}</span></div></div><div className="stat-item"><Sprout className="stat-icon" /><div className="stat-details"><span className="stat-label">Avg. Yield</span><span className="stat-value">{crop.crop_details.statistics.avg_yield_per_hectare.toFixed(2)} t/ha</span></div></div></div></div>
+                                        <div className="stats-section"><h4 className="section-title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Database size={18} /> Historical Data</h4><div className="stats-grid"><div className="stat-item"><Database className="stat-icon" /><div className="stat-details"><span className="stat-label">Records</span><span className="stat-value">{crop.crop_details.statistics.historical_records.toLocaleString()}</span></div></div><div className="stat-item"><MapPin className="stat-icon" /><div className="stat-details"><span className="stat-label">States</span><span className="stat-value">{crop.crop_details.statistics.states_grown}</span></div></div><div className="stat-item"><Sprout className="stat-icon" /><div className="stat-details"><span className="stat-label">Avg. Yield</span><span className="stat-value">{crop.crop_details.statistics.avg_yield_per_hectare.toFixed(2)} t/ha</span></div></div></div></div>
                                     )}
                                 </div>
                             ))}
